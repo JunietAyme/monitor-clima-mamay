@@ -3,184 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Climático — Inversiones Mamay E.I.R.L.</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Inversiones Mamay — Monitor Climático</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'system-ui', 'sans-serif'],
+                        mono: ['"SF Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+                    },
                     colors: {
-                        brand: { 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c' }
+                        apple: {
+                            orange: '#FF9F0A',
+                            orangeLight: '#FF6B00',
+                            darkBg: '#000000',
+                            darkCard: '#1C1C1E',
+                            darkElevated: '#2C2C2E',
+                            lightBg: '#F5F5F7',
+                            lightCard: '#FFFFFF',
+                            grayText: '#8E8E93'
+                        }
                     }
                 }
             }
         }
     </script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .glass-card:hover {
-            border-color: rgba(249, 115, 22, 0.3);
-            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.1);
+
+        body {
+            transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s ease;
         }
+
+        /* Navbar translúcida estilo macOS */
+        .apple-nav {
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        /* Tarjetas limpias sin ruido visual */
+        .apple-card {
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Animación de entrada sutil */
+        @keyframes appleReveal {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(0.995);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .reveal {
+            animation: appleReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+
+        /* Scrollbar invisible / minimalista */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(142, 142, 147, 0.3); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(142, 142, 147, 0.5); }
     </style>
 </head>
-<body class="bg-[#030712] text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+<body class="bg-apple-lightBg dark:bg-apple-darkBg text-zinc-900 dark:text-white min-h-screen flex flex-col selection:bg-apple-orange selection:text-black">
 
-    <!-- Header Elegante -->
-    <header class="glass-card sticky top-0 z-50 border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-brand-500 to-amber-500 flex items-center justify-center font-bold text-xl shadow-lg shadow-brand-500/25 text-white">
-                    IM
+    <!-- Header estilo macOS -->
+    <header class="apple-nav sticky top-0 z-50 bg-white/80 dark:bg-black/75 border-b border-black/[0.06] dark:border-white/[0.08]">
+        <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <!-- Identidad Minimalista -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-[10px] bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-sm tracking-tighter shadow-sm">
+                    IM<span class="text-apple-orange font-black">+</span>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                        Inversiones Mamay E.I.R.L.
-                        <span class="text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-full">PROD</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Monitoreo Climático y Bioseguridad — 15 Galpones</p>
+                    <h1 class="text-[15px] font-semibold tracking-tight leading-none">Inversiones Mamay</h1>
+                    <p class="text-[11px] text-apple-grayText mt-1 font-medium">Clima & Bioseguridad · 15 Galpones</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3 text-xs">
-                <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 shadow-inner">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+
+            <!-- Controles de Estado y Tema -->
+            <div class="flex items-center gap-2.5">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.07] text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                     <span id="lbl-actualizado">Sincronizando...</span>
                 </div>
-                <button onclick="cargarDatos()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold transition shadow-lg shadow-brand-600/25 active:scale-95">
-                    Actualizar Vista
+
+                <!-- Botón Cambiar Tema (Claro / Oscuro) -->
+                <button onclick="toggleTheme()" title="Cambiar apariencia" class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.14] flex items-center justify-center transition active:scale-90">
+                    <svg id="icon-sun" class="w-4 h-4 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg id="icon-moon" class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+
+                <!-- Botón Actualizar -->
+                <button onclick="cargarDatos()" class="px-3.5 py-1.5 rounded-full bg-apple-orangeLight dark:bg-apple-orange text-white dark:text-black text-xs font-semibold hover:opacity-90 transition active:scale-95 shadow-sm">
+                    Actualizar
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full space-y-6">
+    <!-- Contenido Principal -->
+    <main class="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex-grow w-full space-y-6">
 
-        <!-- Panel de Filtros y Comparación (Glassmorphism) -->
-        <section class="glass-card rounded-2xl p-6 shadow-2xl">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 pb-4 border-b border-slate-800/60">
-                <h2 class="text-xs font-bold text-brand-400 uppercase tracking-widest flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                    Filtros y Selector de Galpones para Comparación
-                </h2>
-                <div class="flex gap-2">
-                    <button onclick="seleccionarTodos(true)" class="text-xs px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-slate-300 font-medium transition">Marcar Todos</button>
-                    <button onclick="seleccionarTodos(false)" class="text-xs px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-slate-300 font-medium transition">Limpiar</button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+        <!-- Barra de Controles estilo iOS -->
+        <section class="reveal apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5 sm:p-6 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-black/[0.06] dark:border-white/[0.06]">
+                
+                <!-- Segmented Control para Zonas -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-2">Mes / Período</label>
-                    <select id="filtro-mes" onchange="aplicarFiltros()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500 transition shadow-inner">
-                        <option value="todos">Todos los Meses</option>
-                    </select>
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Zona Operativa</span>
+                    <div class="inline-flex p-1 rounded-xl bg-black/[0.05] dark:bg-black/60 border border-black/[0.04] dark:border-white/[0.05]">
+                        <button onclick="setZona('todos')" id="btn-zona-todos" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-apple-darkElevated text-zinc-900 dark:text-white shadow-sm">
+                            Todas (15)
+                        </button>
+                        <button onclick="setZona('Arias')" id="btn-zona-Arias" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
+                            Arias (01–09)
+                        </button>
+                        <button onclick="setZona('Castillo')" id="btn-zona-Castillo" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
+                            Castillo (10–15)
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-2">Zona / Encargado</label>
-                    <select id="filtro-encargado" onchange="aplicarFiltros()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500 transition shadow-inner">
-                        <option value="todos">Todas las Zonas (Arias & Castillo)</option>
-                        <option value="Arias">Zona Arias (01 - 09)</option>
-                        <option value="Castillo">Zona Castillo (10 - 15)</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-400 mb-2">Galpones a Comparar (1 para vista detallada, varios para matriz)</label>
-                    <div id="selector-galpones" class="flex flex-wrap gap-2 bg-slate-950/80 border border-slate-800 rounded-xl p-3 max-h-28 overflow-y-auto shadow-inner">
-                        <!-- Se llena dinámicamente -->
+
+                <!-- Selector de Mes y Acciones Rápidas -->
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="filtro-mes" class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Período</label>
+                        <select id="filtro-mes" onchange="aplicarFiltros()" class="bg-black/[0.05] dark:bg-apple-darkElevated border-0 rounded-xl px-3.5 py-2 text-xs font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
+                            <option value="todos">Todo el historial</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button onclick="seleccionarTodos(true)" class="px-3 py-2 rounded-xl bg-black/[0.05] dark:bg-apple-darkElevated hover:bg-black/[0.09] dark:hover:bg-white/[0.12] text-xs font-medium transition active:scale-95">
+                            Todos
+                        </button>
+                        <button onclick="seleccionarTodos(false)" class="px-3 py-2 rounded-xl bg-black/[0.05] dark:bg-apple-darkElevated hover:bg-black/[0.09] dark:hover:bg-white/[0.12] text-xs font-medium text-apple-grayText hover:text-zinc-900 dark:hover:text-white transition active:scale-95">
+                            Ninguno
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- KPI Cards con diseño refinado -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div class="glass-card rounded-2xl p-5 shadow-xl transition hover:-translate-y-0.5">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Registros Analizados</p>
-                <h3 id="kpi-total" class="text-3xl font-extrabold text-white mt-2 tracking-tight">0</h3>
-                <span class="text-xs text-brand-400 font-semibold mt-1 inline-block">Histórico filtrado activo</span>
-            </div>
-            <div class="glass-card rounded-2xl p-5 shadow-xl transition hover:-translate-y-0.5">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Temperatura Promedio</p>
-                <h3 id="kpi-temp-prom" class="text-3xl font-extrabold text-white mt-2 tracking-tight">0.0 °C</h3>
-                <span class="text-xs text-slate-400 font-medium mt-1 inline-block">Límite crítico: <span class="text-brand-400 font-semibold">26°C</span></span>
-            </div>
-            <div class="glass-card rounded-2xl p-5 shadow-xl transition hover:-translate-y-0.5">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Humedad Promedio</p>
-                <h3 id="kpi-hum-prom" class="text-3xl font-extrabold text-white mt-2 tracking-tight">0 %</h3>
-                <span class="text-xs text-slate-400 font-medium mt-1 inline-block">Límite crítico: <span class="text-brand-400 font-semibold">85%</span></span>
-            </div>
-            <div class="glass-card rounded-2xl p-5 shadow-xl transition hover:-translate-y-0.5 border-red-500/20">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Alertas Registradas</p>
-                <h3 id="kpi-alertas" class="text-3xl font-extrabold text-red-400 mt-2 tracking-tight">0</h3>
-                <span class="text-xs text-red-400/90 font-medium mt-1 inline-block">Temp ≥ 26°C o Hum ≥ 85%</span>
-            </div>
-        </section>
-
-        <!-- Gráficos Multi-Galpón -->
-        <section id="seccion-multigalpon" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="glass-card rounded-2xl p-6 shadow-2xl">
-                <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-800/60">
-                    <h3 class="text-sm font-bold text-white tracking-wide">Evolución de Temperatura (°C) — Múltiples Galpones</h3>
-                    <span class="text-xs font-semibold text-red-400 bg-red-950/50 border border-red-900/50 px-2.5 py-1 rounded-lg">Umbral: 26°C</span>
+            <!-- Pills Interactivas de Galpones -->
+            <div class="pt-4">
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">Galpones Activos</span>
+                    <span id="hint-modo" class="text-[11px] text-apple-orangeLight dark:text-apple-orange font-medium">Modo comparativo</span>
                 </div>
-                <div class="h-80 relative">
+                <div id="selector-galpones" class="flex flex-wrap gap-2">
+                    <!-- Pills inyectadas por JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- KPIs Minimalistas (Estilo Apple Health) -->
+        <section class="reveal delay-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+                <span class="text-xs font-medium text-apple-grayText">Lecturas</span>
+                <div id="kpi-total" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0</div>
+                <p class="text-[11px] text-apple-grayText mt-1.5">Registros filtrados</p>
+            </div>
+
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-apple-grayText">Temp. Media</span>
+                    <span class="w-2 h-2 rounded-full bg-apple-orange"></span>
+                </div>
+                <div id="kpi-temp-prom" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0.0°</div>
+                <p class="text-[11px] text-apple-grayText mt-1.5">Umbral máximo <span class="text-zinc-900 dark:text-white font-medium">26.0°C</span></p>
+            </div>
+
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-apple-grayText">Humedad Media</span>
+                    <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                </div>
+                <div id="kpi-hum-prom" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0%</div>
+                <p class="text-[11px] text-apple-grayText mt-1.5">Umbral máximo <span class="text-zinc-900 dark:text-white font-medium">85%</span></p>
+            </div>
+
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-apple-grayText">Desviaciones</span>
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                </div>
+                <div id="kpi-alertas" class="text-3xl font-bold tracking-tight mt-2 tabular-nums text-rose-500">0</div>
+                <p class="text-[11px] text-apple-grayText mt-1.5">Fuera de rango óptimo</p>
+            </div>
+        </section>
+
+        <!-- Gráficos Comparativos (Multi-Galpón) -->
+        <section id="seccion-multigalpon" class="reveal delay-2 grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6">
+                <div class="flex items-baseline justify-between mb-5">
+                    <div>
+                        <h3 class="text-[15px] font-semibold tracking-tight">Temperatura Interior</h3>
+                        <p class="text-xs text-apple-grayText mt-0.5">Comparativa por galpón (°C)</p>
+                    </div>
+                    <span class="text-[11px] font-semibold text-rose-500">Límite 26°C</span>
+                </div>
+                <div class="h-72 relative">
                     <canvas id="chartTemp"></canvas>
                 </div>
             </div>
-            <div class="glass-card rounded-2xl p-6 shadow-2xl">
-                <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-800/60">
-                    <h3 class="text-sm font-bold text-white tracking-wide">Evolución de Humedad (%) — Múltiples Galpones</h3>
-                    <span class="text-xs font-semibold text-red-400 bg-red-950/50 border border-red-900/50 px-2.5 py-1 rounded-lg">Umbral: 85%</span>
+
+            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6">
+                <div class="flex items-baseline justify-between mb-5">
+                    <div>
+                        <h3 class="text-[15px] font-semibold tracking-tight">Humedad Relativa</h3>
+                        <p class="text-xs text-apple-grayText mt-0.5">Comparativa por galpón (%)</p>
+                    </div>
+                    <span class="text-[11px] font-semibold text-rose-500">Límite 85%</span>
                 </div>
-                <div class="h-80 relative">
+                <div class="h-72 relative">
                     <canvas id="chartHum"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- Gráfico Detallado Individual -->
-        <section id="seccion-individual" class="glass-card rounded-2xl p-6 shadow-2xl hidden">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-800/60">
+        <!-- Gráfico Detallado Individual (1 Galpón seleccionado) -->
+        <section id="seccion-individual" class="reveal apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                 <div>
-                    <h3 id="titulo-grafico-ind" class="text-sm font-bold text-white tracking-wide">Evolución Horaria: Interior vs. Experimentada vs. Exterior</h3>
-                    <p id="subtitulo-grafico-ind" class="text-xs text-slate-400 mt-0.5">Curva detallada del galpón seleccionado</p>
+                    <h3 id="titulo-grafico-ind" class="text-base font-semibold tracking-tight">Perfil Térmico Detallado</h3>
+                    <p id="subtitulo-grafico-ind" class="text-xs text-apple-grayText mt-0.5">Interior · Sensación térmica · Exterior</p>
                 </div>
-                <span class="text-xs font-semibold text-brand-400 bg-brand-950/50 border border-brand-800/50 px-3 py-1 rounded-lg">Vista Detallada Individual</span>
+                <span class="self-start sm:self-auto px-3 py-1 rounded-full bg-apple-orange/15 text-apple-orangeLight dark:text-apple-orange text-[11px] font-semibold">
+                    Vista Individual
+                </span>
             </div>
             <div class="h-80 relative">
                 <canvas id="chartIndividual"></canvas>
             </div>
         </section>
 
-        <!-- Tabla Detallada -->
-        <section class="glass-card rounded-2xl p-6 shadow-2xl overflow-hidden">
-            <h3 class="text-sm font-bold text-white mb-4 tracking-wide">Detalle de Registros Históricos Filtrados</h3>
+        <!-- Tabla Histórica Minimalista -->
+        <section class="reveal delay-3 apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] overflow-hidden">
+            <div class="px-6 py-5 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
+                <div>
+                    <h3 class="text-[15px] font-semibold tracking-tight">Registro Cronológico</h3>
+                    <p class="text-xs text-apple-grayText mt-0.5">Últimas 100 lecturas del filtro actual</p>
+                </div>
+            </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
-                    <thead class="bg-slate-900/90 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                        <tr>
-                            <th class="px-4 py-3.5">Fecha y Hora</th>
-                            <th class="px-4 py-3.5">Encargado</th>
-                            <th class="px-4 py-3.5">Galpón</th>
-                            <th class="px-4 py-3.5 text-right">Temp. (°C)</th>
-                            <th class="px-4 py-3.5 text-right">Ext. (°C)</th>
-                            <th class="px-4 py-3.5 text-right">Humedad (%)</th>
-                            <th class="px-4 py-3.5 text-right">Exp. (°C)</th>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-black/[0.05] dark:border-white/[0.06] text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">
+                            <th class="py-3.5 px-6">Fecha / Hora</th>
+                            <th class="py-3.5 px-4">Zona</th>
+                            <th class="py-3.5 px-4">Galpón</th>
+                            <th class="py-3.5 px-4 text-right">Interior</th>
+                            <th class="py-3.5 px-4 text-right">Exterior</th>
+                            <th class="py-3.5 px-4 text-right">Humedad</th>
+                            <th class="py-3.5 px-6 text-right">Sensación</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-datos" class="divide-y divide-slate-800/50">
-                        <!-- Inyectado por JS -->
+                    <tbody id="tabla-datos" class="divide-y divide-black/[0.04] dark:divide-white/[0.05] text-xs">
+                        <!-- Filas inyectadas por JS -->
                     </tbody>
                 </table>
             </div>
@@ -188,43 +281,63 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="glass-card border-t border-slate-800/80 py-5 text-center text-xs text-slate-500 mt-auto">
-        Inversiones Mamay E.I.R.L. © 2026 — Sistema Autónomo de Monitoreo Avícola
+    <!-- Footer Discreto -->
+    <footer class="py-8 text-center text-[11px] text-apple-grayText">
+        Inversiones Mamay E.I.R.L. · Telemetría Automatizada
     </footer>
 
-    <!-- Cargar Script de Datos -->
     <script src="datos_clima.js"></script>
     <script>
         let chartTempInstance = null;
         let chartHumInstance = null;
         let chartIndInstance = null;
         let todosGalponesDisponibles = [];
+        let galponesActivos = new Set();
+        let zonaActual = 'todos';
 
-        // Paleta naranja elegante y moderna para gráficos
-        const coloresGalpones = [
-            '#f97316', '#fb923c', '#3b82f6', '#10b981', '#a855f7', 
-            '#ec4899', '#eab308', '#06b6d4', '#84cc16', '#6366f1',
-            '#f43f5e', '#14b8a6', '#d946ef', '#f59e0b', '#0ea5e9'
+        // Paleta Apple System Colors (armónica y distinguible)
+        const applePalette = [
+            '#FF9F0A', '#0A84FF', '#30D158', '#BF5AF2', '#FF375F',
+            '#64D2FF', '#FFD60A', '#5E5CE6', '#FF6482', '#32ADE6',
+            '#AC8E68', '#FF9F0A', '#34C759', '#AF52DE', '#FF2D55'
         ];
 
         function limpiarNombreGalpon(g) {
             return g.replace(/GalpÃ³n/g, 'Galpón');
         }
 
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            aplicarFiltros(); // Redibuja gráficos con colores adaptados al tema
+        }
+
+        function setZona(zona) {
+            zonaActual = zona;
+            document.querySelectorAll('.zona-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+                btn.classList.add('text-apple-grayText', 'font-medium');
+            });
+            const activeBtn = document.getElementById(`btn-zona-${zona}`);
+            activeBtn.classList.remove('text-apple-grayText', 'font-medium');
+            activeBtn.classList.add('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+            aplicarFiltros();
+        }
+
         function cargarDatos() {
             if (typeof window.DATOS_MAMAY_AUTO === 'undefined') {
-                document.getElementById('lbl-actualizado').innerText = "Sin datos en datos_clima.js";
+                document.getElementById('lbl-actualizado').innerText = "Sin datos locales";
                 return;
             }
 
             const data = window.DATOS_MAMAY_AUTO;
-            document.getElementById('lbl-actualizado').innerText = `Actualizado: ${data.actualizado}`;
+            document.getElementById('lbl-actualizado').innerText = data.actualizado;
+            
             const registros = data.registros.map(r => ({
                 ...r,
                 galpon: limpiarNombreGalpon(r.galpon)
             }));
-            
+
             const mesesSet = new Set();
             const galponesSet = new Set();
 
@@ -240,71 +353,101 @@
             });
 
             const selectMes = document.getElementById('filtro-mes');
-            const mesActualSel = selectMes.value;
-            selectMes.innerHTML = '<option value="todos">Todos los Meses</option>';
+            const mesPrevio = selectMes.value;
+            selectMes.innerHTML = '<option value="todos">Todo el historial</option>';
             Array.from(mesesSet).sort().reverse().forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m;
                 opt.textContent = m;
                 selectMes.appendChild(opt);
             });
-            if (mesesSet.has(mesActualSel)) selectMes.value = mesActualSel;
+            if (mesesSet.has(mesPrevio)) selectMes.value = mesPrevio;
 
-            const containerGalp = document.getElementById('selector-galpones');
-            const galponesMarcadosPrevios = Array.from(containerGalp.querySelectorAll('input:checked')).map(el => el.value);
-            
-            containerGalp.innerHTML = '';
-            todosGalponesDisponibles.forEach((g, idx) => {
-                const isChecked = galponesMarcadosPrevios.length === 0 ? (idx < 3) : galponesMarcadosPrevios.includes(g);
-                const label = document.createElement('label');
-                label.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs cursor-pointer hover:border-brand-500 hover:bg-slate-800/80 transition shadow-sm";
-                label.innerHTML = `<input type="checkbox" value="${g}" ${isChecked ? 'checked' : ''} onchange="aplicarFiltros()" class="rounded bg-slate-950 border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0"> <span class="text-slate-200 font-medium">${g}</span>`;
-                containerGalp.appendChild(label);
-            });
+            if (galponesActivos.size === 0) {
+                todosGalponesDisponibles.slice(0, 3).forEach(g => galponesActivos.add(g));
+            }
 
             window.REGISTROS_GLOBALES = registros;
+            renderPills();
+            aplicarFiltros();
+        }
+
+        function renderPills() {
+            const container = document.getElementById('selector-galpones');
+            container.innerHTML = '';
+
+            todosGalponesDisponibles.forEach(g => {
+                const activo = galponesActivos.has(g);
+                const numCorto = g.replace('Galpón ', 'G');
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => toggleGalpon(g);
+                btn.className = activo
+                    ? 'px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-apple-orangeLight dark:bg-apple-orange text-white dark:text-black shadow-sm scale-[1.02]'
+                    : 'px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-black/[0.04] dark:bg-white/[0.06] text-zinc-600 dark:text-zinc-400 hover:bg-black/[0.08] dark:hover:bg-white/[0.12]';
+                btn.textContent = numCorto;
+                btn.title = g;
+                container.appendChild(btn);
+            });
+
+            const hint = document.getElementById('hint-modo');
+            if (galponesActivos.size === 1) {
+                hint.textContent = `Detalle: ${Array.from(galponesActivos)[0]}`;
+            } else {
+                hint.textContent = `${galponesActivos.size} seleccionados`;
+            }
+        }
+
+        function toggleGalpon(g) {
+            if (galponesActivos.has(g)) {
+                galponesActivos.delete(g);
+            } else {
+                galponesActivos.add(g);
+            }
+            renderPills();
             aplicarFiltros();
         }
 
         function seleccionarTodos(marcar) {
-            document.querySelectorAll('#selector-galpones input').forEach(chk => chk.checked = marcar);
+            galponesActivos.clear();
+            if (marcar) {
+                todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
+            }
+            renderPills();
             aplicarFiltros();
         }
 
         function aplicarFiltros() {
             if (!window.REGISTROS_GLOBALES) return;
             const registros = window.REGISTROS_GLOBALES;
-
             const mesFiltro = document.getElementById('filtro-mes').value;
-            const encargadoFiltro = document.getElementById('filtro-encargado').value;
-            const galponesSeleccionados = Array.from(document.querySelectorAll('#selector-galpones input:checked')).map(el => el.value);
+            const seleccionados = Array.from(galponesActivos);
 
             const filtrados = registros.filter(r => {
                 const coincideMes = (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)));
-                const coincideEncargado = (encargadoFiltro === 'todos' || r.encargado === encargadoFiltro);
-                const coincideGalpon = galponesSeleccionados.includes(r.galpon);
-                return coincideMes && coincideEncargado && coincideGalpon;
+                const coincideZona = (zonaActual === 'todos' || r.encargado === zonaActual);
+                const coincideGalpon = seleccionados.includes(r.galpon);
+                return coincideMes && coincideZona && coincideGalpon;
             });
 
-            actualizarKPIsYTd(filtrados);
+            actualizarKPIsYTabla(filtrados);
 
             const secMulti = document.getElementById('seccion-multigalpon');
             const secInd = document.getElementById('seccion-individual');
 
-            if (galponesSeleccionados.length === 1) {
+            if (seleccionados.length === 1) {
                 secMulti.classList.add('hidden');
                 secInd.classList.remove('hidden');
-                document.getElementById('titulo-grafico-ind').textContent = `Evolución Horaria: Interior vs. Experimentada vs. Exterior`;
-                document.getElementById('subtitulo-grafico-ind').textContent = `Curva detallada de ${galponesSeleccionados[0]}`;
-                actualizarGraficoIndividual(filtrados, galponesSeleccionados[0]);
+                document.getElementById('titulo-grafico-ind').textContent = `Perfil Térmico — ${seleccionados[0]}`;
+                actualizarGraficoIndividual(filtrados);
             } else {
                 secMulti.classList.remove('hidden');
                 secInd.classList.add('hidden');
-                actualizarGraficosMulti(filtrados, galponesSeleccionados);
+                actualizarGraficosMulti(filtrados, seleccionados);
             }
         }
 
-        function actualizarKPIsYTd(filtrados) {
+        function actualizarKPIsYTabla(filtrados) {
             document.getElementById('kpi-total').textContent = filtrados.length.toLocaleString();
 
             let sumaTemp = 0, countTemp = 0;
@@ -316,254 +459,213 @@
                 if (r.hum !== null) { sumaHum += r.hum; countHum++; if (r.hum >= 85.0) alertas++; }
             });
 
-            document.getElementById('kpi-temp-prom').textContent = countTemp > 0 ? (sumaTemp / countTemp).toFixed(1) + " °C" : "0.0 °C";
-            document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + " %" : "0 %";
+            document.getElementById('kpi-temp-prom').textContent = countTemp > 0 ? (sumaTemp / countTemp).toFixed(1) + "°" : "0.0°";
+            document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + "%" : "0%";
             document.getElementById('kpi-alertas').textContent = alertas;
 
             const tbody = document.getElementById('tabla-datos');
             tbody.innerHTML = '';
-            
-            const ultimos = filtrados.slice(-100).reverse();
-            ultimos.forEach(r => {
+
+            filtrados.slice(-100).reverse().forEach(r => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/40 transition";
-                
-                const esAlertaTemp = r.temp !== null && r.temp >= 26.0;
-                const esAlertaHum = r.hum !== null && r.hum >= 85.0;
+                tr.className = "hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors";
+
+                const alertaT = r.temp !== null && r.temp >= 26.0;
+                const alertaH = r.hum !== null && r.hum >= 85.0;
 
                 tr.innerHTML = `
-                    <td class="px-4 py-3 font-mono text-xs text-slate-400">${r.fecha} ${r.hora}</td>
-                    <td class="px-4 py-3 font-medium text-slate-200">${r.encargado}</td>
-                    <td class="px-4 py-3 font-semibold text-white">${r.galpon}</td>
-                    <td class="px-4 py-3 text-right font-mono ${esAlertaTemp ? 'text-red-400 font-bold bg-red-950/40 rounded' : 'text-slate-200'}">${r.temp !== null ? r.temp.toFixed(1) + ' °C' : 'N/D'}</td>
-                    <td class="px-4 py-3 text-right font-mono text-slate-400">${r.ext !== null ? r.ext.toFixed(1) + ' °C' : 'N/D'}</td>
-                    <td class="px-4 py-3 text-right font-mono ${esAlertaHum ? 'text-red-400 font-bold bg-red-950/40 rounded' : 'text-slate-200'}">${r.hum !== null ? r.hum + ' %' : 'N/D'}</td>
-                    <td class="px-4 py-3 text-right font-mono text-slate-400">${r.exp !== null ? r.exp.toFixed(1) + ' °C' : 'N/D'}</td>
+                    <td class="py-3.5 px-6 font-mono text-[11px] text-apple-grayText">${r.fecha} · ${r.hora}</td>
+                    <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">${r.encargado}</td>
+                    <td class="py-3.5 px-4 font-semibold">${r.galpon}</td>
+                    <td class="py-3.5 px-4 text-right font-mono font-medium ${alertaT ? 'text-rose-500 font-bold' : ''}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3.5 px-4 text-right font-mono text-apple-grayText">${r.ext !== null ? r.ext.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3.5 px-4 text-right font-mono font-medium ${alertaH ? 'text-rose-500 font-bold' : ''}">${r.hum !== null ? r.hum + '%' : '—'}</td>
+                    <td class="py-3.5 px-6 text-right font-mono text-apple-grayText">${r.exp !== null ? r.exp.toFixed(1) + '°C' : '—'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function actualizarGraficoIndividual(filtradosGalpon, galponNombre) {
-            const tiemposSet = new Set();
-            filtradosGalpon.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
-            const labelsTiempos = Array.from(tiemposSet).sort();
+        function getChartBaseOptions(minY, maxY) {
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
+            const tickColor = '#8E8E93';
 
-            const datosTemp = labelsTiempos.map(t => {
-                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
-                return found ? found.temp : null;
-            });
-
-            const datosExt = labelsTiempos.map(t => {
-                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
-                return found ? found.ext : null;
-            });
-
-            const datosExp = labelsTiempos.map(t => {
-                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
-                return found ? found.exp : null;
-            });
-
-            const datasets = [
-                {
-                    label: 'Temperatura interior',
-                    data: datosTemp,
-                    borderColor: '#f97316',
-                    backgroundColor: '#f97316',
-                    borderWidth: 2.5,
-                    tension: 0.2,
-                    pointRadius: 2,
-                    spanGaps: true
-                },
-                {
-                    label: 'Temperatura experimentada',
-                    data: datosExp,
-                    borderColor: '#3b82f6',
-                    backgroundColor: '#3b82f6',
-                    borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 2,
-                    spanGaps: true
-                },
-                {
-                    label: 'Temperatura del exterior',
-                    data: datosExt,
-                    borderColor: '#94a3b8',
-                    backgroundColor: '#94a3b8',
-                    borderWidth: 1.5,
-                    borderDash: [4, 4],
-                    tension: 0.2,
-                    pointRadius: 1.5,
-                    spanGaps: true
-                }
-            ];
-
-            const config = {
+            return {
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 11, family: 'Inter' } } },
-                    tooltip: { backgroundColor: 'rgba(3, 7, 18, 0.95)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1, padding: 12 }
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: tickColor,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 6,
+                            padding: 16,
+                            font: { size: 11, family: '-apple-system, BlinkMacSystemFont, Inter, sans-serif' }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? 'rgba(28, 28, 30, 0.92)' : 'rgba(255, 255, 255, 0.95)',
+                        titleColor: isDark ? '#FFFFFF' : '#18181B',
+                        bodyColor: isDark ? '#E4E4E7' : '#3F3F46',
+                        borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                        borderWidth: 1,
+                        cornerRadius: 12,
+                        padding: 12,
+                        boxPadding: 4,
+                        usePointStyle: true
+                    }
                 },
                 scales: {
-                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(255, 255, 255, 0.04)' } },
-                    y: { 
-                        ticks: { color: '#64748b', font: { size: 10 } }, 
-                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
-                        suggestedMin: 20,
-                        suggestedMax: 35
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: { color: tickColor, maxTicksLimit: 6, font: { size: 10 } }
+                    },
+                    y: {
+                        grid: { color: gridColor },
+                        border: { display: false },
+                        ticks: { color: tickColor, font: { size: 10 } },
+                        suggestedMin: minY,
+                        suggestedMax: maxY
                     }
                 }
             };
+        }
+
+        function crearPluginUmbral(valorLimite) {
+            return {
+                id: 'umbralApple',
+                afterDraw(chart) {
+                    const { ctx, chartArea: { left, right, top, bottom }, scales: { y } } = chart;
+                    const yPos = y.getPixelForValue(valorLimite);
+                    if (yPos >= top && yPos <= bottom) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(left, yPos);
+                        ctx.lineTo(right, yPos);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                        ctx.setLineDash([4, 4]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+        }
+
+        function actualizarGraficoIndividual(filtrados) {
+            const tiemposSet = new Set();
+            filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
+            const labels = Array.from(tiemposSet).sort();
+
+            const mapCampo = campo => labels.map(t => {
+                const found = filtrados.find(r => `${r.fecha} ${r.hora}` === t);
+                return found ? found[campo] : null;
+            });
+
+            const datasets = [
+                {
+                    label: 'Interior',
+                    data: mapCampo('temp'),
+                    borderColor: '#FF9F0A',
+                    backgroundColor: '#FF9F0A',
+                    borderWidth: 2.5,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    spanGaps: true
+                },
+                {
+                    label: 'Experimentada',
+                    data: mapCampo('exp'),
+                    borderColor: '#0A84FF',
+                    backgroundColor: '#0A84FF',
+                    borderWidth: 2,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    spanGaps: true
+                },
+                {
+                    label: 'Exterior',
+                    data: mapCampo('ext'),
+                    borderColor: '#8E8E93',
+                    backgroundColor: '#8E8E93',
+                    borderWidth: 1.5,
+                    borderDash: [4, 4],
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    spanGaps: true
+                }
+            ];
 
             const ctx = document.getElementById('chartIndividual').getContext('2d');
             if (chartIndInstance) chartIndInstance.destroy();
             chartIndInstance = new Chart(ctx, {
                 type: 'line',
-                data: { labels: labelsTiempos, datasets: datasets },
-                options: config
+                data: { labels, datasets },
+                options: getChartBaseOptions(20, 34),
+                plugins: [crearPluginUmbral(26.0)]
             });
         }
 
-        function actualizarGraficosMulti(filtrados, galponesSeleccionados) {
+        function actualizarGraficosMulti(filtrados, seleccionados) {
             const tiemposSet = new Set();
             filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
-            const labelsTiempos = Array.from(tiemposSet).sort();
+            const labels = Array.from(tiemposSet).sort();
 
             const datasetsTemp = [];
             const datasetsHum = [];
 
-            galponesSeleccionados.forEach((g, idx) => {
-                const color = coloresGalpones[idx % coloresGalpones.length];
-                
-                const datosTempG = labelsTiempos.map(t => {
-                    const found = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
-                    return found ? found.temp : null;
+            seleccionados.forEach((g, idx) => {
+                const color = applePalette[idx % applePalette.length];
+
+                const serieTemp = labels.map(t => {
+                    const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
+                    return f ? f.temp : null;
                 });
 
-                const datosHumG = labelsTiempos.map(t => {
-                    const found = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
-                    return found ? found.hum : null;
+                const serieHum = labels.map(t => {
+                    const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
+                    return f ? f.hum : null;
                 });
 
-                datasetsTemp.push({
-                    label: g,
-                    data: datosTempG,
+                const estiloComun = {
+                    label: g.replace('Galpón ', 'G'),
                     borderColor: color,
                     backgroundColor: color,
                     borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 1.5,
+                    tension: 0.35,
+                    pointRadius: 0,
                     pointHoverRadius: 5,
                     spanGaps: true
-                });
+                };
 
-                datasetsHum.push({
-                    label: g,
-                    data: datosHumG,
-                    borderColor: color,
-                    backgroundColor: color,
-                    borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 1.5,
-                    pointHoverRadius: 5,
-                    spanGaps: true
-                });
+                datasetsTemp.push({ ...estiloComun, data: serieTemp });
+                datasetsHum.push({ ...estiloComun, data: serieHum });
             });
-
-            const configTemp = {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 11, family: 'Inter' } } },
-                    tooltip: { backgroundColor: 'rgba(3, 7, 18, 0.95)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1, padding: 12 }
-                },
-                scales: {
-                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(255, 255, 255, 0.04)' } },
-                    y: { 
-                        ticks: { color: '#64748b', font: { size: 10 } }, 
-                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
-                        suggestedMin: 20,
-                        suggestedMax: 32
-                    }
-                }
-            };
-
-            const configHum = {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 11, family: 'Inter' } } },
-                    tooltip: { backgroundColor: 'rgba(3, 7, 18, 0.95)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1, padding: 12 }
-                },
-                scales: {
-                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(255, 255, 255, 0.04)' } },
-                    y: { 
-                        ticks: { color: '#64748b', font: { size: 10 } }, 
-                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
-                        suggestedMin: 50,
-                        suggestedMax: 95
-                    }
-                }
-            };
-
-            const pluginUmbralTemp = {
-                id: 'umbralTemp',
-                afterDraw(chart) {
-                    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
-                    const yValue = y.getPixelForValue(26.0);
-                    if (yValue >= chart.chartArea.top && yValue <= chart.chartArea.bottom) {
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.moveTo(left, yValue);
-                        ctx.lineTo(right, yValue);
-                        ctx.lineWidth = 1.5;
-                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
-                        ctx.setLineDash([4, 4]);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
-                }
-            };
-
-            const pluginUmbralHum = {
-                id: 'umbralHum',
-                afterDraw(chart) {
-                    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
-                    const yValue = y.getPixelForValue(85.0);
-                    if (yValue >= chart.chartArea.top && yValue <= chart.chartArea.bottom) {
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.moveTo(left, yValue);
-                        ctx.lineTo(right, yValue);
-                        ctx.lineWidth = 1.5;
-                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
-                        ctx.setLineDash([4, 4]);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
-                }
-            };
 
             const ctxTemp = document.getElementById('chartTemp').getContext('2d');
             if (chartTempInstance) chartTempInstance.destroy();
             chartTempInstance = new Chart(ctxTemp, {
                 type: 'line',
-                data: { labels: labelsTiempos, datasets: datasetsTemp },
-                options: configTemp,
-                plugins: [pluginUmbralTemp]
+                data: { labels, datasets: datasetsTemp },
+                options: getChartBaseOptions(22, 31),
+                plugins: [crearPluginUmbral(26.0)]
             });
 
             const ctxHum = document.getElementById('chartHum').getContext('2d');
             if (chartHumInstance) chartHumInstance.destroy();
             chartHumInstance = new Chart(ctxHum, {
                 type: 'line',
-                data: { labels: labelsTiempos, datasets: datasetsHum },
-                options: configHum,
-                plugins: [pluginUmbralHum]
+                data: { labels, datasets: datasetsHum },
+                options: getChartBaseOptions(55, 92),
+                plugins: [crearPluginUmbral(85.0)]
             });
         }
 
