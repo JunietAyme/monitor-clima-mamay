@@ -41,37 +41,25 @@
             transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s ease;
         }
 
-        /* Navbar translúcida estilo macOS */
         .apple-nav {
             backdrop-filter: saturate(180%) blur(20px);
             -webkit-backdrop-filter: saturate(180%) blur(20px);
         }
 
-        /* Tarjetas limpias sin ruido visual */
         .apple-card {
             transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Animación de entrada sutil */
         @keyframes appleReveal {
-            from {
-                opacity: 0;
-                transform: translateY(8px) scale(0.995);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(8px) scale(0.995); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .reveal {
-            animation: appleReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
+        .reveal { animation: appleReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
         .delay-1 { animation-delay: 0.05s; }
         .delay-2 { animation-delay: 0.1s; }
         .delay-3 { animation-delay: 0.15s; }
 
-        /* Scrollbar invisible / minimalista */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(142, 142, 147, 0.3); border-radius: 999px; }
@@ -83,8 +71,6 @@
     <!-- Header estilo macOS -->
     <header class="apple-nav sticky top-0 z-50 bg-white/80 dark:bg-black/75 border-b border-black/[0.06] dark:border-white/[0.08]">
         <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
-            
-            <!-- Identidad Minimalista -->
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-[10px] bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-sm tracking-tighter shadow-sm">
                     IM<span class="text-apple-orange font-black">+</span>
@@ -95,20 +81,17 @@
                 </div>
             </div>
 
-            <!-- Controles de Estado y Tema -->
             <div class="flex items-center gap-2.5">
                 <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.07] text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                     <span id="lbl-actualizado">Sincronizando...</span>
                 </div>
 
-                <!-- Botón Cambiar Tema (Claro / Oscuro) -->
                 <button onclick="toggleTheme()" title="Cambiar apariencia" class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.14] flex items-center justify-center transition active:scale-90">
-                    <svg id="icon-sun" class="w-4 h-4 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                    <svg id="icon-moon" class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="w-4 h-4 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                 </button>
 
-                <!-- Botón Actualizar -->
                 <button onclick="cargarDatos()" class="px-3.5 py-1.5 rounded-full bg-apple-orangeLight dark:bg-apple-orange text-white dark:text-black text-xs font-semibold hover:opacity-90 transition active:scale-95 shadow-sm">
                     Actualizar
                 </button>
@@ -119,50 +102,43 @@
     <!-- Contenido Principal -->
     <main class="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex-grow w-full space-y-6">
 
-        <!-- Barra de Controles estilo iOS -->
+        <!-- Barra de Controles Unificada estilo iOS -->
         <section class="reveal apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5 sm:p-6 shadow-sm">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-black/[0.06] dark:border-white/[0.06]">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-black/[0.06] dark:border-white/[0.06]">
                 
-                <!-- Segmented Control para Zonas -->
+                <!-- Segmented Control Único (Selección Rápida por Zona) -->
                 <div>
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Zona Operativa</span>
-                    <div class="inline-flex p-1 rounded-xl bg-black/[0.05] dark:bg-black/60 border border-black/[0.04] dark:border-white/[0.05]">
-                        <button onclick="setZona('todos')" id="btn-zona-todos" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-apple-darkElevated text-zinc-900 dark:text-white shadow-sm">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Selección Rápida por Zona</span>
+                    <div class="inline-flex flex-wrap p-1 rounded-xl bg-black/[0.05] dark:bg-black/60 border border-black/[0.04] dark:border-white/[0.05]">
+                        <button onclick="aplicarPreset('todos')" id="btn-preset-todos" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
                             Todas (15)
                         </button>
-                        <button onclick="setZona('Arias')" id="btn-zona-Arias" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
+                        <button onclick="aplicarPreset('Arias')" id="btn-preset-Arias" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
                             Arias (01–09)
                         </button>
-                        <button onclick="setZona('Castillo')" id="btn-zona-Castillo" class="zona-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
+                        <button onclick="aplicarPreset('Castillo')" id="btn-preset-Castillo" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
                             Castillo (10–15)
+                        </button>
+                        <button onclick="aplicarPreset('ninguno')" id="btn-preset-ninguno" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
+                            Limpiar
                         </button>
                     </div>
                 </div>
 
-                <!-- Selector de Mes y Acciones Rápidas -->
-                <div class="flex flex-wrap items-end gap-3">
-                    <div>
-                        <label for="filtro-mes" class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Período</label>
-                        <select id="filtro-mes" onchange="aplicarFiltros()" class="bg-black/[0.05] dark:bg-apple-darkElevated border-0 rounded-xl px-3.5 py-2 text-xs font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
-                            <option value="todos">Todo el historial</option>
-                        </select>
-                    </div>
-                    <div class="flex gap-1.5">
-                        <button onclick="seleccionarTodos(true)" class="px-3 py-2 rounded-xl bg-black/[0.05] dark:bg-apple-darkElevated hover:bg-black/[0.09] dark:hover:bg-white/[0.12] text-xs font-medium transition active:scale-95">
-                            Todos
-                        </button>
-                        <button onclick="seleccionarTodos(false)" class="px-3 py-2 rounded-xl bg-black/[0.05] dark:bg-apple-darkElevated hover:bg-black/[0.09] dark:hover:bg-white/[0.12] text-xs font-medium text-apple-grayText hover:text-zinc-900 dark:hover:text-white transition active:scale-95">
-                            Ninguno
-                        </button>
-                    </div>
+                <!-- Selector de Período -->
+                <div>
+                    <label for="filtro-mes" class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Período</label>
+                    <select id="filtro-mes" onchange="aplicarFiltros()" class="bg-black/[0.05] dark:bg-apple-darkElevated border-0 rounded-xl px-4 py-2 text-xs font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
+                        <option value="todos">Todo el historial</option>
+                    </select>
                 </div>
             </div>
 
             <!-- Pills Interactivas de Galpones -->
             <div class="pt-4">
                 <div class="flex items-center justify-between mb-2.5">
-                    <span class="text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">Galpones Activos</span>
-                    <span id="hint-modo" class="text-[11px] text-apple-orangeLight dark:text-apple-orange font-medium">Modo comparativo</span>
+                    <span class="text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">Galpones Activos (Toca 1 para detalle o varios para comparar)</span>
+                    <span id="hint-modo" class="text-[11px] text-apple-orangeLight dark:text-apple-orange font-semibold">3 seleccionados</span>
                 </div>
                 <div id="selector-galpones" class="flex flex-wrap gap-2">
                     <!-- Pills inyectadas por JS -->
@@ -170,7 +146,7 @@
             </div>
         </section>
 
-        <!-- KPIs Minimalistas (Estilo Apple Health) -->
+        <!-- KPIs Minimalistas -->
         <section class="reveal delay-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
                 <span class="text-xs font-medium text-apple-grayText">Lecturas</span>
@@ -273,7 +249,6 @@
                         </tr>
                     </thead>
                     <tbody id="tabla-datos" class="divide-y divide-black/[0.04] dark:divide-white/[0.05] text-xs">
-                        <!-- Filas inyectadas por JS -->
                     </tbody>
                 </table>
             </div>
@@ -281,7 +256,6 @@
 
     </main>
 
-    <!-- Footer Discreto -->
     <footer class="py-8 text-center text-[11px] text-apple-grayText">
         Inversiones Mamay E.I.R.L. · Telemetría Automatizada
     </footer>
@@ -293,9 +267,7 @@
         let chartIndInstance = null;
         let todosGalponesDisponibles = [];
         let galponesActivos = new Set();
-        let zonaActual = 'todos';
 
-        // Paleta Apple System Colors (armónica y distinguible)
         const applePalette = [
             '#FF9F0A', '#0A84FF', '#30D158', '#BF5AF2', '#FF375F',
             '#64D2FF', '#FFD60A', '#5E5CE6', '#FF6482', '#32ADE6',
@@ -306,21 +278,61 @@
             return g.replace(/GalpÃ³n/g, 'Galpón');
         }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            aplicarFiltros(); // Redibuja gráficos con colores adaptados al tema
+        function obtenerNumGalpon(g) {
+            return parseInt(g.replace(/\D/g, ''), 10) || 0;
         }
 
-        function setZona(zona) {
-            zonaActual = zona;
-            document.querySelectorAll('.zona-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
-                btn.classList.add('text-apple-grayText', 'font-medium');
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            aplicarFiltros();
+        }
+
+        function actualizarEstadoBotonesPreset() {
+            const total = todosGalponesDisponibles.length;
+            const activosArr = Array.from(galponesActivos);
+            const numsActivos = activosArr.map(obtenerNumGalpon);
+
+            const esTodos = total > 0 && activosArr.length === total;
+            const esNinguno = activosArr.length === 0;
+            const esArias = activosArr.length === 9 && numsActivos.every(n => n >= 1 && n <= 9);
+            const esCastillo = activosArr.length === 6 && numsActivos.every(n => n >= 10 && n <= 15);
+
+            const mapa = {
+                todos: esTodos,
+                Arias: esArias,
+                Castillo: esCastillo,
+                ninguno: esNinguno
+            };
+
+            Object.keys(mapa).forEach(key => {
+                const btn = document.getElementById(`btn-preset-${key}`);
+                if (!btn) return;
+                if (mapa[key]) {
+                    btn.classList.remove('text-apple-grayText', 'font-medium');
+                    btn.classList.add('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+                } else {
+                    btn.classList.remove('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+                    btn.classList.add('text-apple-grayText', 'font-medium');
+                }
             });
-            const activeBtn = document.getElementById(`btn-zona-${zona}`);
-            activeBtn.classList.remove('text-apple-grayText', 'font-medium');
-            activeBtn.classList.add('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+        }
+
+        function aplicarPreset(tipo) {
+            galponesActivos.clear();
+            if (tipo === 'todos') {
+                todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
+            } else if (tipo === 'Arias') {
+                todosGalponesDisponibles.forEach(g => {
+                    const n = obtenerNumGalpon(g);
+                    if (n >= 1 && n <= 9) galponesActivos.add(g);
+                });
+            } else if (tipo === 'Castillo') {
+                todosGalponesDisponibles.forEach(g => {
+                    const n = obtenerNumGalpon(g);
+                    if (n >= 10 && n <= 15) galponesActivos.add(g);
+                });
+            }
+            renderPills();
             aplicarFiltros();
         }
 
@@ -346,11 +358,7 @@
                 if (r.galpon) galponesSet.add(r.galpon);
             });
 
-            todosGalponesDisponibles = Array.from(galponesSet).sort((a, b) => {
-                const numA = parseInt(a.replace(/\D/g, '')) || 0;
-                const numB = parseInt(b.replace(/\D/g, '')) || 0;
-                return numA - numB;
-            });
+            todosGalponesDisponibles = Array.from(galponesSet).sort((a, b) => obtenerNumGalpon(a) - obtenerNumGalpon(b));
 
             const selectMes = document.getElementById('filtro-mes');
             const mesPrevio = selectMes.value;
@@ -396,6 +404,8 @@
             } else {
                 hint.textContent = `${galponesActivos.size} seleccionados`;
             }
+
+            actualizarEstadoBotonesPreset();
         }
 
         function toggleGalpon(g) {
@@ -403,15 +413,6 @@
                 galponesActivos.delete(g);
             } else {
                 galponesActivos.add(g);
-            }
-            renderPills();
-            aplicarFiltros();
-        }
-
-        function seleccionarTodos(marcar) {
-            galponesActivos.clear();
-            if (marcar) {
-                todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
             }
             renderPills();
             aplicarFiltros();
@@ -425,9 +426,8 @@
 
             const filtrados = registros.filter(r => {
                 const coincideMes = (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)));
-                const coincideZona = (zonaActual === 'todos' || r.encargado === zonaActual);
                 const coincideGalpon = seleccionados.includes(r.galpon);
-                return coincideMes && coincideZona && coincideGalpon;
+                return coincideMes && coincideGalpon;
             });
 
             actualizarKPIsYTabla(filtrados);
