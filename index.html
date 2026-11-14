@@ -1,4 +1,4 @@
-﻿ <!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold tracking-tight text-white">Inversiones Mamay E.I.R.L.</h1>
-                    <p class="text-xs text-slate-400">Monitoreo Climático y Bioseguridad — 17 Galpones</p>
+                    <p class="text-xs text-slate-400">Monitoreo Climático y Bioseguridad — 15 Galpones</p>
                 </div>
             </div>
             <div class="flex items-center gap-3 text-xs">
@@ -55,10 +55,16 @@
 
         <!-- Panel de Filtros y Comparación -->
         <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
-            <h2 class="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                Filtros y Selector de Galpones para Comparación
-            </h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                <h2 class="text-sm font-semibold text-brand-500 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                    Filtros y Selector de Galpones para Comparación
+                </h2>
+                <div class="flex gap-2">
+                    <button onclick="seleccionarTodos(true)" class="text-xs px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition">Marcar Todos</button>
+                    <button onclick="seleccionarTodos(false)" class="text-xs px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition">Limpiar</button>
+                </div>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Mes / Período</label>
@@ -71,11 +77,11 @@
                     <select id="filtro-encargado" onchange="aplicarFiltros()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
                         <option value="todos">Todas las Zonas (Arias & Castillo)</option>
                         <option value="Arias">Zona Arias (01 - 09)</option>
-                        <option value="Castillo">Zona Castillo (10 - 17)</option>
+                        <option value="Castillo">Zona Castillo (10 - 15)</option>
                     </select>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Galpones a Comparar (Selecciona uno o varios)</label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Galpones a Comparar (Recomendado: máx. 3 o 4 a la vez)</label>
                     <div id="selector-galpones" class="flex flex-wrap gap-1.5 bg-slate-950 border border-slate-700 rounded-xl p-2 max-h-24 overflow-y-auto">
                         <!-- Se llena dinámicamente -->
                     </div>
@@ -88,17 +94,17 @@
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg">
                 <p class="text-xs font-medium text-slate-400">Registros Analizados</p>
                 <h3 id="kpi-total" class="text-2xl font-bold text-white mt-1">0</h3>
-                <span class="text-xs text-brand-500 font-medium">Histórico completo</span>
+                <span class="text-xs text-brand-500 font-medium">Histórico filtrado</span>
             </div>
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg">
                 <p class="text-xs font-medium text-slate-400">Temperatura Promedio</p>
                 <h3 id="kpi-temp-prom" class="text-2xl font-bold text-white mt-1">0.0 °C</h3>
-                <span class="text-xs text-slate-400">Límite preventivo: 23°C</span>
+                <span class="text-xs text-slate-400">Límite crítico: 26°C</span>
             </div>
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg">
                 <p class="text-xs font-medium text-slate-400">Humedad Promedio</p>
                 <h3 id="kpi-hum-prom" class="text-2xl font-bold text-white mt-1">0 %</h3>
-                <span class="text-xs text-slate-400">Límite preventivo: 75%</span>
+                <span class="text-xs text-slate-400">Límite crítico: 85%</span>
             </div>
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg">
                 <p class="text-xs font-medium text-slate-400">Alertas Registradas</p>
@@ -112,10 +118,10 @@
             <!-- Gráfica de Temperatura -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-white">Evolución de Temperatura (°C) — Galpones Seleccionados</h3>
-                    <span class="text-xs text-slate-400">Línea de corte: 26°C</span>
+                    <h3 class="text-sm font-semibold text-white">Evolución de Temperatura (°C)</h3>
+                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral crítico: 26°C</span>
                 </div>
-                <div class="h-72 relative">
+                <div class="h-80 relative">
                     <canvas id="chartTemp"></canvas>
                 </div>
             </div>
@@ -123,10 +129,10 @@
             <!-- Gráfica de Humedad -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-white">Evolución de Humedad (%) — Galpones Seleccionados</h3>
-                    <span class="text-xs text-slate-400">Línea de corte: 85%</span>
+                    <h3 class="text-sm font-semibold text-white">Evolución de Humedad (%)</h3>
+                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral crítico: 85%</span>
                 </div>
-                <div class="h-72 relative">
+                <div class="h-80 relative">
                     <canvas id="chartHum"></canvas>
                 </div>
             </div>
@@ -175,6 +181,11 @@
             '#14b8a6', '#d946ef', '#f59e0b', '#0ea5e9', '#22c55e', '#64748b', '#e11d48'
         ];
 
+        function limpiarNombreGalpon(g) {
+            // Normalizar codificación corrupta por tildes si las hubiera
+            return g.replace(/GalpÃ³n/g, 'Galpón');
+        }
+
         function cargarDatos() {
             if (typeof window.DATOS_MAMAY_AUTO === 'undefined') {
                 document.getElementById('lbl-actualizado').innerText = "Sin datos en datos_clima.js";
@@ -183,15 +194,16 @@
 
             const data = window.DATOS_MAMAY_AUTO;
             document.getElementById('lbl-actualizado').innerText = `Actualizado: ${data.actualizado}`;
-
-            const registros = data.registros;
+            const registros = data.registros.map(r => ({
+                ...r,
+                galpon: limpiarNombreGalpon(r.galpon)
+            }));
             
-            // Poblar selector de meses únicos
             const mesesSet = new Set();
             const galponesSet = new Set();
 
             registros.forEach(r => {
-                if (r.fecha) mesesSet.add(r.fecha.substring(0, 7)); // YYYY-MM
+                if (r.fecha) mesesSet.add(r.fecha.substring(0, 7));
                 if (r.galpon) galponesSet.add(r.galpon);
             });
 
@@ -201,7 +213,6 @@
                 return numA - numB;
             });
 
-            // Llenar select de meses
             const selectMes = document.getElementById('filtro-mes');
             const mesActualSel = selectMes.value;
             selectMes.innerHTML = '<option value="todos">Todos los Meses</option>';
@@ -213,25 +224,30 @@
             });
             if (mesesSet.has(mesActualSel)) selectMes.value = mesActualSel;
 
-            // Llenar checkboxes de galpones
             const containerGalp = document.getElementById('selector-galpones');
             const galponesMarcadosPrevios = Array.from(containerGalp.querySelectorAll('input:checked')).map(el => el.value);
             
             containerGalp.innerHTML = '';
-            todosGalponesDisponibles.forEach(g => {
-                const isChecked = galponesMarcadosPrevios.length === 0 || galponesMarcadosPrevios.includes(g);
+            todosGalponesDisponibles.forEach((g, idx) => {
+                const isChecked = galponesMarcadosPrevios.length === 0 ? (idx < 3) : galponesMarcadosPrevios.includes(g);
                 const label = document.createElement('label');
                 label.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs cursor-pointer hover:border-brand-500 transition";
                 label.innerHTML = `<input type="checkbox" value="${g}" ${isChecked ? 'checked' : ''} onchange="aplicarFiltros()" class="rounded bg-slate-950 border-slate-700 text-brand-600 focus:ring-0"> <span class="text-slate-300">${g}</span>`;
                 containerGalp.appendChild(label);
             });
 
+            window.REGISTROS_GLOBALES = registros;
+            aplicarFiltros();
+        }
+
+        function seleccionarTodos(marcar) {
+            document.querySelectorAll('#selector-galpones input').forEach(chk => chk.checked = marcar);
             aplicarFiltros();
         }
 
         function aplicarFiltros() {
-            if (typeof window.DATOS_MAMAY_AUTO === 'undefined') return;
-            const registros = window.DATOS_MAMAY_AUTO.registros;
+            if (!window.REGISTROS_GLOBALES) return;
+            const registros = window.REGISTROS_GLOBALES;
 
             const mesFiltro = document.getElementById('filtro-mes').value;
             const encargadoFiltro = document.getElementById('filtro-encargado').value;
@@ -264,11 +280,9 @@
             document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + " %" : "0 %";
             document.getElementById('kpi-alertas').textContent = alertas;
 
-            // Tabla
             const tbody = document.getElementById('tabla-datos');
             tbody.innerHTML = '';
             
-            // Mostrar últimos 100 registros para evitar sobrecarga visual
             const ultimos = filtrados.slice(-100).reverse();
             ultimos.forEach(r => {
                 const tr = document.createElement('tr');
@@ -291,7 +305,6 @@
         }
 
         function actualizarGraficos(filtrados, galponesSeleccionados) {
-            // Agrupar marcas de tiempo únicas (eje X)
             const tiemposSet = new Set();
             filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
             const labelsTiempos = Array.from(tiemposSet).sort();
@@ -318,8 +331,9 @@
                     borderColor: color,
                     backgroundColor: color,
                     borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 2,
+                    tension: 0.15,
+                    pointRadius: 1.5,
+                    pointHoverRadius: 5,
                     spanGaps: true
                 });
 
@@ -329,40 +343,105 @@
                     borderColor: color,
                     backgroundColor: color,
                     borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 2,
+                    tension: 0.15,
+                    pointRadius: 1.5,
+                    pointHoverRadius: 5,
                     spanGaps: true
                 });
             });
 
-            const configComun = {
+            const configTemp = {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11 } } }
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 11 } } },
+                    tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1 }
                 },
                 scales: {
-                    x: { ticks: { color: '#64748b', maxTicksLimit: 8 }, grid: { color: '#1e293b' } },
-                    y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#1e293b' } },
+                    y: { 
+                        ticks: { color: '#64748b', font: { size: 10 } }, 
+                        grid: { color: '#1e293b' },
+                        suggestedMin: 20,
+                        suggestedMax: 32
+                    }
                 }
             };
 
-            // Renderizar Temp
+            const configHum = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 11 } } },
+                    tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1 }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#1e293b' } },
+                    y: { 
+                        ticks: { color: '#64748b', font: { size: 10 } }, 
+                        grid: { color: '#1e293b' },
+                        suggestedMin: 50,
+                        suggestedMax: 95
+                    }
+                }
+            };
+
+            const pluginUmbralTemp = {
+                id: 'umbralTemp',
+                afterDraw(chart) {
+                    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+                    const yValue = y.getPixelForValue(26.0);
+                    if (yValue >= chart.chartArea.top && yValue <= chart.chartArea.bottom) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(left, yValue);
+                        ctx.lineTo(right, yValue);
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+                        ctx.setLineDash([4, 4]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+
+            const pluginUmbralHum = {
+                id: 'umbralHum',
+                afterDraw(chart) {
+                    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+                    const yValue = y.getPixelForValue(85.0);
+                    if (yValue >= chart.chartArea.top && yValue <= chart.chartArea.bottom) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(left, yValue);
+                        ctx.lineTo(right, yValue);
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+                        ctx.setLineDash([4, 4]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+
             const ctxTemp = document.getElementById('chartTemp').getContext('2d');
             if (chartTempInstance) chartTempInstance.destroy();
             chartTempInstance = new Chart(ctxTemp, {
                 type: 'line',
                 data: { labels: labelsTiempos, datasets: datasetsTemp },
-                options: configComun
+                options: configTemp,
+                plugins: [pluginUmbralTemp]
             });
 
-            // Renderizar Humedad
             const ctxHum = document.getElementById('chartHum').getContext('2d');
             if (chartHumInstance) chartHumInstance.destroy();
             chartHumInstance = new Chart(ctxHum, {
                 type: 'line',
                 data: { labels: labelsTiempos, datasets: datasetsHum },
-                options: configComun
+                options: configHum,
+                plugins: [pluginUmbralHum]
             });
         }
 
