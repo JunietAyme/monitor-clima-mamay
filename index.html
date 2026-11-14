@@ -81,7 +81,7 @@
                     </select>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Galpones a Comparar (Recomendado: máx. 3 o 4 a la vez)</label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Galpones a Comparar (Selecciona 1 para vista detallada o varios para matriz)</label>
                     <div id="selector-galpones" class="flex flex-wrap gap-1.5 bg-slate-950 border border-slate-700 rounded-xl p-2 max-h-24 overflow-y-auto">
                         <!-- Se llena dinámicamente -->
                     </div>
@@ -113,28 +113,39 @@
             </div>
         </section>
 
-        <!-- Gráficos de Comparación (Chart.js) -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Gráfica de Temperatura -->
+        <!-- Gráficos Multi-Galpón (Comparación General) -->
+        <section id="seccion-multigalpon" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-white">Evolución de Temperatura (°C)</h3>
-                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral crítico: 26°C</span>
+                    <h3 class="text-sm font-semibold text-white">Evolución de Temperatura (°C) — Múltiples Galpones</h3>
+                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral: 26°C</span>
                 </div>
                 <div class="h-80 relative">
                     <canvas id="chartTemp"></canvas>
                 </div>
             </div>
-
-            <!-- Gráfica de Humedad -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-white">Evolución de Humedad (%)</h3>
-                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral crítico: 85%</span>
+                    <h3 class="text-sm font-semibold text-white">Evolución de Humedad (%) — Múltiples Galpones</h3>
+                    <span class="text-xs text-red-400 font-medium bg-red-950/40 px-2 py-0.5 rounded border border-red-900/50">Umbral: 85%</span>
                 </div>
                 <div class="h-80 relative">
                     <canvas id="chartHum"></canvas>
                 </div>
+            </div>
+        </section>
+
+        <!-- Gráfico Detallado Individual (Aparece cuando seleccionas UN SOLO galpón) -->
+        <section id="seccion-individual" class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl hidden">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 id="titulo-grafico-ind" class="text-sm font-semibold text-white">Evolución Horaria: Interior vs. Experimentada vs. Exterior</h3>
+                    <p id="subtitulo-grafico-ind" class="text-xs text-slate-400 mt-0.5">Curva detallada del galpón seleccionado</p>
+                </div>
+                <span class="text-xs text-brand-500 font-medium bg-brand-950/40 px-2 py-1 rounded border border-brand-800/50">Vista Detallada Individual</span>
+            </div>
+            <div class="h-80 relative">
+                <canvas id="chartIndividual"></canvas>
             </div>
         </section>
 
@@ -173,6 +184,7 @@
     <script>
         let chartTempInstance = null;
         let chartHumInstance = null;
+        let chartIndInstance = null;
         let todosGalponesDisponibles = [];
 
         const coloresGalpones = [
@@ -182,7 +194,6 @@
         ];
 
         function limpiarNombreGalpon(g) {
-            // Normalizar codificación corrupta por tildes si las hubiera
             return g.replace(/GalpÃ³n/g, 'Galpón');
         }
 
@@ -261,7 +272,22 @@
             });
 
             actualizarKPIsYTd(filtrados);
-            actualizarGraficos(filtrados, galponesSeleccionados);
+
+            // Control de vista: Si se selecciona exactamente 1 galpón, mostramos el gráfico individual y ocultamos la comparativa general
+            const secMulti = document.getElementById('seccion-multigalpon');
+            const secInd = document.getElementById('seccion-individual');
+
+            if (galponesSeleccionados.length === 1) {
+                secMulti.classList.add('hidden');
+                secInd.classList.remove('hidden');
+                document.getElementById('titulo-grafico-ind').textContent = `Evolución Horaria: Interior vs. Experimentada vs. Exterior`;
+                document.getElementById('subtitulo-grafico-ind').textContent = `Curva detallada de ${galponesSeleccionados[0]}`;
+                actualizarGraficoIndividual(filtrados, galponesSeleccionados[0]);
+            } else {
+                secMulti.classList.remove('hidden');
+                secInd.classList.add('hidden');
+                actualizarGraficosMulti(filtrados, galponesSeleccionados);
+            }
         }
 
         function actualizarKPIsYTd(filtrados) {
@@ -304,7 +330,89 @@
             });
         }
 
-        function actualizarGraficos(filtrados, galponesSeleccionados) {
+        function actualizarGraficoIndividual(filtradosGalpon, galponNombre) {
+            const tiemposSet = new Set();
+            filtradosGalpon.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
+            const labelsTiempos = Array.from(tiemposSet).sort();
+
+            const datosTemp = labelsTiempos.map(t => {
+                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
+                return found ? found.temp : null;
+            });
+
+            const datosExt = labelsTiempos.map(t => {
+                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
+                return found ? found.ext : null;
+            });
+
+            const datosExp = labelsTiempos.map(t => {
+                const found = filtradosGalpon.find(r => `${r.fecha} ${r.hora}` === t);
+                return found ? found.exp : null;
+            });
+
+            const datasets = [
+                {
+                    label: 'Temperatura interior',
+                    data: datosTemp,
+                    borderColor: '#3b82f6',
+                    backgroundColor: '#3b82f6',
+                    borderWidth: 2,
+                    tension: 0.15,
+                    pointRadius: 2,
+                    spanGaps: true
+                },
+                {
+                    label: 'Temperatura experimentada',
+                    data: datosExp,
+                    borderColor: '#f97316',
+                    backgroundColor: '#f97316',
+                    borderWidth: 2,
+                    tension: 0.15,
+                    pointRadius: 2,
+                    spanGaps: true
+                },
+                {
+                    label: 'Temperatura del exterior',
+                    data: datosExt,
+                    borderColor: '#94a3b8',
+                    backgroundColor: '#94a3b8',
+                    borderWidth: 1.5,
+                    borderDash: [3, 3],
+                    tension: 0.15,
+                    pointRadius: 1.5,
+                    spanGaps: true
+                }
+            ];
+
+            const config = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11 } } },
+                    tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#f8fafc', bodyColor: '#cbd5e1', borderColor: '#334155', borderWidth: 1 }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#1e293b' } },
+                    y: { 
+                        ticks: { color: '#64748b', font: { size: 10 } }, 
+                        grid: { color: '#1e293b' },
+                        suggestedMin: 20,
+                        suggestedMax: 35
+                    }
+                }
+            };
+
+            const ctx = document.getElementById('chartIndividual').getContext('2d');
+            if (chartIndInstance) chartIndInstance.destroy();
+            chartIndInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: labelsTiempos, datasets: datasets },
+                options: config
+            });
+        }
+
+        function actualizarGraficosMulti(filtrados, galponesSeleccionados) {
             const tiemposSet = new Set();
             filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
             const labelsTiempos = Array.from(tiemposSet).sort();
