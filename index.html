@@ -2,7 +2,7 @@
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Inversiones Mamay — Monitor Climático</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,6 +19,9 @@
                         apple: {
                             orange: '#FF9F0A',
                             orangeLight: '#FF6B00',
+                            blue: '#0A84FF',
+                            green: '#30D158',
+                            red: '#FF453A',
                             darkBg: '#000000',
                             darkCard: '#1C1C1E',
                             darkElevated: '#2C2C2E',
@@ -26,6 +29,9 @@
                             lightCard: '#FFFFFF',
                             grayText: '#8E8E93'
                         }
+                    },
+                    gridTemplateColumns: {
+                        '15': 'repeat(15, minmax(0, 1fr))'
                     }
                 }
             }
@@ -35,10 +41,11 @@
         * {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s ease;
+            transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
         }
 
         .apple-nav {
@@ -47,208 +54,227 @@
         }
 
         .apple-card {
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease, border-color 0.25s ease;
         }
 
         @keyframes appleReveal {
-            from { opacity: 0; transform: translateY(8px) scale(0.995); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .reveal { animation: appleReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
-        .delay-1 { animation-delay: 0.05s; }
-        .delay-2 { animation-delay: 0.1s; }
-        .delay-3 { animation-delay: 0.15s; }
+        .reveal { animation: appleReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .delay-1 { animation-delay: 0.04s; }
+        .delay-2 { animation-delay: 0.08s; }
+        .delay-3 { animation-delay: 0.12s; }
 
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(142, 142, 147, 0.3); border-radius: 999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(142, 142, 147, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(142, 142, 147, 0.28); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(142, 142, 147, 0.48); }
     </style>
 </head>
 <body class="bg-apple-lightBg dark:bg-apple-darkBg text-zinc-900 dark:text-white min-h-screen flex flex-col selection:bg-apple-orange selection:text-black">
 
-    <!-- Header estilo macOS -->
-    <header class="apple-nav sticky top-0 z-50 bg-white/80 dark:bg-black/75 border-b border-black/[0.06] dark:border-white/[0.08]">
-        <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-[10px] bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-sm tracking-tighter shadow-sm">
+    <!-- Header Minimalista estilo iOS / macOS -->
+    <header class="apple-nav sticky top-0 z-50 bg-white/80 dark:bg-[#111113]/80 border-b border-black/[0.06] dark:border-white/[0.08]">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-2">
+            <!-- Identidad compacta -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 shrink-0 rounded-[9px] bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-xs tracking-tighter shadow-sm">
                     IM<span class="text-apple-orange font-black">+</span>
                 </div>
-                <div>
-                    <h1 class="text-[15px] font-semibold tracking-tight leading-none">Inversiones Mamay</h1>
-                    <p class="text-[11px] text-apple-grayText mt-1 font-medium">Clima & Bioseguridad · 15 Galpones</p>
+                <div class="min-w-0">
+                    <h1 class="text-sm sm:text-[15px] font-semibold tracking-tight leading-tight truncate">Inversiones Mamay</h1>
+                    <p class="text-[11px] text-apple-grayText leading-tight truncate">Telemetría · 15 Galpones</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.07] text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span id="lbl-actualizado">Sincronizando...</span>
+            <!-- Controles derechos -->
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/[0.04] dark:bg-white/[0.07] text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="lbl-actualizado" class="max-w-[95px] sm:max-w-none truncate">En línea</span>
                 </div>
 
-                <button onclick="toggleTheme()" title="Cambiar apariencia" class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.14] flex items-center justify-center transition active:scale-90">
-                    <svg class="w-4 h-4 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                    <svg class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <button onclick="toggleTheme()" title="Cambiar apariencia" aria-label="Cambiar tema"
+                    class="w-8 h-8 rounded-full bg-black/[0.04] dark:bg-white/[0.07] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] flex items-center justify-center transition active:scale-90">
+                    <svg class="w-3.5 h-3.5 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="w-3.5 h-3.5 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                 </button>
 
-                <button onclick="cargarDatos()" class="px-3.5 py-1.5 rounded-full bg-apple-orangeLight dark:bg-apple-orange text-white dark:text-black text-xs font-semibold hover:opacity-90 transition active:scale-95 shadow-sm">
-                    Actualizar
+                <button onclick="cargarDatos()" title="Actualizar datos"
+                    class="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-zinc-900 dark:bg-white/[0.1] text-white dark:text-zinc-100 hover:opacity-90 text-xs font-medium transition active:scale-95">
+                    <svg class="w-3.5 h-3.5 text-apple-orange" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                    </svg>
+                    <span class="hidden sm:inline">Actualizar</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Contenido Principal -->
-    <main class="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex-grow w-full space-y-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-4 sm:py-7 flex-grow w-full space-y-4 sm:space-y-6">
 
-        <!-- Barra de Controles Unificada estilo iOS -->
-        <section class="reveal apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5 sm:p-6 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-black/[0.06] dark:border-white/[0.06]">
+        <!-- Panel de Controles Compacto estilo iOS -->
+        <section class="reveal apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-3.5 sm:p-5 shadow-sm">
+            
+            <!-- Fila 1: Segmented Control de 3 columnas exactas + Período/Limpiar -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-3.5 border-b border-black/[0.05] dark:border-white/[0.06]">
                 
-                <!-- Segmented Control Único (Selección Rápida por Zona) -->
-                <div>
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Selección Rápida por Zona</span>
-                    <div class="inline-flex flex-wrap p-1 rounded-xl bg-black/[0.05] dark:bg-black/60 border border-black/[0.04] dark:border-white/[0.05]">
-                        <button onclick="aplicarPreset('todos')" id="btn-preset-todos" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
-                            Todas (15)
-                        </button>
-                        <button onclick="aplicarPreset('Arias')" id="btn-preset-Arias" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
-                            Arias (01–09)
-                        </button>
-                        <button onclick="aplicarPreset('Castillo')" id="btn-preset-Castillo" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
-                            Castillo (10–15)
-                        </button>
-                        <button onclick="aplicarPreset('ninguno')" id="btn-preset-ninguno" class="preset-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all text-apple-grayText hover:text-zinc-900 dark:hover:text-white">
-                            Limpiar
-                        </button>
-                    </div>
+                <!-- Control Segmentado Zonas -->
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-black/70 border border-black/[0.03] dark:border-white/[0.05] w-full md:w-auto md:min-w-[310px]">
+                    <button type="button" onclick="aplicarPreset('todos')" id="btn-preset-todos"
+                        class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
+                        Todas <span class="text-[10px] opacity-70">(15)</span>
+                    </button>
+                    <button type="button" onclick="aplicarPreset('Arias')" id="btn-preset-Arias"
+                        class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
+                        Arias <span class="text-[10px] opacity-70">01–09</span>
+                    </button>
+                    <button type="button" onclick="aplicarPreset('Castillo')" id="btn-preset-Castillo"
+                        class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
+                        Castillo <span class="text-[10px] opacity-70">10–15</span>
+                    </button>
                 </div>
 
-                <!-- Selector de Período -->
-                <div>
-                    <label for="filtro-mes" class="block text-[11px] font-semibold uppercase tracking-wider text-apple-grayText mb-2">Período</label>
-                    <select id="filtro-mes" onchange="aplicarFiltros()" class="bg-black/[0.05] dark:bg-apple-darkElevated border-0 rounded-xl px-4 py-2 text-xs font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
-                        <option value="todos">Todo el historial</option>
-                    </select>
+                <!-- Período + Limpiar en la misma línea -->
+                <div class="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto">
+                    <div class="relative flex-1 md:flex-initial md:min-w-[175px]">
+                        <select id="filtro-mes" onchange="aplicarFiltros()" aria-label="Seleccionar período"
+                            class="w-full appearance-none bg-black/[0.04] dark:bg-apple-darkElevated border border-black/[0.04] dark:border-white/[0.06] rounded-xl pl-3.5 pr-8 py-1.5 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
+                            <option value="todos">Todo el historial</option>
+                        </select>
+                        <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-apple-grayText" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                        </svg>
+                    </div>
+
+                    <button type="button" onclick="aplicarPreset('ninguno')" id="btn-preset-ninguno"
+                        class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium text-apple-grayText hover:text-zinc-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition active:scale-95">
+                        Limpiar
+                    </button>
                 </div>
             </div>
 
-            <!-- Pills Interactivas de Galpones -->
-            <div class="pt-4">
-                <div class="flex items-center justify-between mb-2.5">
-                    <span class="text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">Galpones Activos (Toca 1 para detalle o varios para comparar)</span>
-                    <span id="hint-modo" class="text-[11px] text-apple-orangeLight dark:text-apple-orange font-semibold">3 seleccionados</span>
+            <!-- Fila 2: Matriz de Galpones (5x3 en móvil, 15x1 en desktop) -->
+            <div class="pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-medium text-apple-grayText">Galpones</span>
+                    <span id="hint-modo" class="text-[11px] font-semibold text-apple-orangeLight dark:text-apple-orange tabular-nums">3 seleccionados</span>
                 </div>
-                <div id="selector-galpones" class="flex flex-wrap gap-2">
-                    <!-- Pills inyectadas por JS -->
+                <div id="selector-galpones" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-15 gap-1.5">
+                    <!-- Celdas inyectadas por JS -->
                 </div>
             </div>
         </section>
 
         <!-- KPIs Minimalistas -->
-        <section class="reveal delay-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
-                <span class="text-xs font-medium text-apple-grayText">Lecturas</span>
-                <div id="kpi-total" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0</div>
-                <p class="text-[11px] text-apple-grayText mt-1.5">Registros filtrados</p>
+        <section class="reveal delay-1 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Lecturas</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                </div>
+                <div id="kpi-total" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0</div>
+                <p class="text-[11px] text-apple-grayText mt-1">Registros activos</p>
             </div>
 
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-medium text-apple-grayText">Temp. Media</span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Temp. Media</span>
                     <span class="w-2 h-2 rounded-full bg-apple-orange"></span>
                 </div>
-                <div id="kpi-temp-prom" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0.0°</div>
-                <p class="text-[11px] text-apple-grayText mt-1.5">Umbral máximo <span class="text-zinc-900 dark:text-white font-medium">26.0°C</span></p>
+                <div id="kpi-temp-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0.0°</div>
+                <p class="text-[11px] text-apple-grayText mt-1">Máx. <span class="text-zinc-900 dark:text-zinc-200 font-medium">26.0°C</span></p>
             </div>
 
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-medium text-apple-grayText">Humedad Media</span>
-                    <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Humedad Media</span>
+                    <span class="w-2 h-2 rounded-full bg-apple-blue"></span>
                 </div>
-                <div id="kpi-hum-prom" class="text-3xl font-bold tracking-tight mt-2 tabular-nums">0%</div>
-                <p class="text-[11px] text-apple-grayText mt-1.5">Umbral máximo <span class="text-zinc-900 dark:text-white font-medium">85%</span></p>
+                <div id="kpi-hum-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0%</div>
+                <p class="text-[11px] text-apple-grayText mt-1">Máx. <span class="text-zinc-900 dark:text-zinc-200 font-medium">85%</span></p>
             </div>
 
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-5">
+            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-medium text-apple-grayText">Desviaciones</span>
-                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Alertas</span>
+                    <span class="w-2 h-2 rounded-full bg-apple-red"></span>
                 </div>
-                <div id="kpi-alertas" class="text-3xl font-bold tracking-tight mt-2 tabular-nums text-rose-500">0</div>
-                <p class="text-[11px] text-apple-grayText mt-1.5">Fuera de rango óptimo</p>
+                <div id="kpi-alertas" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums text-apple-red">0</div>
+                <p class="text-[11px] text-apple-grayText mt-1">Fuera de umbral</p>
             </div>
         </section>
 
         <!-- Gráficos Comparativos (Multi-Galpón) -->
-        <section id="seccion-multigalpon" class="reveal delay-2 grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6">
-                <div class="flex items-baseline justify-between mb-5">
+        <section id="seccion-multigalpon" class="reveal delay-2 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+            <div class="apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6">
+                <div class="flex items-baseline justify-between mb-4">
                     <div>
-                        <h3 class="text-[15px] font-semibold tracking-tight">Temperatura Interior</h3>
-                        <p class="text-xs text-apple-grayText mt-0.5">Comparativa por galpón (°C)</p>
+                        <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Temperatura Interior</h3>
+                        <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Evolución por galpón (°C)</p>
                     </div>
-                    <span class="text-[11px] font-semibold text-rose-500">Límite 26°C</span>
+                    <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Límite 26°C</span>
                 </div>
-                <div class="h-72 relative">
+                <div class="h-60 sm:h-72 relative">
                     <canvas id="chartTemp"></canvas>
                 </div>
             </div>
 
-            <div class="apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6">
-                <div class="flex items-baseline justify-between mb-5">
+            <div class="apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6">
+                <div class="flex items-baseline justify-between mb-4">
                     <div>
-                        <h3 class="text-[15px] font-semibold tracking-tight">Humedad Relativa</h3>
-                        <p class="text-xs text-apple-grayText mt-0.5">Comparativa por galpón (%)</p>
+                        <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Humedad Relativa</h3>
+                        <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Evolución por galpón (%)</p>
                     </div>
-                    <span class="text-[11px] font-semibold text-rose-500">Límite 85%</span>
+                    <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Límite 85%</span>
                 </div>
-                <div class="h-72 relative">
+                <div class="h-60 sm:h-72 relative">
                     <canvas id="chartHum"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- Gráfico Detallado Individual (1 Galpón seleccionado) -->
-        <section id="seccion-individual" class="reveal apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-6 hidden">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+        <section id="seccion-individual" class="reveal apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6 hidden">
+            <div class="flex items-center justify-between gap-2 mb-4 sm:mb-6">
                 <div>
-                    <h3 id="titulo-grafico-ind" class="text-base font-semibold tracking-tight">Perfil Térmico Detallado</h3>
-                    <p id="subtitulo-grafico-ind" class="text-xs text-apple-grayText mt-0.5">Interior · Sensación térmica · Exterior</p>
+                    <h3 id="titulo-grafico-ind" class="text-sm sm:text-base font-semibold tracking-tight">Perfil Térmico Detallado</h3>
+                    <p id="subtitulo-grafico-ind" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Interior · Sensación térmica · Exterior</p>
                 </div>
-                <span class="self-start sm:self-auto px-3 py-1 rounded-full bg-apple-orange/15 text-apple-orangeLight dark:text-apple-orange text-[11px] font-semibold">
-                    Vista Individual
+                <span class="shrink-0 px-2.5 py-1 rounded-full bg-apple-orange/15 text-apple-orangeLight dark:text-apple-orange text-[11px] font-semibold">
+                    Individual
                 </span>
             </div>
-            <div class="h-80 relative">
+            <div class="h-64 sm:h-80 relative">
                 <canvas id="chartIndividual"></canvas>
             </div>
         </section>
 
         <!-- Tabla Histórica Minimalista -->
-        <section class="reveal delay-3 apple-card rounded-3xl bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] overflow-hidden">
-            <div class="px-6 py-5 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
+        <section class="reveal delay-3 apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] overflow-hidden">
+            <div class="px-4 sm:px-6 py-4 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
                 <div>
-                    <h3 class="text-[15px] font-semibold tracking-tight">Registro Cronológico</h3>
-                    <p class="text-xs text-apple-grayText mt-0.5">Últimas 100 lecturas del filtro actual</p>
+                    <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Registro Cronológico</h3>
+                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Últimas 100 lecturas filtradas</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-black/[0.05] dark:border-white/[0.06] text-[11px] font-semibold uppercase tracking-wider text-apple-grayText">
-                            <th class="py-3.5 px-6">Fecha / Hora</th>
-                            <th class="py-3.5 px-4">Zona</th>
-                            <th class="py-3.5 px-4">Galpón</th>
-                            <th class="py-3.5 px-4 text-right">Interior</th>
-                            <th class="py-3.5 px-4 text-right">Exterior</th>
-                            <th class="py-3.5 px-4 text-right">Humedad</th>
-                            <th class="py-3.5 px-6 text-right">Sensación</th>
+                        <tr class="border-b border-black/[0.05] dark:border-white/[0.06] text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-apple-grayText whitespace-nowrap">
+                            <th class="py-3 px-4 sm:px-6">Fecha / Hora</th>
+                            <th class="py-3 px-3 sm:px-4">Zona</th>
+                            <th class="py-3 px-3 sm:px-4">Galpón</th>
+                            <th class="py-3 px-3 sm:px-4 text-right">Interior</th>
+                            <th class="py-3 px-3 sm:px-4 text-right">Exterior</th>
+                            <th class="py-3 px-3 sm:px-4 text-right">Humedad</th>
+                            <th class="py-3 px-4 sm:px-6 text-right">Sensación</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-datos" class="divide-y divide-black/[0.04] dark:divide-white/[0.05] text-xs">
+                    <tbody id="tabla-datos" class="divide-y divide-black/[0.04] dark:divide-white/[0.05] text-xs whitespace-nowrap">
                     </tbody>
                 </table>
             </div>
@@ -256,7 +282,7 @@
 
     </main>
 
-    <footer class="py-8 text-center text-[11px] text-apple-grayText">
+    <footer class="py-6 text-center text-[11px] text-apple-grayText">
         Inversiones Mamay E.I.R.L. · Telemetría Automatizada
     </footer>
 
@@ -282,6 +308,18 @@
             return parseInt(g.replace(/\D/g, ''), 10) || 0;
         }
 
+        function formatearEjeTiempo(labels) {
+            if (!labels.length) return [];
+            const fechasUnicas = new Set(labels.map(l => l.split(' ')[0]));
+            return labels.map(l => {
+                const [fecha, hora] = l.split(' ');
+                const horaCorta = hora ? hora.slice(0, 5) : '';
+                if (fechasUnicas.size === 1) return horaCorta;
+                const partes = fecha.split('-');
+                return partes.length === 3 ? `${partes[2]}/${partes[1]} ${horaCorta}` : l;
+            });
+        }
+
         function toggleTheme() {
             document.documentElement.classList.toggle('dark');
             aplicarFiltros();
@@ -293,15 +331,13 @@
             const numsActivos = activosArr.map(obtenerNumGalpon);
 
             const esTodos = total > 0 && activosArr.length === total;
-            const esNinguno = activosArr.length === 0;
             const esArias = activosArr.length === 9 && numsActivos.every(n => n >= 1 && n <= 9);
             const esCastillo = activosArr.length === 6 && numsActivos.every(n => n >= 10 && n <= 15);
 
             const mapa = {
                 todos: esTodos,
                 Arias: esArias,
-                Castillo: esCastillo,
-                ninguno: esNinguno
+                Castillo: esCastillo
             };
 
             Object.keys(mapa).forEach(key => {
@@ -309,9 +345,9 @@
                 if (!btn) return;
                 if (mapa[key]) {
                     btn.classList.remove('text-apple-grayText', 'font-medium');
-                    btn.classList.add('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+                    btn.classList.add('bg-white', 'dark:bg-[#3A3A3C]', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
                 } else {
-                    btn.classList.remove('bg-white', 'dark:bg-apple-darkElevated', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
+                    btn.classList.remove('bg-white', 'dark:bg-[#3A3A3C]', 'text-zinc-900', 'dark:text-white', 'shadow-sm', 'font-semibold');
                     btn.classList.add('text-apple-grayText', 'font-medium');
                 }
             });
@@ -338,12 +374,13 @@
 
         function cargarDatos() {
             if (typeof window.DATOS_MAMAY_AUTO === 'undefined') {
-                document.getElementById('lbl-actualizado').innerText = "Sin datos locales";
+                document.getElementById('lbl-actualizado').innerText = "Sin datos";
                 return;
             }
 
             const data = window.DATOS_MAMAY_AUTO;
-            document.getElementById('lbl-actualizado').innerText = data.actualizado;
+            const horaAct = data.actualizado ? data.actualizado.split(' ').pop().slice(0, 5) : 'En línea';
+            document.getElementById('lbl-actualizado').innerText = horaAct;
             
             const registros = data.registros.map(r => ({
                 ...r,
@@ -391,8 +428,8 @@
                 btn.type = 'button';
                 btn.onclick = () => toggleGalpon(g);
                 btn.className = activo
-                    ? 'px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-apple-orangeLight dark:bg-apple-orange text-white dark:text-black shadow-sm scale-[1.02]'
-                    : 'px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-black/[0.04] dark:bg-white/[0.06] text-zinc-600 dark:text-zinc-400 hover:bg-black/[0.08] dark:hover:bg-white/[0.12]';
+                    ? 'py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 border border-apple-orange/50 bg-apple-orangeLight/15 dark:bg-apple-orange/20 text-apple-orangeLight dark:text-apple-orange shadow-xs active:scale-95'
+                    : 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-black/[0.05] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.04] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 active:scale-95';
                 btn.textContent = numCorto;
                 btn.title = g;
                 container.appendChild(btn);
@@ -474,19 +511,19 @@
                 const alertaH = r.hum !== null && r.hum >= 85.0;
 
                 tr.innerHTML = `
-                    <td class="py-3.5 px-6 font-mono text-[11px] text-apple-grayText">${r.fecha} · ${r.hora}</td>
-                    <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">${r.encargado}</td>
-                    <td class="py-3.5 px-4 font-semibold">${r.galpon}</td>
-                    <td class="py-3.5 px-4 text-right font-mono font-medium ${alertaT ? 'text-rose-500 font-bold' : ''}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
-                    <td class="py-3.5 px-4 text-right font-mono text-apple-grayText">${r.ext !== null ? r.ext.toFixed(1) + '°C' : '—'}</td>
-                    <td class="py-3.5 px-4 text-right font-mono font-medium ${alertaH ? 'text-rose-500 font-bold' : ''}">${r.hum !== null ? r.hum + '%' : '—'}</td>
-                    <td class="py-3.5 px-6 text-right font-mono text-apple-grayText">${r.exp !== null ? r.exp.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3 px-4 sm:px-6 font-mono text-[11px] text-apple-grayText">${r.fecha} · ${r.hora.slice(0, 5)}</td>
+                    <td class="py-3 px-3 sm:px-4 text-zinc-600 dark:text-zinc-400">${r.encargado}</td>
+                    <td class="py-3 px-3 sm:px-4 font-semibold">${r.galpon}</td>
+                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${alertaT ? 'text-apple-red font-bold' : ''}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3 px-3 sm:px-4 text-right font-mono text-apple-grayText tabular-nums">${r.ext !== null ? r.ext.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${alertaH ? 'text-apple-red font-bold' : ''}">${r.hum !== null ? r.hum + '%' : '—'}</td>
+                    <td class="py-3 px-4 sm:px-6 text-right font-mono text-apple-grayText tabular-nums">${r.exp !== null ? r.exp.toFixed(1) + '°C' : '—'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function getChartBaseOptions(minY, maxY) {
+        function getChartBaseOptions(minY, maxY, rawLabels) {
             const isDark = document.documentElement.classList.contains('dark');
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
             const tickColor = '#8E8E93';
@@ -503,27 +540,33 @@
                             usePointStyle: true,
                             pointStyle: 'circle',
                             boxWidth: 6,
-                            padding: 16,
+                            padding: 14,
                             font: { size: 11, family: '-apple-system, BlinkMacSystemFont, Inter, sans-serif' }
                         }
                     },
                     tooltip: {
-                        backgroundColor: isDark ? 'rgba(28, 28, 30, 0.92)' : 'rgba(255, 255, 255, 0.95)',
+                        backgroundColor: isDark ? 'rgba(28, 28, 30, 0.94)' : 'rgba(255, 255, 255, 0.96)',
                         titleColor: isDark ? '#FFFFFF' : '#18181B',
                         bodyColor: isDark ? '#E4E4E7' : '#3F3F46',
                         borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
                         borderWidth: 1,
                         cornerRadius: 12,
-                        padding: 12,
+                        padding: 10,
                         boxPadding: 4,
-                        usePointStyle: true
+                        usePointStyle: true,
+                        callbacks: {
+                            title(items) {
+                                const idx = items[0]?.dataIndex ?? 0;
+                                return rawLabels && rawLabels[idx] ? rawLabels[idx] : items[0]?.label;
+                            }
+                        }
                     }
                 },
                 scales: {
                     x: {
                         grid: { display: false },
                         border: { display: false },
-                        ticks: { color: tickColor, maxTicksLimit: 6, font: { size: 10 } }
+                        ticks: { color: tickColor, maxTicksLimit: 5, font: { size: 10 } }
                     },
                     y: {
                         grid: { color: gridColor },
@@ -548,7 +591,7 @@
                         ctx.moveTo(left, yPos);
                         ctx.lineTo(right, yPos);
                         ctx.lineWidth = 1;
-                        ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                        ctx.strokeStyle = 'rgba(255, 69, 58, 0.5)';
                         ctx.setLineDash([4, 4]);
                         ctx.stroke();
                         ctx.restore();
@@ -560,9 +603,10 @@
         function actualizarGraficoIndividual(filtrados) {
             const tiemposSet = new Set();
             filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
-            const labels = Array.from(tiemposSet).sort();
+            const rawLabels = Array.from(tiemposSet).sort();
+            const labels = formatearEjeTiempo(rawLabels);
 
-            const mapCampo = campo => labels.map(t => {
+            const mapCampo = campo => rawLabels.map(t => {
                 const found = filtrados.find(r => `${r.fecha} ${r.hora}` === t);
                 return found ? found[campo] : null;
             });
@@ -572,7 +616,8 @@
                     label: 'Interior',
                     data: mapCampo('temp'),
                     borderColor: '#FF9F0A',
-                    backgroundColor: '#FF9F0A',
+                    backgroundColor: 'rgba(255, 159, 10, 0.12)',
+                    fill: true,
                     borderWidth: 2.5,
                     tension: 0.35,
                     pointRadius: 0,
@@ -580,7 +625,7 @@
                     spanGaps: true
                 },
                 {
-                    label: 'Experimentada',
+                    label: 'Sensación',
                     data: mapCampo('exp'),
                     borderColor: '#0A84FF',
                     backgroundColor: '#0A84FF',
@@ -609,7 +654,7 @@
             chartIndInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets },
-                options: getChartBaseOptions(20, 34),
+                options: getChartBaseOptions(20, 34, rawLabels),
                 plugins: [crearPluginUmbral(26.0)]
             });
         }
@@ -617,7 +662,8 @@
         function actualizarGraficosMulti(filtrados, seleccionados) {
             const tiemposSet = new Set();
             filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
-            const labels = Array.from(tiemposSet).sort();
+            const rawLabels = Array.from(tiemposSet).sort();
+            const labels = formatearEjeTiempo(rawLabels);
 
             const datasetsTemp = [];
             const datasetsHum = [];
@@ -625,12 +671,12 @@
             seleccionados.forEach((g, idx) => {
                 const color = applePalette[idx % applePalette.length];
 
-                const serieTemp = labels.map(t => {
+                const serieTemp = rawLabels.map(t => {
                     const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
                     return f ? f.temp : null;
                 });
 
-                const serieHum = labels.map(t => {
+                const serieHum = rawLabels.map(t => {
                     const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
                     return f ? f.hum : null;
                 });
@@ -655,7 +701,7 @@
             chartTempInstance = new Chart(ctxTemp, {
                 type: 'line',
                 data: { labels, datasets: datasetsTemp },
-                options: getChartBaseOptions(22, 31),
+                options: getChartBaseOptions(22, 31, rawLabels),
                 plugins: [crearPluginUmbral(26.0)]
             });
 
@@ -664,7 +710,7 @@
             chartHumInstance = new Chart(ctxHum, {
                 type: 'line',
                 data: { labels, datasets: datasetsHum },
-                options: getChartBaseOptions(55, 92),
+                options: getChartBaseOptions(55, 92, rawLabels),
                 plugins: [crearPluginUmbral(85.0)]
             });
         }
