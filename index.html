@@ -29,9 +29,6 @@
                             lightCard: '#FFFFFF',
                             grayText: '#8E8E93'
                         }
-                    },
-                    gridTemplateColumns: {
-                        '15': 'repeat(15, minmax(0, 1fr))'
                     }
                 }
             }
@@ -78,7 +75,7 @@
 </head>
 <body class="bg-apple-lightBg dark:bg-apple-darkBg text-zinc-900 dark:text-white min-h-screen flex flex-col selection:bg-apple-orange selection:text-black">
 
-    <!-- Header Minimalista estilo iOS / macOS -->
+    <!-- Header Minimalista -->
     <header class="apple-nav sticky top-0 z-40 bg-white/80 dark:bg-[#111113]/80 border-b border-black/[0.06] dark:border-white/[0.08]">
         <div class="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
@@ -87,7 +84,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 class="text-sm sm:text-[15px] font-semibold tracking-tight leading-tight truncate">Inversiones Mamay</h1>
-                    <p id="lbl-subtitulo-header" class="text-[11px] text-apple-grayText leading-tight truncate">Telemetría · 15 Galpones</p>
+                    <p id="lbl-subtitulo-header" class="text-[11px] text-apple-grayText leading-tight truncate">Telemetría · 15 activos / 17 galpones</p>
                 </div>
             </div>
 
@@ -117,15 +114,15 @@
     <!-- Contenido Principal -->
     <main class="max-w-6xl mx-auto px-4 sm:px-8 py-4 sm:py-7 flex-grow w-full space-y-4 sm:space-y-6">
 
-        <!-- Panel de Filtros Compacto -->
+        <!-- Panel de Filtros Coherente -->
         <section class="reveal apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-3.5 sm:p-5 shadow-sm">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 pb-3.5 border-b border-black/[0.05] dark:border-white/[0.06]">
                 
                 <!-- Segmented Control Zonas -->
-                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-black/70 border border-black/[0.03] dark:border-white/[0.05] w-full lg:w-auto lg:min-w-[320px]">
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-black/70 border border-black/[0.03] dark:border-white/[0.05] w-full lg:w-auto lg:min-w-[330px]">
                     <button type="button" onclick="aplicarPreset('todos')" id="btn-preset-todos"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
-                        Todas <span id="lbl-count-todas" class="text-[10px] opacity-70">(15)</span>
+                        Todas <span id="lbl-count-todas" class="text-[10px] opacity-70">(17)</span>
                     </button>
                     <button type="button" onclick="aplicarPreset('Arias')" id="btn-preset-Arias"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
@@ -133,7 +130,7 @@
                     </button>
                     <button type="button" onclick="aplicarPreset('Castillo')" id="btn-preset-Castillo"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
-                        Castillo <span id="lbl-rango-castillo" class="text-[10px] opacity-70">10–15</span>
+                        Castillo <span class="text-[10px] opacity-70">10–17</span>
                     </button>
                 </div>
 
@@ -149,7 +146,7 @@
                         </svg>
                     </div>
 
-                    <div class="relative flex-1 sm:flex-initial sm:min-w-[145px]">
+                    <div class="relative flex-1 sm:flex-initial sm:min-w-[155px]">
                         <select id="filtro-dia" onchange="aplicarFiltros()" aria-label="Seleccionar día"
                             class="w-full appearance-none bg-black/[0.04] dark:bg-apple-darkElevated border border-black/[0.04] dark:border-white/[0.06] rounded-xl pl-3 pr-7 py-1.5 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
                             <option value="todos">Todos los días</option>
@@ -166,78 +163,76 @@
                 </div>
             </div>
 
-            <!-- Matriz de Galpones (Filtro multi-selección) -->
+            <!-- Matriz completa de los 17 Galpones -->
             <div class="pt-3">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-medium text-apple-grayText">Filtrar galpones en vista (selecciona 1, 2 o más para comparar)</span>
+                    <span class="text-[11px] font-medium text-apple-grayText">Galpones en vista (G16–G17 pendientes de enlace BFN)</span>
                     <span id="hint-modo" class="text-[11px] font-semibold text-apple-orangeLight dark:text-apple-orange tabular-nums">15 activos</span>
                 </div>
-                <div id="selector-galpones" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-15 gap-1.5"></div>
+                <div id="selector-galpones" class="grid grid-cols-6 sm:grid-cols-9 lg:grid-cols-17 gap-1.5" style="grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));"></div>
             </div>
         </section>
 
-        <!-- 4 KPIs Ejecutivos -->
+        <!-- 4 KPIs Ejecutivos con Contexto de Picos y Ambiente Exterior -->
         <section class="reveal grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Lecturas</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Estado Actual</span>
+                    <span class="w-2 h-2 rounded-full bg-apple-green"></span>
                 </div>
-                <div id="kpi-total" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0</div>
-                <p id="kpi-sub-periodo" class="text-[11px] text-apple-grayText mt-1">Registros filtrados</p>
+                <div id="kpi-estado-resumen" class="text-xl sm:text-2xl font-semibold tracking-tight mt-1.5 tabular-nums">0 Óptimos</div>
+                <p id="kpi-estado-detalle" class="text-[11px] text-apple-grayText mt-1">Sin alertas activas</p>
             </div>
 
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Temp. Media</span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Temp. Interior</span>
                     <span class="w-2 h-2 rounded-full bg-apple-orange"></span>
                 </div>
                 <div id="kpi-temp-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0.0°</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Prev. <span class="text-amber-500 font-medium">23°</span> · Crít. <span class="text-rose-500 font-medium">26°</span></p>
+                <p id="kpi-temp-pico" class="text-[11px] text-apple-grayText mt-1 truncate">Máx. --°C</p>
             </div>
 
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Humedad Media</span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Ambiente Exterior</span>
+                    <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
+                </div>
+                <div id="kpi-ext-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0.0°</div>
+                <p id="kpi-delta-termico" class="text-[11px] text-apple-grayText mt-1 truncate">Diferencial vs. interior</p>
+            </div>
+
+            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Humedad Relativa</span>
                     <span class="w-2 h-2 rounded-full bg-apple-blue"></span>
                 </div>
                 <div id="kpi-hum-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0%</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Prev. <span class="text-amber-500 font-medium">75%</span> · Crít. <span class="text-rose-500 font-medium">85%</span></p>
-            </div>
-
-            <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Eventos Alerta</span>
-                    <span class="w-2 h-2 rounded-full bg-apple-red"></span>
-                </div>
-                <div class="flex items-baseline gap-2 mt-1.5">
-                    <span id="kpi-alertas" class="text-2xl sm:text-3xl font-semibold tracking-tight tabular-nums text-apple-red">0</span>
-                    <span id="kpi-preventivos" class="text-xs font-semibold tabular-nums text-apple-orange">0 prev.</span>
-                </div>
-                <p class="text-[11px] text-apple-grayText mt-1">Críticos y preventivos</p>
+                <p id="kpi-hum-pico" class="text-[11px] text-apple-grayText mt-1 truncate">Máx. --%</p>
             </div>
         </section>
 
-        <!-- Vista Resumida por Galpón con Semáforo de 3 Niveles -->
+        <!-- Vista Resumida por Galpón (17 Galpones completos) -->
         <section class="reveal apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                 <div>
                     <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Estado por Galpón</h3>
-                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura del período filtrado · Toca un galpón para abrir su detalle</p>
+                    <p id="subtitulo-grid-galpones" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura del período · Toca un galpón para abrir su detalle</p>
                 </div>
-                <div class="inline-flex items-center gap-3 text-[11px] text-apple-grayText">
+                <div class="inline-flex flex-wrap items-center gap-3 text-[11px] text-apple-grayText">
                     <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-green"></span> Óptimo</span>
                     <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-orange"></span> Preventivo</span>
                     <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-red"></span> Crítico</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-500"></span> Sin enlace</span>
                 </div>
             </div>
 
-            <div id="grid-resumen-galpones" class="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-2.5">
-                <!-- Tarjetas compactas inyectadas por JS -->
+            <div id="grid-resumen-galpones" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
+                <!-- Tarjetas inyectadas por JS -->
             </div>
         </section>
 
-        <!-- Sección de Gráficos con Selector Manual -->
+        <!-- Sección de Gráficos con Selector Manual + Referencia Exterior -->
         <section class="reveal space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-1">
                 <div>
@@ -266,7 +261,7 @@
                 <div class="apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6">
                     <div class="flex items-baseline justify-between mb-4">
                         <div>
-                            <h4 class="text-sm sm:text-[15px] font-semibold tracking-tight">Temperatura Interior</h4>
+                            <h4 class="text-sm sm:text-[15px] font-semibold tracking-tight">Temperatura Interior vs. Exterior</h4>
                             <p id="desc-chart-temp" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura por galpón (°C)</p>
                         </div>
                         <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Prev. 23° · Crít. 26°</span>
@@ -296,7 +291,7 @@
             <div class="px-4 sm:px-6 py-4 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
                 <div>
                     <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Registro Cronológico</h3>
-                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Últimas 60 lecturas del filtro · Toca una fila para abrir detalle</p>
+                    <p id="subtitulo-tabla" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Últimas 60 lecturas · Toca una fila para abrir detalle</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -324,7 +319,7 @@
         Inversiones Mamay E.I.R.L. · Telemetría Automatizada
     </footer>
 
-    <!-- MODAL DE DETALLE INDIVIDUAL ESTILO APPLE SHEET -->
+    <!-- MODAL DE DETALLE INDIVIDUAL -->
     <div id="modal-galpon" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4" onclick="cerrarModalSiFondo(event)">
         <div class="modal-animate w-full max-w-2xl rounded-t-[28px] sm:rounded-[28px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
             
@@ -415,20 +410,27 @@
         const UMBRAL_TEMP_CRIT = 26.0;
         const UMBRAL_HUM_PREV = 75.0;
         const UMBRAL_HUM_CRIT = 85.0;
+        const TOTAL_GALPONES_GRANJA = 17;
+
+        const CATALOGO_GALPONES = Array.from({ length: TOTAL_GALPONES_GRANJA }, (_, i) => {
+            const num = i + 1;
+            return `Galpón ${String(num).padStart(2, '0')}`;
+        });
 
         let chartTempInstance = null;
         let chartHumInstance = null;
         let chartModalInstance = null;
-        let todosGalponesDisponibles = [];
+        let galponesConDatos = new Set();
         let galponesActivos = new Set();
         let tipoGraficoActual = 'barras';
         let galponModalActual = null;
-        let paramsUrlAplicados = false;
+        let inicializado = false;
 
         const applePalette = [
             '#FF9F0A', '#0A84FF', '#30D158', '#BF5AF2', '#FF375F',
             '#64D2FF', '#FFD60A', '#5E5CE6', '#FF6482', '#32ADE6',
-            '#AC8E68', '#34C759', '#AF52DE', '#FF2D55', '#5AC8FA'
+            '#AC8E68', '#34C759', '#AF52DE', '#FF2D55', '#5AC8FA',
+            '#FF9500', '#30B0C7'
         ];
 
         function limpiarNombreGalpon(g) {
@@ -512,13 +514,13 @@
                     h: 'Última lectura por galpón (%)'
                 },
                 banda: {
-                    sub: 'Promedio del grupo y rango mínimo–máximo en el tiempo',
-                    t: 'Promedio y rango Min/Max (°C)',
+                    sub: 'Promedio del grupo, rango Min/Max y referencia Exterior en el tiempo',
+                    t: 'Grupo interior vs. Exterior promedio (°C)',
                     h: 'Promedio y rango Min/Max (%)'
                 },
                 lineas: {
-                    sub: 'Curvas individuales por galpón (ideal para 2–4 galpones o evolución diaria)',
-                    t: 'Evolución individual por galpón (°C)',
+                    sub: 'Curvas individuales por galpón + Exterior de referencia',
+                    t: 'Evolución individual vs. Exterior (°C)',
                     h: 'Evolución individual por galpón (%)'
                 }
             };
@@ -531,18 +533,13 @@
         }
 
         function actualizarEstadoBotonesPreset() {
-            const total = todosGalponesDisponibles.length;
             const activosArr = Array.from(galponesActivos);
             const numsActivos = activosArr.map(obtenerNumGalpon);
-            const totalCastillo = todosGalponesDisponibles.filter(g => {
-                const n = obtenerNumGalpon(g);
-                return n >= 10 && n <= 17;
-            }).length;
 
             const mapa = {
-                todos: total > 0 && activosArr.length === total,
+                todos: activosArr.length === CATALOGO_GALPONES.length,
                 Arias: activosArr.length === 9 && numsActivos.every(n => n >= 1 && n <= 9),
-                Castillo: totalCastillo > 0 && activosArr.length === totalCastillo && numsActivos.every(n => n >= 10 && n <= 17)
+                Castillo: activosArr.length === 8 && numsActivos.every(n => n >= 10 && n <= 17)
             };
 
             Object.keys(mapa).forEach(key => {
@@ -561,14 +558,14 @@
         function aplicarPreset(tipo) {
             galponesActivos.clear();
             if (tipo === 'todos') {
-                todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
+                CATALOGO_GALPONES.forEach(g => galponesActivos.add(g));
             } else if (tipo === 'Arias') {
-                todosGalponesDisponibles.forEach(g => {
+                CATALOGO_GALPONES.forEach(g => {
                     const n = obtenerNumGalpon(g);
                     if (n >= 1 && n <= 9) galponesActivos.add(g);
                 });
             } else if (tipo === 'Castillo') {
-                todosGalponesDisponibles.forEach(g => {
+                CATALOGO_GALPONES.forEach(g => {
                     const n = obtenerNumGalpon(g);
                     if (n >= 10 && n <= 17) galponesActivos.add(g);
                 });
@@ -577,7 +574,7 @@
             aplicarFiltros();
         }
 
-        function poblarSelectorDias(mesSeleccionado) {
+        function poblarSelectorDias(mesSeleccionado, seleccionarUltimoDia = false) {
             if (!window.REGISTROS_GLOBALES) return;
             const selectDia = document.getElementById('filtro-dia');
             const diaPrevio = selectDia.value;
@@ -590,22 +587,25 @@
                 }
             });
 
+            const diasOrdenados = Array.from(diasSet).sort().reverse();
             selectDia.innerHTML = '<option value="todos">Todos los días</option>';
-            Array.from(diasSet).sort().reverse().forEach(d => {
+            diasOrdenados.forEach((d, idx) => {
                 const opt = document.createElement('option');
                 opt.value = d;
-                opt.textContent = formatearFechaCorta(d);
+                opt.textContent = idx === 0 ? `${formatearFechaCorta(d)} (Último)` : formatearFechaCorta(d);
                 selectDia.appendChild(opt);
             });
 
-            if (diasSet.has(diaPrevio)) {
+            if (seleccionarUltimoDia && diasOrdenados.length > 0) {
+                selectDia.value = diasOrdenados[0];
+            } else if (diasSet.has(diaPrevio)) {
                 selectDia.value = diaPrevio;
             }
         }
 
         function alCambiarMes() {
             const mes = document.getElementById('filtro-mes').value;
-            poblarSelectorDias(mes);
+            poblarSelectorDias(mes, false);
             aplicarFiltros();
         }
 
@@ -625,18 +625,15 @@
             }));
 
             const mesesSet = new Set();
-            const galponesSet = new Set();
+            galponesConDatos = new Set();
 
             registros.forEach(r => {
                 if (r.fecha) mesesSet.add(r.fecha.substring(0, 7));
-                if (r.galpon) galponesSet.add(r.galpon);
+                if (r.galpon) galponesConDatos.add(r.galpon);
             });
 
-            todosGalponesDisponibles = Array.from(galponesSet).sort((a, b) => obtenerNumGalpon(a) - obtenerNumGalpon(b));
-            const maxNum = todosGalponesDisponibles.length ? Math.max(...todosGalponesDisponibles.map(obtenerNumGalpon)) : 15;
-            document.getElementById('lbl-subtitulo-header').textContent = `Telemetría · ${todosGalponesDisponibles.length} Galpones`;
-            document.getElementById('lbl-count-todas').textContent = `(${todosGalponesDisponibles.length})`;
-            document.getElementById('lbl-rango-castillo').textContent = `10–${Math.max(15, maxNum)}`;
+            document.getElementById('lbl-subtitulo-header').textContent =
+                `Telemetría · ${galponesConDatos.size} activos / ${TOTAL_GALPONES_GRANJA} galpones`;
 
             const selectMes = document.getElementById('filtro-mes');
             const mesPrevio = selectMes.value;
@@ -650,14 +647,13 @@
             if (mesesSet.has(mesPrevio)) selectMes.value = mesPrevio;
 
             window.REGISTROS_GLOBALES = registros;
-            poblarSelectorDias(selectMes.value);
 
-            if (galponesActivos.size === 0) {
-                todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
-            }
+            if (!inicializado) {
+                inicializado = true;
+                CATALOGO_GALPONES.forEach(g => galponesActivos.add(g));
+                // Al abrir por primera vez, mostrar el día más reciente
+                poblarSelectorDias(selectMes.value, true);
 
-            if (!paramsUrlAplicados) {
-                paramsUrlAplicados = true;
                 const params = new URLSearchParams(window.location.search);
                 const zonaParam = (params.get('zona') || '').toLowerCase();
                 const galponParam = params.get('galpon');
@@ -670,11 +666,13 @@
 
                 if (galponParam) {
                     const numObj = obtenerNumGalpon(galponParam);
-                    const encontrado = todosGalponesDisponibles.find(g => obtenerNumGalpon(g) === numObj);
+                    const encontrado = CATALOGO_GALPONES.find(g => obtenerNumGalpon(g) === numObj && galponesConDatos.has(g));
                     if (encontrado) {
                         setTimeout(() => abrirModalGalpon(encontrado), 150);
                     }
                 }
+            } else {
+                poblarSelectorDias(selectMes.value, false);
             }
 
             renderPills();
@@ -686,21 +684,31 @@
             const container = document.getElementById('selector-galpones');
             container.innerHTML = '';
 
-            todosGalponesDisponibles.forEach(g => {
+            CATALOGO_GALPONES.forEach(g => {
                 const activo = galponesActivos.has(g);
+                const conectado = galponesConDatos.has(g);
                 const numCorto = g.replace('Galpón ', 'G');
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.onclick = () => toggleGalpon(g);
-                btn.className = activo
-                    ? 'py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 border border-apple-orange/50 bg-apple-orangeLight/15 dark:bg-apple-orange/20 text-apple-orangeLight dark:text-apple-orange active:scale-95'
-                    : 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-black/[0.05] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.04] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 active:scale-95';
+
+                if (!conectado) {
+                    btn.className = activo
+                        ? 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-dashed border-zinc-400/50 dark:border-white/20 bg-black/[0.02] dark:bg-white/[0.02] text-zinc-400 dark:text-zinc-500 active:scale-95'
+                        : 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-dashed border-black/[0.05] dark:border-white/[0.06] text-zinc-400/60 dark:text-zinc-600 active:scale-95';
+                    btn.title = `${g} (Pendiente de conexión BFN)`;
+                } else {
+                    btn.className = activo
+                        ? 'py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 border border-apple-orange/50 bg-apple-orangeLight/15 dark:bg-apple-orange/20 text-apple-orangeLight dark:text-apple-orange active:scale-95'
+                        : 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-black/[0.05] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.04] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 active:scale-95';
+                    btn.title = g;
+                }
                 btn.textContent = numCorto;
-                btn.title = g;
                 container.appendChild(btn);
             });
 
-            document.getElementById('hint-modo').textContent = `${galponesActivos.size} activos`;
+            const activosConectados = Array.from(galponesActivos).filter(g => galponesConDatos.has(g)).length;
+            document.getElementById('hint-modo').textContent = `${activosConectados} activos`;
             actualizarEstadoBotonesPreset();
         }
 
@@ -719,39 +727,70 @@
             const registros = window.REGISTROS_GLOBALES;
             const mesFiltro = document.getElementById('filtro-mes').value;
             const diaFiltro = document.getElementById('filtro-dia').value;
-            const seleccionados = Array.from(galponesActivos).sort((a, b) => obtenerNumGalpon(a) - obtenerNumGalpon(b));
+
+            const seleccionadosTodos = CATALOGO_GALPONES.filter(g => galponesActivos.has(g));
+            const seleccionadosConectados = seleccionadosTodos.filter(g => galponesConDatos.has(g));
 
             const filtrados = registros.filter(r => {
                 const coincideMes = (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)));
                 const coincideDia = (diaFiltro === 'todos' || r.fecha === diaFiltro);
-                const coincideGalpon = seleccionados.includes(r.galpon);
+                const coincideGalpon = seleccionadosConectados.includes(r.galpon);
                 return coincideMes && coincideDia && coincideGalpon;
             });
 
-            document.getElementById('kpi-sub-periodo').textContent =
-                diaFiltro !== 'todos' ? `Día ${formatearFechaCorta(diaFiltro)}` : 'Registros filtrados';
+            const etiquetaPeriodo = diaFiltro !== 'todos'
+                ? `Jornada ${formatearFechaCorta(diaFiltro)}`
+                : (mesFiltro !== 'todos' ? `Mes ${mesFiltro}` : 'Todo el historial');
+            document.getElementById('subtitulo-grid-galpones').textContent =
+                `${etiquetaPeriodo} · Toca un galpón activo para ver su perfil completo`;
 
-            actualizarKPIsYTabla(filtrados);
-            renderizarResumenGalpones(filtrados, seleccionados);
-            renderizarGraficos(filtrados, seleccionados);
+            actualizarKPIsYTabla(filtrados, seleccionadosConectados);
+            renderizarResumenGalpones(filtrados, seleccionadosTodos);
+            renderizarGraficos(filtrados, seleccionadosConectados);
         }
 
-        function renderizarResumenGalpones(filtrados, seleccionados) {
+        function renderizarResumenGalpones(filtrados, seleccionadosTodos) {
             const grid = document.getElementById('grid-resumen-galpones');
             grid.innerHTML = '';
 
-            seleccionados.forEach(g => {
+            seleccionadosTodos.forEach(g => {
+                const conectado = galponesConDatos.has(g);
+                const numCorto = g.replace('Galpón ', 'G');
+                const zona = obtenerNumGalpon(g) <= 9 ? 'Arias' : 'Castillo';
+
+                if (!conectado) {
+                    const card = document.createElement('div');
+                    card.className = 'rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.1] bg-black/[0.01] dark:bg-white/[0.015] p-3 flex flex-col justify-between opacity-65';
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs font-bold tracking-tight text-zinc-500">${numCorto} · <span class="font-normal text-[10px]">${zona}</span></span>
+                            <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-xs font-medium text-apple-grayText">Sin enlace BFN</div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Pendiente red</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    return;
+                }
+
                 const regsGalpon = filtrados.filter(r => r.galpon === g);
                 const ultimo = regsGalpon.length ? regsGalpon[regsGalpon.length - 1] : null;
-                const numCorto = g.replace('Galpón ', 'G');
 
                 const tempVal = ultimo && ultimo.temp !== null ? ultimo.temp : null;
+                const expVal = ultimo && ultimo.exp !== null ? ultimo.exp : null;
                 const humVal = ultimo && ultimo.hum !== null ? ultimo.hum : null;
                 const nivel = clasificarNivel(tempVal, humVal);
 
                 const dotClass = nivel === 'critico'
                     ? 'bg-apple-red'
                     : (nivel === 'preventivo' ? 'bg-apple-orange' : 'bg-apple-green');
+                const borderCard = nivel === 'critico'
+                    ? 'border-apple-red/40 bg-apple-red/[0.04]'
+                    : (nivel === 'preventivo'
+                        ? 'border-apple-orange/35 bg-apple-orange/[0.03]'
+                        : 'border-black/[0.05] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.03]');
                 const tempColor = tempVal !== null && tempVal >= UMBRAL_TEMP_CRIT
                     ? 'text-apple-red'
                     : (tempVal !== null && tempVal > UMBRAL_TEMP_PREV ? 'text-apple-orange' : '');
@@ -759,19 +798,24 @@
                 const card = document.createElement('button');
                 card.type = 'button';
                 card.onclick = () => abrirModalGalpon(g);
-                card.className = 'text-left rounded-2xl border border-black/[0.05] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.03] hover:bg-black/[0.05] dark:hover:bg-white/[0.07] p-2.5 sm:p-3 transition active:scale-95 flex flex-col justify-between';
+                card.className = `text-left rounded-2xl border ${borderCard} hover:bg-black/[0.05] dark:hover:bg-white/[0.07] p-3 transition active:scale-95 flex flex-col justify-between`;
 
                 card.innerHTML = `
                     <div class="flex items-center justify-between w-full">
-                        <span class="text-xs font-bold tracking-tight">${numCorto}</span>
+                        <span class="text-xs font-bold tracking-tight">${numCorto} <span class="font-normal text-[10px] text-apple-grayText">${zona}</span></span>
                         <span class="w-2 h-2 rounded-full ${dotClass}"></span>
                     </div>
                     <div class="mt-2">
-                        <div class="text-sm sm:text-base font-semibold font-mono tabular-nums ${tempColor}">
-                            ${tempVal !== null ? tempVal.toFixed(1) + '°' : '—'}
+                        <div class="flex items-baseline justify-between gap-1">
+                            <span class="text-base font-semibold font-mono tabular-nums ${tempColor}">
+                                ${tempVal !== null ? tempVal.toFixed(1) + '°' : '—'}
+                            </span>
+                            <span class="text-[11px] font-mono text-apple-blue tabular-nums">
+                                ${humVal !== null ? humVal + '%' : '—'}
+                            </span>
                         </div>
-                        <div class="text-[10px] font-mono text-apple-grayText tabular-nums">
-                            ${humVal !== null ? humVal + '% HR' : 'Sin dato'}
+                        <div class="text-[10px] font-mono text-apple-grayText tabular-nums mt-0.5">
+                            Sens. ${expVal !== null ? expVal.toFixed(1) + '°' : '—'}
                         </div>
                     </div>
                 `;
@@ -779,25 +823,73 @@
             });
         }
 
-        function actualizarKPIsYTabla(filtrados) {
-            document.getElementById('kpi-total').textContent = filtrados.length.toLocaleString();
-
-            let sumaTemp = 0, countTemp = 0;
-            let sumaHum = 0, countHum = 0;
-            let criticos = 0, preventivos = 0;
-
-            filtrados.forEach(r => {
-                if (r.temp !== null) { sumaTemp += r.temp; countTemp++; }
-                if (r.hum !== null) { sumaHum += r.hum; countHum++; }
-                const nivel = clasificarNivel(r.temp, r.hum);
-                if (nivel === 'critico') criticos++;
-                else if (nivel === 'preventivo') preventivos++;
+        function actualizarKPIsYTabla(filtrados, seleccionadosConectados) {
+            // 1. Estado actual basado en la última lectura de cada galpón activo
+            let opt = 0, prev = 0, crit = 0;
+            seleccionadosConectados.forEach(g => {
+                const regs = filtrados.filter(r => r.galpon === g);
+                if (!regs.length) return;
+                const ult = regs[regs.length - 1];
+                const nivel = clasificarNivel(ult.temp, ult.hum);
+                if (nivel === 'critico') crit++;
+                else if (nivel === 'preventivo') prev++;
+                else opt++;
             });
 
-            document.getElementById('kpi-temp-prom').textContent = countTemp > 0 ? (sumaTemp / countTemp).toFixed(1) + "°" : "0.0°";
-            document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + "%" : "0%";
-            document.getElementById('kpi-alertas').textContent = criticos;
-            document.getElementById('kpi-preventivos').textContent = `${preventivos} prev.`;
+            document.getElementById('kpi-estado-resumen').textContent = `${opt} Óptimos`;
+            const partesEstado = [];
+            if (crit > 0) partesEstado.push(`${crit} crítico${crit > 1 ? 's' : ''}`);
+            if (prev > 0) partesEstado.push(`${prev} preventivo${prev > 1 ? 's' : ''}`);
+            document.getElementById('kpi-estado-detalle').textContent =
+                partesEstado.length ? partesEstado.join(' · ') : `De ${seleccionadosConectados.length} galpones activos`;
+
+            // 2. Temperaturas, Exterior y Humedad con picos identificados
+            let sumaTemp = 0, countTemp = 0, maxTempObj = null;
+            let sumaExt = 0, countExt = 0;
+            let sumaHum = 0, countHum = 0, maxHumObj = null;
+
+            filtrados.forEach(r => {
+                if (r.temp !== null) {
+                    sumaTemp += r.temp;
+                    countTemp++;
+                    if (!maxTempObj || r.temp > maxTempObj.temp) maxTempObj = r;
+                }
+                if (r.ext !== null) {
+                    sumaExt += r.ext;
+                    countExt++;
+                }
+                if (r.hum !== null) {
+                    sumaHum += r.hum;
+                    countHum++;
+                    if (!maxHumObj || r.hum > maxHumObj.hum) maxHumObj = r;
+                }
+            });
+
+            const promT = countTemp > 0 ? (sumaTemp / countTemp) : null;
+            const promE = countExt > 0 ? (sumaExt / countExt) : null;
+
+            document.getElementById('kpi-temp-prom').textContent = promT !== null ? promT.toFixed(1) + "°" : "—";
+            document.getElementById('kpi-temp-pico').textContent = maxTempObj
+                ? `Pico: ${maxTempObj.temp.toFixed(1)}°C (${maxTempObj.galpon.replace('Galpón ', 'G')} · ${maxTempObj.hora.slice(0, 5)})`
+                : 'Sin registros';
+
+            document.getElementById('kpi-ext-prom').textContent = promE !== null ? promE.toFixed(1) + "°" : "—";
+            if (promT !== null && promE !== null) {
+                const diff = promT - promE;
+                const signo = diff >= 0 ? '+' : '';
+                document.getElementById('kpi-delta-termico').textContent = `${signo}${diff.toFixed(1)}°C vs. interior`;
+            } else {
+                document.getElementById('kpi-delta-termico').textContent = 'Referencia ambiental';
+            }
+
+            document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + "%" : "—";
+            document.getElementById('kpi-hum-pico').textContent = maxHumObj
+                ? `Pico: ${maxHumObj.hum}% (${maxHumObj.galpon.replace('Galpón ', 'G')} · ${maxHumObj.hora.slice(0, 5)})`
+                : 'Sin registros';
+
+            // 3. Tabla cronológica
+            document.getElementById('subtitulo-tabla').textContent =
+                `Mostrando últimas ${Math.min(60, filtrados.length)} de ${filtrados.length.toLocaleString()} lecturas · Toca una fila para detalle`;
 
             const tbody = document.getElementById('tabla-datos');
             tbody.innerHTML = '';
@@ -923,6 +1015,10 @@
                     const arr = filtrados.filter(r => r.galpon === g && r.temp !== null);
                     return arr.length ? arr[arr.length - 1].temp : null;
                 });
+                const ultimosExt = seleccionados.map(g => {
+                    const arr = filtrados.filter(r => r.galpon === g && r.ext !== null);
+                    return arr.length ? arr[arr.length - 1].ext : null;
+                });
                 const ultimosHum = seleccionados.map(g => {
                     const arr = filtrados.filter(r => r.galpon === g && r.hum !== null);
                     return arr.length ? arr[arr.length - 1].hum : null;
@@ -932,20 +1028,29 @@
                     type: 'bar',
                     data: {
                         labels,
-                        datasets: [{
-                            label: 'Temperatura (°C)',
-                            data: ultimosTemp,
-                            backgroundColor: ultimosTemp.map(v => {
-                                if (v === null) return '#8E8E93';
-                                if (v >= UMBRAL_TEMP_CRIT) return '#FF453A';
-                                if (v > UMBRAL_TEMP_PREV) return '#FF9F0A';
-                                return '#30D158';
-                            }),
-                            borderRadius: 6,
-                            maxBarThickness: 26
-                        }]
+                        datasets: [
+                            {
+                                label: 'Interior (°C)',
+                                data: ultimosTemp,
+                                backgroundColor: ultimosTemp.map(v => {
+                                    if (v === null) return '#8E8E93';
+                                    if (v >= UMBRAL_TEMP_CRIT) return '#FF453A';
+                                    if (v > UMBRAL_TEMP_PREV) return '#FF9F0A';
+                                    return '#30D158';
+                                }),
+                                borderRadius: 6,
+                                maxBarThickness: 22
+                            },
+                            {
+                                label: 'Exterior (°C)',
+                                data: ultimosExt,
+                                backgroundColor: 'rgba(142, 142, 147, 0.35)',
+                                borderRadius: 6,
+                                maxBarThickness: 16
+                            }
+                        ]
                     },
-                    options: getChartBaseOptions(20, 31, seleccionados, false),
+                    options: getChartBaseOptions(18, 32, seleccionados, true),
                     plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
                 });
 
@@ -963,7 +1068,7 @@
                                 return '#0A84FF';
                             }),
                             borderRadius: 6,
-                            maxBarThickness: 26
+                            maxBarThickness: 24
                         }]
                     },
                     options: getChartBaseOptions(50, 95, seleccionados, false),
@@ -972,15 +1077,25 @@
                 return;
             }
 
+            // Agrupar marcas de tiempo al minuto (YYYY-MM-DD HH:MM) para evitar huecos por desfase de segundos
             const tiemposSet = new Set();
-            filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora}`));
+            filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora.slice(0, 5)}`));
             const rawLabels = Array.from(tiemposSet).sort();
             const labels = formatearEjeTiempo(rawLabels);
+
+            // Serie promedio de temperatura exterior por marca de tiempo
+            const serieExterior = rawLabels.map(t => {
+                const vals = filtrados
+                    .filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r.ext !== null)
+                    .map(r => r.ext);
+                if (!vals.length) return null;
+                return Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1));
+            });
 
             if (tipoGraficoActual === 'banda') {
                 const calcStats = campo => rawLabels.map(t => {
                     const vals = filtrados
-                        .filter(r => `${r.fecha} ${r.hora}` === t && r[campo] !== null)
+                        .filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r[campo] !== null)
                         .map(r => r[campo]);
                     if (!vals.length) return { min: null, avg: null, max: null };
                     const sum = vals.reduce((a, b) => a + b, 0);
@@ -1000,39 +1115,54 @@
                         labels,
                         datasets: [
                             {
-                                label: 'Máximo',
+                                label: 'Máximo Interior',
                                 data: statsT.map(s => s.max),
-                                borderColor: 'rgba(255, 69, 58, 0.5)',
+                                borderColor: 'rgba(255, 69, 58, 0.55)',
                                 backgroundColor: 'rgba(255, 159, 10, 0.14)',
                                 borderWidth: 1.2,
                                 borderDash: [3, 3],
                                 fill: '+2',
                                 tension: 0.35,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                spanGaps: true
                             },
                             {
-                                label: 'Promedio Grupo',
+                                label: 'Promedio Interior',
                                 data: statsT.map(s => s.avg),
                                 borderColor: '#FF9F0A',
                                 backgroundColor: '#FF9F0A',
                                 borderWidth: 2.5,
                                 tension: 0.35,
                                 pointRadius: 0,
-                                pointHoverRadius: 5
+                                pointHoverRadius: 5,
+                                spanGaps: true
                             },
                             {
-                                label: 'Mínimo',
+                                label: 'Mínimo Interior',
                                 data: statsT.map(s => s.min),
-                                borderColor: 'rgba(48, 209, 88, 0.5)',
+                                borderColor: 'rgba(48, 209, 88, 0.55)',
                                 borderWidth: 1.2,
                                 borderDash: [3, 3],
                                 fill: false,
                                 tension: 0.35,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                spanGaps: true
+                            },
+                            {
+                                label: 'Exterior Ref.',
+                                data: serieExterior,
+                                borderColor: '#8E8E93',
+                                backgroundColor: '#8E8E93',
+                                borderWidth: 1.8,
+                                borderDash: [5, 4],
+                                tension: 0.35,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                spanGaps: true
                             }
                         ]
                     },
-                    options: getChartBaseOptions(21, 31, rawLabels, true),
+                    options: getChartBaseOptions(18, 32, rawLabels, true),
                     plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
                 });
 
@@ -1050,7 +1180,8 @@
                                 borderDash: [3, 3],
                                 fill: '+2',
                                 tension: 0.35,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                spanGaps: true
                             },
                             {
                                 label: 'Promedio Grupo',
@@ -1060,7 +1191,8 @@
                                 borderWidth: 2.5,
                                 tension: 0.35,
                                 pointRadius: 0,
-                                pointHoverRadius: 5
+                                pointHoverRadius: 5,
+                                spanGaps: true
                             },
                             {
                                 label: 'Mínimo',
@@ -1070,7 +1202,8 @@
                                 borderDash: [3, 3],
                                 fill: false,
                                 tension: 0.35,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                spanGaps: true
                             }
                         ]
                     },
@@ -1080,8 +1213,21 @@
                 return;
             }
 
-            // Modo 'lineas'
-            const datasetsTemp = [];
+            // Modo 'lineas' con referencia Exterior
+            const datasetsTemp = [
+                {
+                    label: 'Exterior',
+                    data: serieExterior,
+                    borderColor: '#8E8E93',
+                    backgroundColor: '#8E8E93',
+                    borderWidth: 1.8,
+                    borderDash: [5, 4],
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    spanGaps: true
+                }
+            ];
             const datasetsHum = [];
 
             seleccionados.forEach((g, idx) => {
@@ -1100,7 +1246,7 @@
                 datasetsTemp.push({
                     ...estilo,
                     data: rawLabels.map(t => {
-                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
+                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora.slice(0, 5)}` === t);
                         return f ? f.temp : null;
                     })
                 });
@@ -1108,7 +1254,7 @@
                 datasetsHum.push({
                     ...estilo,
                     data: rawLabels.map(t => {
-                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora}` === t);
+                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora.slice(0, 5)}` === t);
                         return f ? f.hum : null;
                     })
                 });
@@ -1117,7 +1263,7 @@
             chartTempInstance = new Chart(ctxTemp, {
                 type: 'line',
                 data: { labels, datasets: datasetsTemp },
-                options: getChartBaseOptions(22, 31, rawLabels, true),
+                options: getChartBaseOptions(18, 32, rawLabels, true),
                 plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
             });
 
@@ -1129,8 +1275,9 @@
             });
         }
 
-        // --- LÓGICA DEL MODAL INDIVIDUAL ---
+        // --- MODAL INDIVIDUAL ---
         function abrirModalGalpon(galpon) {
+            if (!galponesConDatos.has(galpon)) return;
             galponModalActual = galpon;
             renderizarContenidoModal(galpon);
             const modal = document.getElementById('modal-galpon');
@@ -1152,10 +1299,11 @@
         }
 
         function navegarModal(delta) {
-            if (!galponModalActual || !todosGalponesDisponibles.length) return;
-            const idx = todosGalponesDisponibles.indexOf(galponModalActual);
-            const nuevoIdx = (idx + delta + todosGalponesDisponibles.length) % todosGalponesDisponibles.length;
-            abrirModalGalpon(todosGalponesDisponibles[nuevoIdx]);
+            const activosList = CATALOGO_GALPONES.filter(g => galponesConDatos.has(g));
+            if (!galponModalActual || !activosList.length) return;
+            const idx = activosList.indexOf(galponModalActual);
+            const nuevoIdx = (idx + delta + activosList.length) % activosList.length;
+            abrirModalGalpon(activosList[nuevoIdx]);
         }
 
         function renderizarContenidoModal(galpon) {
@@ -1203,7 +1351,7 @@
                 tbody.appendChild(tr);
             });
 
-            const rawLabels = regs.map(r => `${r.fecha} ${r.hora}`);
+            const rawLabels = regs.map(r => `${r.fecha} ${r.hora.slice(0, 5)}`);
             const labels = formatearEjeTiempo(rawLabels);
             const ctx = document.getElementById('chartModalDetalle').getContext('2d');
             if (chartModalInstance) chartModalInstance.destroy();
@@ -1250,7 +1398,7 @@
                         }
                     ]
                 },
-                options: getChartBaseOptions(20, 34, rawLabels, true),
+                options: getChartBaseOptions(18, 34, rawLabels, true),
                 plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
             });
         }
