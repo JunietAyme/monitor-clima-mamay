@@ -87,7 +87,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 class="text-sm sm:text-[15px] font-semibold tracking-tight leading-tight truncate">Inversiones Mamay</h1>
-                    <p class="text-[11px] text-apple-grayText leading-tight truncate">Telemetría · 15 Galpones</p>
+                    <p id="lbl-subtitulo-header" class="text-[11px] text-apple-grayText leading-tight truncate">Telemetría · 15 Galpones</p>
                 </div>
             </div>
 
@@ -103,9 +103,9 @@
                     <svg class="w-3.5 h-3.5 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                 </button>
 
-                <button onclick="cargarDatos()" title="Actualizar datos"
+                <button onclick="recargarDatosEnVivo()" id="btn-actualizar" title="Actualizar datos en vivo"
                     class="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-zinc-900 dark:bg-white/[0.1] text-white dark:text-zinc-100 hover:opacity-90 text-xs font-medium transition active:scale-95">
-                    <svg class="w-3.5 h-3.5 text-apple-orange" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <svg id="icono-actualizar" class="w-3.5 h-3.5 text-apple-orange transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
                     </svg>
                     <span class="hidden sm:inline">Actualizar</span>
@@ -119,13 +119,13 @@
 
         <!-- Panel de Filtros Compacto -->
         <section class="reveal apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-3.5 sm:p-5 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-3.5 border-b border-black/[0.05] dark:border-white/[0.06]">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 pb-3.5 border-b border-black/[0.05] dark:border-white/[0.06]">
                 
                 <!-- Segmented Control Zonas -->
-                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-black/70 border border-black/[0.03] dark:border-white/[0.05] w-full md:w-auto md:min-w-[310px]">
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-black/70 border border-black/[0.03] dark:border-white/[0.05] w-full lg:w-auto lg:min-w-[320px]">
                     <button type="button" onclick="aplicarPreset('todos')" id="btn-preset-todos"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
-                        Todas <span class="text-[10px] opacity-70">(15)</span>
+                        Todas <span id="lbl-count-todas" class="text-[10px] opacity-70">(15)</span>
                     </button>
                     <button type="button" onclick="aplicarPreset('Arias')" id="btn-preset-Arias"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
@@ -133,16 +133,26 @@
                     </button>
                     <button type="button" onclick="aplicarPreset('Castillo')" id="btn-preset-Castillo"
                         class="preset-btn py-1.5 px-2.5 rounded-[9px] text-xs font-medium transition-all text-center text-apple-grayText">
-                        Castillo <span class="text-[10px] opacity-70">10–15</span>
+                        Castillo <span id="lbl-rango-castillo" class="text-[10px] opacity-70">10–15</span>
                     </button>
                 </div>
 
-                <!-- Período + Limpiar -->
-                <div class="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto">
-                    <div class="relative flex-1 md:flex-initial md:min-w-[175px]">
-                        <select id="filtro-mes" onchange="aplicarFiltros()" aria-label="Seleccionar período"
-                            class="w-full appearance-none bg-black/[0.04] dark:bg-apple-darkElevated border border-black/[0.04] dark:border-white/[0.06] rounded-xl pl-3.5 pr-8 py-1.5 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
-                            <option value="todos">Todo el historial</option>
+                <!-- Mes + Día + Limpiar -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-2 w-full lg:w-auto">
+                    <div class="relative flex-1 sm:flex-initial sm:min-w-[145px]">
+                        <select id="filtro-mes" onchange="alCambiarMes()" aria-label="Seleccionar mes"
+                            class="w-full appearance-none bg-black/[0.04] dark:bg-apple-darkElevated border border-black/[0.04] dark:border-white/[0.06] rounded-xl pl-3 pr-7 py-1.5 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
+                            <option value="todos">Todos los meses</option>
+                        </select>
+                        <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-apple-grayText" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                        </svg>
+                    </div>
+
+                    <div class="relative flex-1 sm:flex-initial sm:min-w-[145px]">
+                        <select id="filtro-dia" onchange="aplicarFiltros()" aria-label="Seleccionar día"
+                            class="w-full appearance-none bg-black/[0.04] dark:bg-apple-darkElevated border border-black/[0.04] dark:border-white/[0.06] rounded-xl pl-3 pr-7 py-1.5 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-apple-orange outline-none cursor-pointer">
+                            <option value="todos">Todos los días</option>
                         </select>
                         <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-apple-grayText" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
@@ -159,7 +169,7 @@
             <!-- Matriz de Galpones (Filtro multi-selección) -->
             <div class="pt-3">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-medium text-apple-grayText">Filtrar galpones en vista</span>
+                    <span class="text-[11px] font-medium text-apple-grayText">Filtrar galpones en vista (selecciona 1, 2 o más para comparar)</span>
                     <span id="hint-modo" class="text-[11px] font-semibold text-apple-orangeLight dark:text-apple-orange tabular-nums">15 activos</span>
                 </div>
                 <div id="selector-galpones" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-15 gap-1.5"></div>
@@ -174,7 +184,7 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
                 </div>
                 <div id="kpi-total" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Registros filtrados</p>
+                <p id="kpi-sub-periodo" class="text-[11px] text-apple-grayText mt-1">Registros filtrados</p>
             </div>
 
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
@@ -183,7 +193,7 @@
                     <span class="w-2 h-2 rounded-full bg-apple-orange"></span>
                 </div>
                 <div id="kpi-temp-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0.0°</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Máx. <span class="text-zinc-900 dark:text-zinc-200 font-medium">26.0°C</span></p>
+                <p class="text-[11px] text-apple-grayText mt-1">Prev. <span class="text-amber-500 font-medium">23°</span> · Crít. <span class="text-rose-500 font-medium">26°</span></p>
             </div>
 
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
@@ -192,30 +202,34 @@
                     <span class="w-2 h-2 rounded-full bg-apple-blue"></span>
                 </div>
                 <div id="kpi-hum-prom" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums">0%</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Máx. <span class="text-zinc-900 dark:text-zinc-200 font-medium">85%</span></p>
+                <p class="text-[11px] text-apple-grayText mt-1">Prev. <span class="text-amber-500 font-medium">75%</span> · Crít. <span class="text-rose-500 font-medium">85%</span></p>
             </div>
 
             <div class="apple-card rounded-[22px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Alertas</span>
+                    <span class="text-[11px] sm:text-xs font-medium text-apple-grayText">Eventos Alerta</span>
                     <span class="w-2 h-2 rounded-full bg-apple-red"></span>
                 </div>
-                <div id="kpi-alertas" class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1.5 tabular-nums text-apple-red">0</div>
-                <p class="text-[11px] text-apple-grayText mt-1">Fuera de umbral</p>
+                <div class="flex items-baseline gap-2 mt-1.5">
+                    <span id="kpi-alertas" class="text-2xl sm:text-3xl font-semibold tracking-tight tabular-nums text-apple-red">0</span>
+                    <span id="kpi-preventivos" class="text-xs font-semibold tabular-nums text-apple-orange">0 prev.</span>
+                </div>
+                <p class="text-[11px] text-apple-grayText mt-1">Críticos y preventivos</p>
             </div>
         </section>
 
-        <!-- Vista Resumida por Galpón (Tocar abre el Modal de Detalle) -->
+        <!-- Vista Resumida por Galpón con Semáforo de 3 Niveles -->
         <section class="reveal apple-card rounded-[24px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.05] dark:border-white/[0.08] p-4 sm:p-6">
-            <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                 <div>
-                    <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Estado Actual por Galpón</h3>
-                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Toca cualquier galpón para abrir su historial completo</p>
+                    <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Estado por Galpón</h3>
+                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura del período filtrado · Toca un galpón para abrir su detalle</p>
                 </div>
-                <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-apple-grayText">
-                    <span class="w-2 h-2 rounded-full bg-apple-green"></span> Óptimo
-                    <span class="w-2 h-2 rounded-full bg-apple-red ml-2"></span> Crítico
-                </span>
+                <div class="inline-flex items-center gap-3 text-[11px] text-apple-grayText">
+                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-green"></span> Óptimo</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-orange"></span> Preventivo</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-apple-red"></span> Crítico</span>
+                </div>
             </div>
 
             <div id="grid-resumen-galpones" class="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-2.5">
@@ -223,16 +237,15 @@
             </div>
         </section>
 
-        <!-- Sección de Gráficos con Selector de Tipo -->
+        <!-- Sección de Gráficos con Selector Manual -->
         <section class="reveal space-y-4">
-            <!-- Barra de control del tipo de gráfico -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-1">
                 <div>
                     <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Análisis Visual</h3>
                     <p id="subtitulo-tipo-grafico" class="text-[11px] sm:text-xs text-apple-grayText">Comparativa clara por galpón sin líneas cruzadas</p>
                 </div>
 
-                <!-- Segmented Control Tipo de Gráfico -->
+                <!-- Segmented Control Tipo de Gráfico (Manual) -->
                 <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/[0.05] dark:bg-apple-darkCard border border-black/[0.04] dark:border-white/[0.08] w-full sm:w-auto sm:min-w-[320px]">
                     <button type="button" onclick="cambiarTipoGrafico('barras')" id="btn-chart-barras"
                         class="chart-type-btn py-1.5 px-3 rounded-[9px] text-xs font-semibold transition-all text-center">
@@ -256,7 +269,7 @@
                             <h4 class="text-sm sm:text-[15px] font-semibold tracking-tight">Temperatura Interior</h4>
                             <p id="desc-chart-temp" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura por galpón (°C)</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Límite 26°C</span>
+                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Prev. 23° · Crít. 26°</span>
                     </div>
                     <div class="h-60 sm:h-72 relative">
                         <canvas id="chartTemp"></canvas>
@@ -269,7 +282,7 @@
                             <h4 class="text-sm sm:text-[15px] font-semibold tracking-tight">Humedad Relativa</h4>
                             <p id="desc-chart-hum" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura por galpón (%)</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Límite 85%</span>
+                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Prev. 75% · Crít. 85%</span>
                     </div>
                     <div class="h-60 sm:h-72 relative">
                         <canvas id="chartHum"></canvas>
@@ -283,7 +296,7 @@
             <div class="px-4 sm:px-6 py-4 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
                 <div>
                     <h3 class="text-sm sm:text-[15px] font-semibold tracking-tight">Registro Cronológico</h3>
-                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Últimas 60 lecturas · Toca una fila para abrir detalle</p>
+                    <p class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Últimas 60 lecturas del filtro · Toca una fila para abrir detalle</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -315,12 +328,10 @@
     <div id="modal-galpon" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4" onclick="cerrarModalSiFondo(event)">
         <div class="modal-animate w-full max-w-2xl rounded-t-[28px] sm:rounded-[28px] bg-apple-lightCard dark:bg-apple-darkCard border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
             
-            <!-- Indicador táctil superior en móvil -->
             <div class="sm:hidden flex justify-center pt-2.5 pb-1">
                 <div class="w-10 h-1 rounded-full bg-zinc-400/40"></div>
             </div>
 
-            <!-- Cabecera del Modal con navegación entre galpones -->
             <div class="px-5 py-4 border-b border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="navegarModal(-1)" aria-label="Galpón anterior"
@@ -346,9 +357,7 @@
                 </button>
             </div>
 
-            <!-- Cuerpo desplazable del Modal -->
             <div class="p-5 overflow-y-auto space-y-5">
-                <!-- 4 Métricas del Galpón -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] p-3.5">
                         <span class="text-[11px] text-apple-grayText">Interior</span>
@@ -368,25 +377,23 @@
                     </div>
                 </div>
 
-                <!-- Gráfico Detallado del Galpón -->
                 <div class="rounded-2xl bg-black/[0.02] dark:bg-black/40 border border-black/[0.05] dark:border-white/[0.06] p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-semibold">Perfil Térmico (Interior · Sensación · Exterior)</span>
-                        <span class="text-[10px] font-semibold text-rose-500">Máx. 26°C</span>
+                        <span class="text-[10px] font-semibold text-rose-500">Prev. 23° · Crít. 26°</span>
                     </div>
                     <div class="h-56 relative">
                         <canvas id="chartModalDetalle"></canvas>
                     </div>
                 </div>
 
-                <!-- Últimos 10 registros del galpón -->
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-apple-grayText mb-2">Últimas 10 lecturas del galpón</h4>
                     <div class="rounded-2xl border border-black/[0.05] dark:border-white/[0.07] overflow-hidden">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-black/[0.03] dark:bg-white/[0.04] text-[10px] uppercase text-apple-grayText">
-                                    <th class="py-2 px-3">Hora</th>
+                                    <th class="py-2 px-3">Fecha / Hora</th>
                                     <th class="py-2 px-3 text-right">Int.</th>
                                     <th class="py-2 px-3 text-right">Sens.</th>
                                     <th class="py-2 px-3 text-right">Ext.</th>
@@ -404,13 +411,19 @@
 
     <script src="datos_clima.js"></script>
     <script>
+        const UMBRAL_TEMP_PREV = 23.0;
+        const UMBRAL_TEMP_CRIT = 26.0;
+        const UMBRAL_HUM_PREV = 75.0;
+        const UMBRAL_HUM_CRIT = 85.0;
+
         let chartTempInstance = null;
         let chartHumInstance = null;
         let chartModalInstance = null;
         let todosGalponesDisponibles = [];
         let galponesActivos = new Set();
-        let tipoGraficoActual = 'barras'; // 'barras' | 'banda' | 'lineas'
+        let tipoGraficoActual = 'barras';
         let galponModalActual = null;
+        let paramsUrlAplicados = false;
 
         const applePalette = [
             '#FF9F0A', '#0A84FF', '#30D158', '#BF5AF2', '#FF375F',
@@ -424,6 +437,19 @@
 
         function obtenerNumGalpon(g) {
             return parseInt(g.replace(/\D/g, ''), 10) || 0;
+        }
+
+        function clasificarNivel(temp, hum) {
+            const critico = (temp !== null && temp >= UMBRAL_TEMP_CRIT) || (hum !== null && hum >= UMBRAL_HUM_CRIT);
+            if (critico) return 'critico';
+            const preventivo = (temp !== null && temp > UMBRAL_TEMP_PREV) || (hum !== null && hum > UMBRAL_HUM_PREV);
+            if (preventivo) return 'preventivo';
+            return 'normal';
+        }
+
+        function formatearFechaCorta(fechaIso) {
+            const p = fechaIso.split('-');
+            return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : fechaIso;
         }
 
         function formatearEjeTiempo(labels) {
@@ -442,6 +468,27 @@
             document.documentElement.classList.toggle('dark');
             aplicarFiltros();
             if (galponModalActual) renderizarContenidoModal(galponModalActual);
+        }
+
+        function recargarDatosEnVivo() {
+            const icono = document.getElementById('icono-actualizar');
+            if (icono) icono.classList.add('rotate-180');
+
+            const scriptPrev = document.getElementById('script-datos-vivo');
+            if (scriptPrev) scriptPrev.remove();
+
+            const script = document.createElement('script');
+            script.id = 'script-datos-vivo';
+            script.src = `datos_clima.js?t=${Date.now()}`;
+            script.onload = () => {
+                cargarDatos();
+                setTimeout(() => { if (icono) icono.classList.remove('rotate-180'); }, 350);
+            };
+            script.onerror = () => {
+                cargarDatos();
+                setTimeout(() => { if (icono) icono.classList.remove('rotate-180'); }, 350);
+            };
+            document.body.appendChild(script);
         }
 
         function cambiarTipoGrafico(tipo) {
@@ -470,7 +517,7 @@
                     h: 'Promedio y rango Min/Max (%)'
                 },
                 lineas: {
-                    sub: 'Curvas individuales por galpón (ideal para 2–4 galpones)',
+                    sub: 'Curvas individuales por galpón (ideal para 2–4 galpones o evolución diaria)',
                     t: 'Evolución individual por galpón (°C)',
                     h: 'Evolución individual por galpón (%)'
                 }
@@ -487,11 +534,15 @@
             const total = todosGalponesDisponibles.length;
             const activosArr = Array.from(galponesActivos);
             const numsActivos = activosArr.map(obtenerNumGalpon);
+            const totalCastillo = todosGalponesDisponibles.filter(g => {
+                const n = obtenerNumGalpon(g);
+                return n >= 10 && n <= 17;
+            }).length;
 
             const mapa = {
                 todos: total > 0 && activosArr.length === total,
                 Arias: activosArr.length === 9 && numsActivos.every(n => n >= 1 && n <= 9),
-                Castillo: activosArr.length === 6 && numsActivos.every(n => n >= 10 && n <= 15)
+                Castillo: totalCastillo > 0 && activosArr.length === totalCastillo && numsActivos.every(n => n >= 10 && n <= 17)
             };
 
             Object.keys(mapa).forEach(key => {
@@ -519,10 +570,42 @@
             } else if (tipo === 'Castillo') {
                 todosGalponesDisponibles.forEach(g => {
                     const n = obtenerNumGalpon(g);
-                    if (n >= 10 && n <= 15) galponesActivos.add(g);
+                    if (n >= 10 && n <= 17) galponesActivos.add(g);
                 });
             }
             renderPills();
+            aplicarFiltros();
+        }
+
+        function poblarSelectorDias(mesSeleccionado) {
+            if (!window.REGISTROS_GLOBALES) return;
+            const selectDia = document.getElementById('filtro-dia');
+            const diaPrevio = selectDia.value;
+
+            const diasSet = new Set();
+            window.REGISTROS_GLOBALES.forEach(r => {
+                if (!r.fecha) return;
+                if (mesSeleccionado === 'todos' || r.fecha.startsWith(mesSeleccionado)) {
+                    diasSet.add(r.fecha);
+                }
+            });
+
+            selectDia.innerHTML = '<option value="todos">Todos los días</option>';
+            Array.from(diasSet).sort().reverse().forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = formatearFechaCorta(d);
+                selectDia.appendChild(opt);
+            });
+
+            if (diasSet.has(diaPrevio)) {
+                selectDia.value = diaPrevio;
+            }
+        }
+
+        function alCambiarMes() {
+            const mes = document.getElementById('filtro-mes').value;
+            poblarSelectorDias(mes);
             aplicarFiltros();
         }
 
@@ -550,10 +633,14 @@
             });
 
             todosGalponesDisponibles = Array.from(galponesSet).sort((a, b) => obtenerNumGalpon(a) - obtenerNumGalpon(b));
+            const maxNum = todosGalponesDisponibles.length ? Math.max(...todosGalponesDisponibles.map(obtenerNumGalpon)) : 15;
+            document.getElementById('lbl-subtitulo-header').textContent = `Telemetría · ${todosGalponesDisponibles.length} Galpones`;
+            document.getElementById('lbl-count-todas').textContent = `(${todosGalponesDisponibles.length})`;
+            document.getElementById('lbl-rango-castillo').textContent = `10–${Math.max(15, maxNum)}`;
 
             const selectMes = document.getElementById('filtro-mes');
             const mesPrevio = selectMes.value;
-            selectMes.innerHTML = '<option value="todos">Todo el historial</option>';
+            selectMes.innerHTML = '<option value="todos">Todos los meses</option>';
             Array.from(mesesSet).sort().reverse().forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m;
@@ -562,13 +649,37 @@
             });
             if (mesesSet.has(mesPrevio)) selectMes.value = mesPrevio;
 
+            window.REGISTROS_GLOBALES = registros;
+            poblarSelectorDias(selectMes.value);
+
             if (galponesActivos.size === 0) {
                 todosGalponesDisponibles.forEach(g => galponesActivos.add(g));
             }
 
-            window.REGISTROS_GLOBALES = registros;
+            if (!paramsUrlAplicados) {
+                paramsUrlAplicados = true;
+                const params = new URLSearchParams(window.location.search);
+                const zonaParam = (params.get('zona') || '').toLowerCase();
+                const galponParam = params.get('galpon');
+
+                if (zonaParam === 'arias') {
+                    aplicarPreset('Arias');
+                } else if (zonaParam === 'castillo') {
+                    aplicarPreset('Castillo');
+                }
+
+                if (galponParam) {
+                    const numObj = obtenerNumGalpon(galponParam);
+                    const encontrado = todosGalponesDisponibles.find(g => obtenerNumGalpon(g) === numObj);
+                    if (encontrado) {
+                        setTimeout(() => abrirModalGalpon(encontrado), 150);
+                    }
+                }
+            }
+
             renderPills();
             cambiarTipoGrafico(tipoGraficoActual);
+            if (galponModalActual) renderizarContenidoModal(galponModalActual);
         }
 
         function renderPills() {
@@ -607,13 +718,18 @@
             if (!window.REGISTROS_GLOBALES) return;
             const registros = window.REGISTROS_GLOBALES;
             const mesFiltro = document.getElementById('filtro-mes').value;
+            const diaFiltro = document.getElementById('filtro-dia').value;
             const seleccionados = Array.from(galponesActivos).sort((a, b) => obtenerNumGalpon(a) - obtenerNumGalpon(b));
 
             const filtrados = registros.filter(r => {
                 const coincideMes = (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)));
+                const coincideDia = (diaFiltro === 'todos' || r.fecha === diaFiltro);
                 const coincideGalpon = seleccionados.includes(r.galpon);
-                return coincideMes && coincideGalpon;
+                return coincideMes && coincideDia && coincideGalpon;
             });
+
+            document.getElementById('kpi-sub-periodo').textContent =
+                diaFiltro !== 'todos' ? `Día ${formatearFechaCorta(diaFiltro)}` : 'Registros filtrados';
 
             actualizarKPIsYTabla(filtrados);
             renderizarResumenGalpones(filtrados, seleccionados);
@@ -631,7 +747,14 @@
 
                 const tempVal = ultimo && ultimo.temp !== null ? ultimo.temp : null;
                 const humVal = ultimo && ultimo.hum !== null ? ultimo.hum : null;
-                const enAlerta = (tempVal !== null && tempVal >= 26.0) || (humVal !== null && humVal >= 85.0);
+                const nivel = clasificarNivel(tempVal, humVal);
+
+                const dotClass = nivel === 'critico'
+                    ? 'bg-apple-red'
+                    : (nivel === 'preventivo' ? 'bg-apple-orange' : 'bg-apple-green');
+                const tempColor = tempVal !== null && tempVal >= UMBRAL_TEMP_CRIT
+                    ? 'text-apple-red'
+                    : (tempVal !== null && tempVal > UMBRAL_TEMP_PREV ? 'text-apple-orange' : '');
 
                 const card = document.createElement('button');
                 card.type = 'button';
@@ -641,10 +764,10 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between w-full">
                         <span class="text-xs font-bold tracking-tight">${numCorto}</span>
-                        <span class="w-2 h-2 rounded-full ${enAlerta ? 'bg-apple-red' : 'bg-apple-green'}"></span>
+                        <span class="w-2 h-2 rounded-full ${dotClass}"></span>
                     </div>
                     <div class="mt-2">
-                        <div class="text-sm sm:text-base font-semibold font-mono tabular-nums ${tempVal !== null && tempVal >= 26.0 ? 'text-apple-red' : ''}">
+                        <div class="text-sm sm:text-base font-semibold font-mono tabular-nums ${tempColor}">
                             ${tempVal !== null ? tempVal.toFixed(1) + '°' : '—'}
                         </div>
                         <div class="text-[10px] font-mono text-apple-grayText tabular-nums">
@@ -661,16 +784,20 @@
 
             let sumaTemp = 0, countTemp = 0;
             let sumaHum = 0, countHum = 0;
-            let alertas = 0;
+            let criticos = 0, preventivos = 0;
 
             filtrados.forEach(r => {
-                if (r.temp !== null) { sumaTemp += r.temp; countTemp++; if (r.temp >= 26.0) alertas++; }
-                if (r.hum !== null) { sumaHum += r.hum; countHum++; if (r.hum >= 85.0) alertas++; }
+                if (r.temp !== null) { sumaTemp += r.temp; countTemp++; }
+                if (r.hum !== null) { sumaHum += r.hum; countHum++; }
+                const nivel = clasificarNivel(r.temp, r.hum);
+                if (nivel === 'critico') criticos++;
+                else if (nivel === 'preventivo') preventivos++;
             });
 
             document.getElementById('kpi-temp-prom').textContent = countTemp > 0 ? (sumaTemp / countTemp).toFixed(1) + "°" : "0.0°";
             document.getElementById('kpi-hum-prom').textContent = countHum > 0 ? Math.round(sumaHum / countHum) + "%" : "0%";
-            document.getElementById('kpi-alertas').textContent = alertas;
+            document.getElementById('kpi-alertas').textContent = criticos;
+            document.getElementById('kpi-preventivos').textContent = `${preventivos} prev.`;
 
             const tbody = document.getElementById('tabla-datos');
             tbody.innerHTML = '';
@@ -680,16 +807,20 @@
                 tr.onclick = () => abrirModalGalpon(r.galpon);
                 tr.className = "cursor-pointer hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors";
 
-                const alertaT = r.temp !== null && r.temp >= 26.0;
-                const alertaH = r.hum !== null && r.hum >= 85.0;
+                const claseT = r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT
+                    ? 'text-apple-red font-bold'
+                    : (r.temp !== null && r.temp > UMBRAL_TEMP_PREV ? 'text-apple-orange font-semibold' : '');
+                const claseH = r.hum !== null && r.hum >= UMBRAL_HUM_CRIT
+                    ? 'text-apple-red font-bold'
+                    : (r.hum !== null && r.hum > UMBRAL_HUM_PREV ? 'text-apple-orange font-semibold' : '');
 
                 tr.innerHTML = `
                     <td class="py-3 px-4 sm:px-6 font-mono text-[11px] text-apple-grayText">${r.fecha} · ${r.hora.slice(0, 5)}</td>
                     <td class="py-3 px-3 sm:px-4 text-zinc-600 dark:text-zinc-400">${r.encargado}</td>
                     <td class="py-3 px-3 sm:px-4 font-semibold">${r.galpon}</td>
-                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${alertaT ? 'text-apple-red font-bold' : ''}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
+                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${claseT}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
                     <td class="py-3 px-3 sm:px-4 text-right font-mono text-apple-grayText tabular-nums">${r.ext !== null ? r.ext.toFixed(1) + '°C' : '—'}</td>
-                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${alertaH ? 'text-apple-red font-bold' : ''}">${r.hum !== null ? r.hum + '%' : '—'}</td>
+                    <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${claseH}">${r.hum !== null ? r.hum + '%' : '—'}</td>
                     <td class="py-3 px-4 sm:px-6 text-right font-mono text-apple-grayText tabular-nums">${r.exp !== null ? r.exp.toFixed(1) + '°C' : '—'}</td>
                 `;
                 tbody.appendChild(tr);
@@ -753,23 +884,29 @@
             };
         }
 
-        function crearPluginUmbral(valorLimite) {
+        function crearPluginUmbrales(valorPrev, valorCrit) {
             return {
-                id: 'umbralApple',
+                id: 'umbralesApple',
                 afterDraw(chart) {
                     const { ctx, chartArea: { left, right, top, bottom }, scales: { y } } = chart;
-                    const yPos = y.getPixelForValue(valorLimite);
-                    if (yPos >= top && yPos <= bottom) {
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.moveTo(left, yPos);
-                        ctx.lineTo(right, yPos);
-                        ctx.lineWidth = 1;
-                        ctx.strokeStyle = 'rgba(255, 69, 58, 0.55)';
-                        ctx.setLineDash([4, 4]);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
+                    const lineas = [
+                        { val: valorPrev, color: 'rgba(255, 159, 10, 0.45)' },
+                        { val: valorCrit, color: 'rgba(255, 69, 58, 0.6)' }
+                    ];
+                    lineas.forEach(l => {
+                        const yPos = y.getPixelForValue(l.val);
+                        if (yPos >= top && yPos <= bottom) {
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.moveTo(left, yPos);
+                            ctx.lineTo(right, yPos);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = l.color;
+                            ctx.setLineDash([4, 4]);
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                    });
                 }
             };
         }
@@ -798,13 +935,18 @@
                         datasets: [{
                             label: 'Temperatura (°C)',
                             data: ultimosTemp,
-                            backgroundColor: ultimosTemp.map(v => v !== null && v >= 26.0 ? '#FF453A' : '#FF9F0A'),
+                            backgroundColor: ultimosTemp.map(v => {
+                                if (v === null) return '#8E8E93';
+                                if (v >= UMBRAL_TEMP_CRIT) return '#FF453A';
+                                if (v > UMBRAL_TEMP_PREV) return '#FF9F0A';
+                                return '#30D158';
+                            }),
                             borderRadius: 6,
                             maxBarThickness: 26
                         }]
                     },
                     options: getChartBaseOptions(20, 31, seleccionados, false),
-                    plugins: [crearPluginUmbral(26.0)]
+                    plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
                 });
 
                 chartHumInstance = new Chart(ctxHum, {
@@ -814,13 +956,18 @@
                         datasets: [{
                             label: 'Humedad (%)',
                             data: ultimosHum,
-                            backgroundColor: ultimosHum.map(v => v !== null && v >= 85.0 ? '#FF453A' : '#0A84FF'),
+                            backgroundColor: ultimosHum.map(v => {
+                                if (v === null) return '#8E8E93';
+                                if (v >= UMBRAL_HUM_CRIT) return '#FF453A';
+                                if (v > UMBRAL_HUM_PREV) return '#FF9F0A';
+                                return '#0A84FF';
+                            }),
                             borderRadius: 6,
                             maxBarThickness: 26
                         }]
                     },
                     options: getChartBaseOptions(50, 95, seleccionados, false),
-                    plugins: [crearPluginUmbral(85.0)]
+                    plugins: [crearPluginUmbrales(UMBRAL_HUM_PREV, UMBRAL_HUM_CRIT)]
                 });
                 return;
             }
@@ -886,7 +1033,7 @@
                         ]
                     },
                     options: getChartBaseOptions(21, 31, rawLabels, true),
-                    plugins: [crearPluginUmbral(26.0)]
+                    plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
                 });
 
                 chartHumInstance = new Chart(ctxHum, {
@@ -928,7 +1075,7 @@
                         ]
                     },
                     options: getChartBaseOptions(55, 93, rawLabels, true),
-                    plugins: [crearPluginUmbral(85.0)]
+                    plugins: [crearPluginUmbrales(UMBRAL_HUM_PREV, UMBRAL_HUM_CRIT)]
                 });
                 return;
             }
@@ -971,14 +1118,14 @@
                 type: 'line',
                 data: { labels, datasets: datasetsTemp },
                 options: getChartBaseOptions(22, 31, rawLabels, true),
-                plugins: [crearPluginUmbral(26.0)]
+                plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
             });
 
             chartHumInstance = new Chart(ctxHum, {
                 type: 'line',
                 data: { labels, datasets: datasetsHum },
                 options: getChartBaseOptions(55, 92, rawLabels, true),
-                plugins: [crearPluginUmbral(85.0)]
+                plugins: [crearPluginUmbrales(UMBRAL_HUM_PREV, UMBRAL_HUM_CRIT)]
             });
         }
 
@@ -1014,8 +1161,11 @@
         function renderizarContenidoModal(galpon) {
             if (!window.REGISTROS_GLOBALES) return;
             const mesFiltro = document.getElementById('filtro-mes').value;
+            const diaFiltro = document.getElementById('filtro-dia').value;
             const regs = window.REGISTROS_GLOBALES.filter(r =>
-                r.galpon === galpon && (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)))
+                r.galpon === galpon &&
+                (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro))) &&
+                (diaFiltro === 'todos' || r.fecha === diaFiltro)
             );
 
             const ultimo = regs.length ? regs[regs.length - 1] : null;
@@ -1032,22 +1182,27 @@
             document.getElementById('modal-kpi-ext').textContent = ultimo && ultimo.ext !== null ? `${ultimo.ext.toFixed(1)}°C` : '—';
             document.getElementById('modal-kpi-hum').textContent = ultimo && ultimo.hum !== null ? `${ultimo.hum}%` : '—';
 
-            // Tabla interna del modal
             const tbody = document.getElementById('modal-tabla-body');
             tbody.innerHTML = '';
             regs.slice(-10).reverse().forEach(r => {
                 const tr = document.createElement('tr');
+                const claseT = r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT
+                    ? 'text-apple-red font-bold'
+                    : (r.temp !== null && r.temp > UMBRAL_TEMP_PREV ? 'text-apple-orange font-semibold' : '');
+                const claseH = r.hum !== null && r.hum >= UMBRAL_HUM_CRIT
+                    ? 'text-apple-red font-bold'
+                    : (r.hum !== null && r.hum > UMBRAL_HUM_PREV ? 'text-apple-orange font-semibold' : '');
+
                 tr.innerHTML = `
                     <td class="py-2 px-3 text-apple-grayText">${r.fecha.slice(5)} ${r.hora.slice(0, 5)}</td>
-                    <td class="py-2 px-3 text-right font-semibold ${r.temp !== null && r.temp >= 26.0 ? 'text-apple-red' : ''}">${r.temp !== null ? r.temp.toFixed(1) + '°' : '—'}</td>
+                    <td class="py-2 px-3 text-right font-semibold ${claseT}">${r.temp !== null ? r.temp.toFixed(1) + '°' : '—'}</td>
                     <td class="py-2 px-3 text-right text-apple-blue">${r.exp !== null ? r.exp.toFixed(1) + '°' : '—'}</td>
                     <td class="py-2 px-3 text-right text-apple-grayText">${r.ext !== null ? r.ext.toFixed(1) + '°' : '—'}</td>
-                    <td class="py-2 px-3 text-right ${r.hum !== null && r.hum >= 85.0 ? 'text-apple-red font-bold' : ''}">${r.hum !== null ? r.hum + '%' : '—'}</td>
+                    <td class="py-2 px-3 text-right ${claseH}">${r.hum !== null ? r.hum + '%' : '—'}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Gráfico individual dentro del modal
             const rawLabels = regs.map(r => `${r.fecha} ${r.hora}`);
             const labels = formatearEjeTiempo(rawLabels);
             const ctx = document.getElementById('chartModalDetalle').getContext('2d');
@@ -1096,7 +1251,7 @@
                     ]
                 },
                 options: getChartBaseOptions(20, 34, rawLabels, true),
-                plugins: [crearPluginUmbral(26.0)]
+                plugins: [crearPluginUmbrales(UMBRAL_TEMP_PREV, UMBRAL_TEMP_CRIT)]
             });
         }
 
