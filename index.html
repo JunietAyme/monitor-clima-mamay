@@ -6,6 +6,7 @@
     <title>Inversiones Mamay — Monitor Climático</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -98,6 +99,14 @@
                     class="w-8 h-8 rounded-full bg-black/[0.04] dark:bg-white/[0.07] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] flex items-center justify-center transition active:scale-90">
                     <svg class="w-3.5 h-3.5 hidden dark:block text-apple-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                     <svg class="w-3.5 h-3.5 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+
+                <button onclick="exportarExcelDashboard()" id="btn-exportar-excel" title="Descargar reporte ejecutivo en Excel (.xlsx)"
+                    class="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition active:scale-95 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                    </svg>
+                    <span>Excel</span>
                 </button>
 
                 <button onclick="recargarDatosEnVivo()" id="btn-actualizar" title="Actualizar datos en vivo"
@@ -1403,6 +1412,526 @@
             });
         }
 
+        async function exportarExcelDashboard() {
+            if (typeof ExcelJS === 'undefined') {
+                alert('El motor de Excel aún está cargando. Intenta nuevamente en 2 segundos.');
+                return;
+            }
+            if (!window.REGISTROS_GLOBALES || !window.REGISTROS_GLOBALES.length) {
+                alert('No hay datos cargados para exportar.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-exportar-excel');
+            const textoOriginal = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>Generando...</span>';
+            }
+
+            try {
+                const mesFiltro = document.getElementById('filtro-mes').value;
+                const diaFiltro = document.getElementById('filtro-dia').value;
+                const seleccionadosTodos = CATALOGO_GALPONES.filter(g => galponesActivos.has(g));
+                const seleccionadosConectados = seleccionadosTodos.filter(g => galponesConDatos.has(g));
+
+                const filtrados = window.REGISTROS_GLOBALES.filter(r => {
+                    const coincideMes = (mesFiltro === 'todos' || (r.fecha && r.fecha.startsWith(mesFiltro)));
+                    const coincideDia = (diaFiltro === 'todos' || r.fecha === diaFiltro);
+                    const coincideGalpon = seleccionadosConectados.includes(r.galpon);
+                    return coincideMes && coincideDia && coincideGalpon;
+                });
+
+                if (!filtrados.length) {
+                    alert('No hay registros en el filtro actual para exportar.');
+                    return;
+                }
+
+                const wb = new ExcelJS.Workbook();
+                wb.creator = 'Inversiones Mamay E.I.R.L. - Sistema Telemetría';
+                wb.created = new Date();
+
+                const C_SLATE_DARK = 'FF0F172A';
+                const C_ORANGE = 'FFEA580C';
+                const C_ZEBRA = 'FFF8FAFC';
+                const C_BORDER = 'FFE2E8F0';
+                const C_GREEN_BG = 'FFDCFCE7';
+                const C_GREEN_TXT = 'FF166534';
+                const C_AMBER_BG = 'FFFEF3C7';
+                const C_AMBER_TXT = 'FF92400E';
+                const C_RED_BG = 'FFFEE2E2';
+                const C_RED_TXT = 'FF991B1B';
+                const C_GRAY_BG = 'FFF1F5F9';
+                const C_GRAY_TXT = 'FF475569';
+
+                const bordeFino = {
+                    top: { style: 'thin', color: { argb: C_BORDER } },
+                    left: { style: 'thin', color: { argb: C_BORDER } },
+                    bottom: { style: 'thin', color: { argb: C_BORDER } },
+                    right: { style: 'thin', color: { argb: C_BORDER } }
+                };
+
+                const aplicarBanner = (ws, titulo, subtitulo, numCols) => {
+                    ws.mergeCells(1, 1, 1, numCols);
+                    const c1 = ws.getCell(1, 1);
+                    c1.value = `INVERSIONES MAMAY E.I.R.L. — ${titulo}`;
+                    c1.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+                    c1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_SLATE_DARK } };
+                    c1.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+                    ws.getRow(1).height = 28;
+
+                    ws.mergeCells(2, 1, 2, numCols);
+                    const c2 = ws.getCell(2, 1);
+                    c2.value = subtitulo;
+                    c2.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: C_GRAY_TXT } };
+                    c2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_GRAY_BG } };
+                    c2.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+                    ws.getRow(2).height = 20;
+                };
+
+                const estilizarHeaderTabla = (ws, filaIdx, headers) => {
+                    const row = ws.getRow(filaIdx);
+                    row.height = 24;
+                    headers.forEach((h, i) => {
+                        const cell = row.getCell(i + 1);
+                        cell.value = h;
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_ORANGE } };
+                        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                        cell.border = bordeFino;
+                    });
+                };
+
+                const aplicarBadgeEstado = (cell, nivel) => {
+                    if (nivel === 'critico') {
+                        cell.value = 'CRÍTICO';
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                    } else if (nivel === 'preventivo') {
+                        cell.value = 'PREVENTIVO';
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                    } else if (nivel === 'sin_enlace') {
+                        cell.value = 'SIN ENLACE BFN';
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_GRAY_BG } };
+                        cell.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: C_GRAY_TXT } };
+                    } else {
+                        cell.value = 'ÓPTIMO';
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_GREEN_BG } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_GREEN_TXT } };
+                    }
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                };
+
+                const etiquetaPeriodo = diaFiltro !== 'todos'
+                    ? `Jornada ${formatearFechaCorta(diaFiltro)}`
+                    : (mesFiltro !== 'todos' ? `Período ${mesFiltro}` : 'Historial Completo');
+                const subInfo = `${etiquetaPeriodo} | Galpones filtrados: ${seleccionadosConectados.length} activos | Generado: ${new Date().toLocaleString('es-PE')}`;
+
+                // HOJA 1: RESUMEN EJECUTIVO
+                const wsExec = wb.addWorksheet('Resumen Ejecutivo', { views: [{ showGridLines: true }] });
+                aplicarBanner(wsExec, 'REPORTE EJECUTIVO DE MONITOREO CLIMÁTICO', subInfo, 10);
+
+                const tempsAll = filtrados.map(r => r.temp).filter(v => v !== null);
+                const humsAll = filtrados.map(r => r.hum).filter(v => v !== null);
+                const extsAll = filtrados.map(r => r.ext).filter(v => v !== null);
+                const expsAll = filtrados.map(r => r.exp).filter(v => v !== null);
+
+                let cntCrit = 0, cntPrev = 0;
+                filtrados.forEach(r => {
+                    const nv = clasificarNivel(r.temp, r.hum);
+                    if (nv === 'critico') cntCrit++;
+                    else if (nv === 'preventivo') cntPrev++;
+                });
+
+                const avg = arr => arr.length ? Number((arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1)) : null;
+
+                estilizarHeaderTabla(wsExec, 4, [
+                    'Total Lecturas', 'Temp. Promedio', 'Temp. Mínima', 'Temp. Máxima',
+                    'Exterior Prom.', 'Sensación Máx.', 'Humedad Prom.', 'Humedad Máx.',
+                    'Eventos Preventivos', 'Eventos Críticos'
+                ]);
+
+                const rKpi = wsExec.getRow(5);
+                rKpi.height = 24;
+                const valsKpi = [
+                    filtrados.length,
+                    avg(tempsAll),
+                    tempsAll.length ? Math.min(...tempsAll) : null,
+                    tempsAll.length ? Math.max(...tempsAll) : null,
+                    avg(extsAll),
+                    expsAll.length ? Math.max(...expsAll) : null,
+                    humsAll.length ? Math.round(avg(humsAll)) : null,
+                    humsAll.length ? Math.round(Math.max(...humsAll)) : null,
+                    cntPrev,
+                    cntCrit
+                ];
+                valsKpi.forEach((v, idx) => {
+                    const c = rKpi.getCell(idx + 1);
+                    c.value = v !== null ? v : '—';
+                    c.font = { name: 'Calibri', size: 11, bold: true, color: { argb: C_SLATE_DARK } };
+                    c.alignment = { vertical: 'middle', horizontal: 'center' };
+                    c.border = bordeFino;
+                    if ([1, 2, 3, 4, 5].includes(idx) && typeof v === 'number') c.numFmt = '0.0 "°C"';
+                    if ([6, 7].includes(idx) && typeof v === 'number') c.numFmt = '0 "%"';
+                    if (idx === 8 && v > 0) {
+                        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                        c.font = { name: 'Calibri', size: 11, bold: true, color: { argb: C_AMBER_TXT } };
+                    }
+                    if (idx === 9 && v > 0) {
+                        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                        c.font = { name: 'Calibri', size: 11, bold: true, color: { argb: C_RED_TXT } };
+                    }
+                });
+
+                wsExec.mergeCells(7, 1, 7, 10);
+                const lblZona = wsExec.getCell(7, 1);
+                lblZona.value = 'COMPARATIVA POR ZONA OPERATIVA';
+                lblZona.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
+                wsExec.getRow(7).height = 22;
+
+                estilizarHeaderTabla(wsExec, 8, [
+                    'Zona / Encargado', 'Rango Galpones', 'Galpones Activos', 'Lecturas',
+                    'Temp. Promedio', 'Temp. Máxima', 'Exterior Prom.', 'Diferencial (Int-Ext)',
+                    'Humedad Promedio', 'Alertas (Prev + Crít)'
+                ]);
+
+                ['Arias', 'Castillo'].forEach((zona, zIdx) => {
+                    const regsZ = filtrados.filter(r => r.encargado === zona);
+                    const tZ = regsZ.map(r => r.temp).filter(v => v !== null);
+                    const eZ = regsZ.map(r => r.ext).filter(v => v !== null);
+                    const hZ = regsZ.map(r => r.hum).filter(v => v !== null);
+                    const alertasZ = regsZ.filter(r => clasificarNivel(r.temp, r.hum) !== 'normal').length;
+                    const activosZ = new Set(regsZ.map(r => r.galpon)).size;
+                    const pT = avg(tZ), pE = avg(eZ);
+
+                    const row = wsExec.getRow(9 + zIdx);
+                    row.height = 21;
+                    const datosZ = [
+                        `Zona ${zona}`,
+                        zona === 'Arias' ? 'G01 – G09' : 'G10 – G17 (16-17 pend.)',
+                        activosZ,
+                        regsZ.length,
+                        pT,
+                        tZ.length ? Math.max(...tZ) : null,
+                        pE,
+                        (pT !== null && pE !== null) ? Number((pT - pE).toFixed(1)) : null,
+                        hZ.length ? Math.round(avg(hZ)) : null,
+                        alertasZ
+                    ];
+                    datosZ.forEach((val, cIdx) => {
+                        const cell = row.getCell(cIdx + 1);
+                        cell.value = val !== null ? val : '—';
+                        cell.font = { name: 'Calibri', size: 10, bold: cIdx === 0, color: { argb: C_SLATE_DARK } };
+                        cell.alignment = { vertical: 'middle', horizontal: cIdx <= 1 ? 'left' : 'center', indent: cIdx <= 1 ? 1 : 0 };
+                        cell.border = bordeFino;
+                        if ([4, 5, 6, 7].includes(cIdx) && typeof val === 'number') cell.numFmt = cIdx === 7 ? '+0.0;-0.0;0.0' : '0.0';
+                        if (cIdx === 8 && typeof val === 'number') cell.numFmt = '0 "%"';
+                    });
+                });
+
+                wsExec.mergeCells(12, 1, 12, 10);
+                const lblGalp = wsExec.getCell(12, 1);
+                lblGalp.value = 'ESTADO Y CONSOLIDADO POR GALPÓN (01 AL 17)';
+                lblGalp.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
+                wsExec.getRow(12).height = 22;
+
+                estilizarHeaderTabla(wsExec, 13, [
+                    'Galpón', 'Zona', 'Estado Actual', 'Última Temp. (°C)', 'Temp. Mín. (°C)',
+                    'Temp. Prom. (°C)', 'Temp. Máx. (°C)', 'Última Humedad (%)', 'Humedad Máx. (%)', 'Lecturas'
+                ]);
+
+                CATALOGO_GALPONES.forEach((g, idx) => {
+                    const row = wsExec.getRow(14 + idx);
+                    row.height = 20;
+                    const num = obtenerNumGalpon(g);
+                    const zona = num <= 9 ? 'Arias' : 'Castillo';
+                    const conectado = galponesConDatos.has(g);
+                    const regsG = filtrados.filter(r => r.galpon === g);
+
+                    if (!conectado) {
+                        const vals = [g, zona, 'SIN ENLACE BFN', '—', '—', '—', '—', '—', '—', 0];
+                        vals.forEach((v, cIdx) => {
+                            const c = row.getCell(cIdx + 1);
+                            c.value = v;
+                            c.border = bordeFino;
+                            c.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: C_GRAY_TXT } };
+                            c.alignment = { vertical: 'middle', horizontal: 'center' };
+                            if (cIdx === 2) aplicarBadgeEstado(c, 'sin_enlace');
+                        });
+                        return;
+                    }
+
+                    const ult = regsG.length ? regsG[regsG.length - 1] : null;
+                    const tG = regsG.map(r => r.temp).filter(v => v !== null);
+                    const hG = regsG.map(r => r.hum).filter(v => v !== null);
+                    const nivelUlt = ult ? clasificarNivel(ult.temp, ult.hum) : 'normal';
+
+                    const vals = [
+                        g,
+                        zona,
+                        '',
+                        ult && ult.temp !== null ? ult.temp : null,
+                        tG.length ? Math.min(...tG) : null,
+                        avg(tG),
+                        tG.length ? Math.max(...tG) : null,
+                        ult && ult.hum !== null ? Math.round(ult.hum) : null,
+                        hG.length ? Math.round(Math.max(...hG)) : null,
+                        regsG.length
+                    ];
+
+                    vals.forEach((v, cIdx) => {
+                        const c = row.getCell(cIdx + 1);
+                        c.value = v !== null ? v : '—';
+                        c.border = bordeFino;
+                        c.font = { name: 'Calibri', size: 10, bold: cIdx === 0, color: { argb: C_SLATE_DARK } };
+                        if (idx % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_ZEBRA } };
+                        c.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        if (cIdx === 2) {
+                            aplicarBadgeEstado(c, nivelUlt);
+                        } else if ([3, 4, 5, 6].includes(cIdx) && typeof v === 'number') {
+                            c.numFmt = '0.0';
+                            if (v >= UMBRAL_TEMP_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (v > UMBRAL_TEMP_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        } else if ([7, 8].includes(cIdx) && typeof v === 'number') {
+                            c.numFmt = '0';
+                            if (v >= UMBRAL_HUM_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (v > UMBRAL_HUM_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        }
+                    });
+                });
+
+                wsExec.columns = [
+                    { width: 16 }, { width: 16 }, { width: 18 }, { width: 16 }, { width: 15 },
+                    { width: 16 }, { width: 16 }, { width: 18 }, { width: 16 }, { width: 14 }
+                ];
+
+                // HOJA 2: CONSOLIDADO DIARIO POR GALPÓN
+                const wsDiario = wb.addWorksheet('Consolidado Diario', { views: [{ state: 'frozen', ySplit: 4 }] });
+                aplicarBanner(wsDiario, 'CONSOLIDADO DIARIO POR GALPÓN', subInfo, 12);
+                estilizarHeaderTabla(wsDiario, 4, [
+                    'Fecha', 'Zona', 'Galpón', 'Estado Máx. Día',
+                    'Temp. Mín (°C)', 'Temp. Prom (°C)', 'Temp. Máx (°C)',
+                    'Exterior Prom (°C)', 'Diferencial (°C)', 'Sensación Máx (°C)',
+                    'Humedad Mín (%)', 'Humedad Máx (%)'
+                ]);
+
+                const gruposDiarios = {};
+                filtrados.forEach(r => {
+                    const key = `${r.fecha}|${r.galpon}`;
+                    if (!gruposDiarios[key]) {
+                        gruposDiarios[key] = { fecha: r.fecha, zona: r.encargado, galpon: r.galpon, temps: [], exts: [], exps: [], hums: [] };
+                    }
+                    if (r.temp !== null) gruposDiarios[key].temps.push(r.temp);
+                    if (r.ext !== null) gruposDiarios[key].exts.push(r.ext);
+                    if (r.exp !== null) gruposDiarios[key].exps.push(r.exp);
+                    if (r.hum !== null) gruposDiarios[key].hums.push(r.hum);
+                });
+
+                const listaDiaria = Object.values(gruposDiarios).sort(
+                    (a, b) => a.fecha.localeCompare(b.fecha) || obtenerNumGalpon(a.galpon) - obtenerNumGalpon(b.galpon)
+                );
+
+                listaDiaria.forEach((g, idx) => {
+                    const row = wsDiario.getRow(5 + idx);
+                    row.height = 20;
+                    const tMin = g.temps.length ? Math.min(...g.temps) : null;
+                    const tProm = avg(g.temps);
+                    const tMax = g.temps.length ? Math.max(...g.temps) : null;
+                    const eProm = avg(g.exts);
+                    const diff = (tProm !== null && eProm !== null) ? Number((tProm - eProm).toFixed(1)) : null;
+                    const expMax = g.exps.length ? Math.max(...g.exps) : null;
+                    const hMin = g.hums.length ? Math.round(Math.min(...g.hums)) : null;
+                    const hMax = g.hums.length ? Math.round(Math.max(...g.hums)) : null;
+                    const nivelDia = clasificarNivel(tMax, hMax);
+
+                    const vals = [g.fecha, g.zona, g.galpon, '', tMin, tProm, tMax, eProm, diff, expMax, hMin, hMax];
+                    vals.forEach((v, cIdx) => {
+                        const c = row.getCell(cIdx + 1);
+                        c.value = v !== null ? v : '—';
+                        c.border = bordeFino;
+                        c.font = { name: 'Calibri', size: 10, color: { argb: C_SLATE_DARK } };
+                        if (idx % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_ZEBRA } };
+                        c.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        if (cIdx === 3) {
+                            aplicarBadgeEstado(c, nivelDia);
+                        } else if ([4, 5, 6, 7, 8, 9].includes(cIdx) && typeof v === 'number') {
+                            c.numFmt = cIdx === 8 ? '+0.0;-0.0;0.0' : '0.0';
+                            if (cIdx === 6 && v >= UMBRAL_TEMP_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (cIdx === 6 && v > UMBRAL_TEMP_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        } else if ([10, 11].includes(cIdx) && typeof v === 'number') {
+                            c.numFmt = '0';
+                            if (cIdx === 11 && v >= UMBRAL_HUM_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (cIdx === 11 && v > UMBRAL_HUM_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        }
+                    });
+                });
+
+                wsDiario.autoFilter = { from: 'A4', to: `L${4 + listaDiaria.length}` };
+                wsDiario.columns = [
+                    { width: 13 }, { width: 11 }, { width: 13 }, { width: 16 },
+                    { width: 14 }, { width: 15 }, { width: 14 }, { width: 16 },
+                    { width: 15 }, { width: 17 }, { width: 15 }, { width: 15 }
+                ];
+
+                // HOJA 3: REGISTRO DETALLADO
+                const wsDet = wb.addWorksheet('Registro Detallado', { views: [{ state: 'frozen', ySplit: 4 }] });
+                aplicarBanner(wsDet, 'REGISTRO CRONOLÓGICO DETALLADO', subInfo, 9);
+                estilizarHeaderTabla(wsDet, 4, [
+                    'Fecha', 'Hora', 'Zona', 'Galpón', 'Estado',
+                    'Temp. Interior (°C)', 'Temp. Exterior (°C)', 'Humedad (%)', 'Sensación Térmica (°C)'
+                ]);
+
+                filtrados.forEach((r, idx) => {
+                    const row = wsDet.getRow(5 + idx);
+                    row.height = 19;
+                    const nivel = clasificarNivel(r.temp, r.hum);
+                    const vals = [r.fecha, r.hora.slice(0, 5), r.encargado, r.galpon, '', r.temp, r.ext, r.hum, r.exp];
+
+                    vals.forEach((v, cIdx) => {
+                        const c = row.getCell(cIdx + 1);
+                        c.value = v !== null ? v : '—';
+                        c.border = bordeFino;
+                        c.font = { name: 'Calibri', size: 10, color: { argb: C_SLATE_DARK } };
+                        if (idx % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_ZEBRA } };
+                        c.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        if (cIdx === 4) {
+                            aplicarBadgeEstado(c, nivel);
+                        } else if ([5, 6, 8].includes(cIdx) && typeof v === 'number') {
+                            c.numFmt = '0.0';
+                            if (cIdx === 5 && v >= UMBRAL_TEMP_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (cIdx === 5 && v > UMBRAL_TEMP_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        } else if (cIdx === 7 && typeof v === 'number') {
+                            c.numFmt = '0';
+                            if (v >= UMBRAL_HUM_CRIT) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
+                            } else if (v > UMBRAL_HUM_PREV) {
+                                c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_AMBER_BG } };
+                                c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_AMBER_TXT } };
+                            }
+                        }
+                    });
+                });
+
+                wsDet.autoFilter = { from: 'A4', to: `I${4 + filtrados.length}` };
+                wsDet.columns = [
+                    { width: 13 }, { width: 9 }, { width: 11 }, { width: 13 }, { width: 15 },
+                    { width: 18 }, { width: 18 }, { width: 14 }, { width: 21 }
+                ];
+
+                // HOJA 4: ALERTAS E INCIDENCIAS
+                const wsAlert = wb.addWorksheet('Alertas e Incidencias', { views: [{ state: 'frozen', ySplit: 4 }] });
+                const incidencias = filtrados
+                    .filter(r => clasificarNivel(r.temp, r.hum) !== 'normal')
+                    .sort((a, b) => {
+                        const sevA = clasificarNivel(a.temp, a.hum) === 'critico' ? 2 : 1;
+                        const sevB = clasificarNivel(b.temp, b.hum) === 'critico' ? 2 : 1;
+                        return sevB - sevA || b.fecha.localeCompare(a.fecha) || b.hora.localeCompare(a.hora);
+                    });
+
+                aplicarBanner(
+                    wsAlert,
+                    `BITÁCORA DE ALERTAS E INCIDENCIAS (${incidencias.length} EVENTOS)`,
+                    subInfo,
+                    9
+                );
+                estilizarHeaderTabla(wsAlert, 4, [
+                    'Severidad', 'Fecha', 'Hora', 'Zona', 'Galpón',
+                    'Temp. Interior (°C)', 'Temp. Exterior (°C)', 'Humedad (%)', 'Motivo de Alerta'
+                ]);
+
+                if (!incidencias.length) {
+                    wsAlert.mergeCells(5, 1, 5, 9);
+                    const cOk = wsAlert.getCell(5, 1);
+                    cOk.value = 'Sin incidencias climáticas: todos los registros del período seleccionado estuvieron dentro del rango óptimo (≤ 23.0°C y ≤ 75%).';
+                    cOk.font = { name: 'Calibri', size: 10.5, italic: true, color: { argb: C_GREEN_TXT } };
+                    cOk.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_GREEN_BG } };
+                    cOk.alignment = { vertical: 'middle', horizontal: 'center' };
+                    wsAlert.getRow(5).height = 26;
+                } else {
+                    incidencias.forEach((r, idx) => {
+                        const row = wsAlert.getRow(5 + idx);
+                        row.height = 20;
+                        const nivel = clasificarNivel(r.temp, r.hum);
+                        const motivos = [];
+                        if (r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT) motivos.push(`Temp. crítica (${r.temp.toFixed(1)}°C ≥ 26°C)`);
+                        else if (r.temp !== null && r.temp > UMBRAL_TEMP_PREV) motivos.push(`Temp. preventiva (${r.temp.toFixed(1)}°C > 23°C)`);
+                        if (r.hum !== null && r.hum >= UMBRAL_HUM_CRIT) motivos.push(`Humedad crítica (${r.hum}% ≥ 85%)`);
+                        else if (r.hum !== null && r.hum > UMBRAL_HUM_PREV) motivos.push(`Humedad preventiva (${r.hum}% > 75%)`);
+
+                        const vals = ['', r.fecha, r.hora.slice(0, 5), r.encargado, r.galpon, r.temp, r.ext, r.hum, motivos.join(' · ')];
+                        vals.forEach((v, cIdx) => {
+                            const c = row.getCell(cIdx + 1);
+                            c.value = v !== null ? v : '—';
+                            c.border = bordeFino;
+                            c.font = { name: 'Calibri', size: 10, color: { argb: C_SLATE_DARK } };
+                            c.alignment = { vertical: 'middle', horizontal: cIdx === 8 ? 'left' : 'center', indent: cIdx === 8 ? 1 : 0 };
+                            if (cIdx === 0) aplicarBadgeEstado(c, nivel);
+                            if ([5, 6].includes(cIdx) && typeof v === 'number') c.numFmt = '0.0';
+                            if (cIdx === 7 && typeof v === 'number') c.numFmt = '0';
+                        });
+                    });
+                    wsAlert.autoFilter = { from: 'A4', to: `I${4 + incidencias.length}` };
+                }
+
+                wsAlert.columns = [
+                    { width: 15 }, { width: 13 }, { width: 9 }, { width: 11 }, { width: 13 },
+                    { width: 18 }, { width: 18 }, { width: 14 }, { width: 42 }
+                ];
+
+                const buffer = await wb.xlsx.writeBuffer();
+                const blob = new Blob([buffer], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const sufijo = diaFiltro !== 'todos' ? diaFiltro : (mesFiltro !== 'todos' ? mesFiltro : 'Historico');
+                a.href = url;
+                a.download = `Reporte_Clima_Mamay_${sufijo}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('Error generando Excel:', err);
+                alert('Ocurrió un error al generar el archivo Excel.');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = textoOriginal;
+                }
+            }
+        }
+
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape' && galponModalActual) cerrarModal();
             if (e.key === 'ArrowLeft' && galponModalActual) navegarModal(-1);
@@ -1413,3 +1942,4 @@
     </script>
 </body>
 </html>
+
