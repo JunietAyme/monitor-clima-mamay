@@ -1717,6 +1717,30 @@
                     { width: 16 }, { width: 16 }, { width: 18 }, { width: 16 }, { width: 14 }
                 ];
 
+                // Incrustar captura del gráfico activo debajo de la tabla
+                const canvasGrafico = document.querySelector('canvas');
+                if (canvasGrafico && canvasGrafico.width > 0 && canvasGrafico.height > 0) {
+                    const filaInicioImg = 15 + seleccionadosTodos.length;
+                    wsExec.mergeCells(filaInicioImg, 1, filaInicioImg, 10);
+                    const lblGraf = wsExec.getCell(filaInicioImg, 1);
+                    lblGraf.value = 'TENDENCIA VISUAL DEL PERÍODO FILTRADO';
+                    lblGraf.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
+                    wsExec.getRow(filaInicioImg).height = 22;
+
+                    const imgId = wb.addImage({
+                        base64: canvasGrafico.toDataURL('image/png'),
+                        extension: 'png'
+                    });
+                    const ratio = canvasGrafico.height / canvasGrafico.width;
+                    const anchoPx = 860;
+                    const altoPx = Math.min(380, Math.max(220, Math.round(anchoPx * ratio)));
+
+                    wsExec.addImage(imgId, {
+                        tl: { col: 0, row: filaInicioImg },
+                        ext: { width: anchoPx, height: altoPx }
+                    });
+                }
+
                 // HOJA 2: CONSOLIDADO DIARIO POR GALPÓN
                 const wsDiario = wb.addWorksheet('Consolidado Diario', { views: [{ state: 'frozen', ySplit: 4 }] });
                 aplicarBanner(wsDiario, 'CONSOLIDADO DIARIO POR GALPÓN', subInfo, 12);
@@ -1942,5 +1966,6 @@
     </script>
 </body>
 </html>
+
 
 
