@@ -178,7 +178,7 @@
                     <span class="text-[11px] font-medium text-apple-grayText">Galpones en vista (G16–G17 pendientes de enlace BFN)</span>
                     <span id="hint-modo" class="text-[11px] font-semibold text-apple-orangeLight dark:text-apple-orange tabular-nums">15 activos</span>
                 </div>
-                <div id="selector-galpones" class="grid grid-cols-6 sm:grid-cols-9 lg:grid-cols-17 gap-1.5" style="grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));"></div>
+                <div id="selector-galpones" class="grid gap-1.5" style="grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));"></div>
             </div>
         </section>
 
@@ -286,7 +286,7 @@
                             <h4 class="text-sm sm:text-[15px] font-semibold tracking-tight">Humedad Relativa</h4>
                             <p id="desc-chart-hum" class="text-[11px] sm:text-xs text-apple-grayText mt-0.5">Última lectura por galpón (%)</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Prev. 75% · Crít. 85%</span>
+                        <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-[10px] font-semibold text-rose-500">Prev. 72% · Crít. 80%</span>
                     </div>
                     <div class="h-60 sm:h-72 relative">
                         <canvas id="chartHum"></canvas>
@@ -417,8 +417,8 @@
     <script>
         const UMBRAL_TEMP_PREV = 23.0;
         const UMBRAL_TEMP_CRIT = 26.0;
-        const UMBRAL_HUM_PREV = 75.0;
-        const UMBRAL_HUM_CRIT = 85.0;
+        const UMBRAL_HUM_PREV = 72.0;
+        const UMBRAL_HUM_CRIT = 80.0;
         const TOTAL_GALPONES_GRANJA = 17;
 
         const CATALOGO_GALPONES = Array.from({ length: TOTAL_GALPONES_GRANJA }, (_, i) => {
@@ -1966,6 +1966,7 @@
     </script>
 </body>
 </html>
+
 
 
 
