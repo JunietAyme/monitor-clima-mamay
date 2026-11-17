@@ -451,7 +451,7 @@
         }
 
         function clasificarNivel(temp, hum) {
-            const critico = (temp !== null && temp >= UMBRAL_TEMP_CRIT) || (hum !== null && hum >= UMBRAL_HUM_CRIT);
+            const critico = (temp !== null && temp >= UMBRAL_TEMP_CRIT) || (hum !== null && hum > UMBRAL_HUM_CRIT);
             if (critico) return 'critico';
             const preventivo = (temp !== null && temp > UMBRAL_TEMP_PREV) || (hum !== null && hum > UMBRAL_HUM_PREV);
             if (preventivo) return 'preventivo';
@@ -911,7 +911,7 @@
                 const claseT = r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT
                     ? 'text-apple-red font-bold'
                     : (r.temp !== null && r.temp > UMBRAL_TEMP_PREV ? 'text-apple-orange font-semibold' : '');
-                const claseH = r.hum !== null && r.hum >= UMBRAL_HUM_CRIT
+                const claseH = r.hum !== null && r.hum > UMBRAL_HUM_CRIT
                     ? 'text-apple-red font-bold'
                     : (r.hum !== null && r.hum > UMBRAL_HUM_PREV ? 'text-apple-orange font-semibold' : '');
 
@@ -1072,7 +1072,7 @@
                             data: ultimosHum,
                             backgroundColor: ultimosHum.map(v => {
                                 if (v === null) return '#8E8E93';
-                                if (v >= UMBRAL_HUM_CRIT) return '#FF453A';
+                                if (v > UMBRAL_HUM_CRIT) return '#FF453A';
                                 if (v > UMBRAL_HUM_PREV) return '#FF9F0A';
                                 return '#0A84FF';
                             }),
@@ -1346,7 +1346,7 @@
                 const claseT = r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT
                     ? 'text-apple-red font-bold'
                     : (r.temp !== null && r.temp > UMBRAL_TEMP_PREV ? 'text-apple-orange font-semibold' : '');
-                const claseH = r.hum !== null && r.hum >= UMBRAL_HUM_CRIT
+                const claseH = r.hum !== null && r.hum > UMBRAL_HUM_CRIT
                     ? 'text-apple-red font-bold'
                     : (r.hum !== null && r.hum > UMBRAL_HUM_PREV ? 'text-apple-orange font-semibold' : '');
 
@@ -1701,7 +1701,7 @@
                             }
                         } else if ([7, 8].includes(cIdx) && typeof v === 'number') {
                             c.numFmt = '0';
-                            if (v >= UMBRAL_HUM_CRIT) {
+                            if (v > UMBRAL_HUM_CRIT) {
                                 c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
                                 c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
                             } else if (v > UMBRAL_HUM_PREV) {
@@ -1802,7 +1802,7 @@
                             }
                         } else if ([10, 11].includes(cIdx) && typeof v === 'number') {
                             c.numFmt = '0';
-                            if (cIdx === 11 && v >= UMBRAL_HUM_CRIT) {
+                            if (cIdx === 11 && v > UMBRAL_HUM_CRIT) {
                                 c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
                                 c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
                             } else if (cIdx === 11 && v > UMBRAL_HUM_PREV) {
@@ -1855,7 +1855,7 @@
                             }
                         } else if (cIdx === 7 && typeof v === 'number') {
                             c.numFmt = '0';
-                            if (v >= UMBRAL_HUM_CRIT) {
+                            if (v > UMBRAL_HUM_CRIT) {
                                 c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C_RED_BG } };
                                 c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: C_RED_TXT } };
                             } else if (v > UMBRAL_HUM_PREV) {
@@ -1909,8 +1909,8 @@
                         const motivos = [];
                         if (r.temp !== null && r.temp >= UMBRAL_TEMP_CRIT) motivos.push(`Temp. crítica (${r.temp.toFixed(1)}°C ≥ 26°C)`);
                         else if (r.temp !== null && r.temp > UMBRAL_TEMP_PREV) motivos.push(`Temp. preventiva (${r.temp.toFixed(1)}°C > 23°C)`);
-                        if (r.hum !== null && r.hum >= UMBRAL_HUM_CRIT) motivos.push(`Humedad crítica (${r.hum}% ≥ 85%)`);
-                        else if (r.hum !== null && r.hum > UMBRAL_HUM_PREV) motivos.push(`Humedad preventiva (${r.hum}% > 75%)`);
+                        if (r.hum !== null && r.hum > UMBRAL_HUM_CRIT) motivos.push(`Humedad crítica (${r.hum}% > 80%)`);
+                        else if (r.hum !== null && r.hum > UMBRAL_HUM_PREV) motivos.push(`Humedad preventiva (${r.hum}% > 72%)`);
 
                         const vals = ['', r.fecha, r.hora.slice(0, 5), r.encargado, r.galpon, r.temp, r.ext, r.hum, motivos.join(' · ')];
                         vals.forEach((v, cIdx) => {
@@ -1966,6 +1966,7 @@
     </script>
 </body>
 </html>
+
 
 
 

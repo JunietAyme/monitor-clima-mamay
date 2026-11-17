@@ -360,7 +360,7 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
                 elif col_idx in (6, 7):
                     celda.number_format = "0"
                     celda.alignment = Alignment(horizontal="right", vertical="center")
-                    if col_idx == 7 and valor is not None and valor >= 80.0:
+                    if col_idx == 7 and valor is not None and valor > 80.0:
                         celda.fill = fill_alerta
                         celda.font = font_alerta
                 else:
@@ -385,4 +385,5 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
 
 if __name__ == "__main__":
     actualizar_excel_mensual()
+
 
