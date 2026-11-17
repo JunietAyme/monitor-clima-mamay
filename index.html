@@ -1632,7 +1632,7 @@
 
                 wsExec.mergeCells(12, 1, 12, 10);
                 const lblGalp = wsExec.getCell(12, 1);
-                lblGalp.value = 'ESTADO Y CONSOLIDADO POR GALPÓN (01 AL 17)';
+                lblGalp.value = `ESTADO Y CONSOLIDADO POR GALPÓN (${seleccionadosTodos.length} SELECCIONADOS)`;
                 lblGalp.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
                 wsExec.getRow(12).height = 22;
 
@@ -1641,7 +1641,7 @@
                     'Temp. Prom. (°C)', 'Temp. Máx. (°C)', 'Última Humedad (%)', 'Humedad Máx. (%)', 'Lecturas'
                 ]);
 
-                CATALOGO_GALPONES.forEach((g, idx) => {
+                seleccionadosTodos.forEach((g, idx) => {
                     const row = wsExec.getRow(14 + idx);
                     row.height = 20;
                     const num = obtenerNumGalpon(g);
@@ -1942,4 +1942,5 @@
     </script>
 </body>
 </html>
+
 
