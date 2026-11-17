@@ -765,7 +765,7 @@ def evaluar_salud_sensores(estado, galpones):
             reg_t["alerta_desconexion"] = False
 
             g = galpones[num]
-            firma_act = f"{g.get('temp')}|{g.get('hum')}"
+            firma_act = f"{g.get('temp')}|{g.get('hum')}|{g.get('ext')}|{g.get('exp')}"
             if g.get("temp") is not None and firma_act == reg_t.get("firma_previa"):
                 reg_t["ciclos_iguales"] = reg_t.get("ciclos_iguales", 0) + 1
                 if reg_t["ciclos_iguales"] >= CICLOS_SENSOR_CONGELADO and not reg_t.get("alerta_congelado"):
@@ -845,7 +845,16 @@ def procesar_ciclo(forzar_reporte=False):
             guardado = estado["galpones"].get(clave_g)
             previo = {**base_previo, **guardado} if isinstance(guardado, dict) else base_previo
 
-            if nivel_act == "NORMAL":
+            en_histeresis = (
+                previo.get("nivel") in ("PREVENTIVO", "CRITICO")
+                and (
+                    (t_act is not None and t_act > (TEMP_PREV_LIMITE - 0.4))
+                    or (h_act is not None and h_act > (HUM_PREV_LIMITE - 2.0))
+                    or (exp_act is not None and exp_act > (SENS_PREV_LIMITE - 0.4))
+                )
+            )
+
+            if nivel_act == "NORMAL" and not en_histeresis:
                 if previo.get("nivel") in ("PREVENTIVO", "CRITICO"):
                     duracion_txt = ""
                     if previo.get("inicio_alerta"):
@@ -1024,6 +1033,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error(f"Error no esperado en ciclo principal (continuando): {e}")
         time.sleep(INTERVALO_SEGUNDOS)
+
 
 
 

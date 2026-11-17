@@ -6,19 +6,15 @@ import generar_excel_clima as ge
 
 class TestMonitorClimaMamay(unittest.TestCase):
     def test_clasificacion_limites_exactos(self):
-        # 80.0% exacto debe ser PREVENTIVO (80% es el máximo permitido)
         cod, _ = mm.clasificar_estado(22.0, 80.0)
         self.assertEqual(cod, "PREVENTIVO")
 
-        # 80.1% supera el límite -> CRITICO
         cod, _ = mm.clasificar_estado(22.0, 80.1)
         self.assertEqual(cod, "CRITICO")
 
-        # 26.0°C exacto -> CRITICO
         cod, _ = mm.clasificar_estado(26.0, 65.0)
         self.assertEqual(cod, "CRITICO")
 
-        # Condiciones óptimas
         cod, _ = mm.clasificar_estado(22.5, 72.0)
         self.assertEqual(cod, "NORMAL")
 
@@ -31,6 +27,12 @@ class TestMonitorClimaMamay(unittest.TestCase):
         self.assertIn("+1.5 °C", texto)
         self.assertIn("+4 %", texto)
         self.assertIn("Diferencial", texto)
+
+    def test_evaluar_salud_sensores_firma_completa(self):
+        estado = {}
+        galpon = {1: {"temp": 22.0, "hum": 70.0, "ext": 20.0, "exp": 22.0}}
+        mm.evaluar_salud_sensores(estado, galpon)
+        self.assertEqual(estado["tecnico"]["1"]["firma_previa"], "22.0|70.0|20.0|22.0")
 
     def test_ventana_resumen_programado(self):
         dt = datetime(2026, 11, 17, 12, 3)
