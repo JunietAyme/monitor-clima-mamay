@@ -213,7 +213,7 @@ def extraer_numero_galpon(texto):
 def clasificar_estado(temp_ref, hum_ref, exp_ref=None):
     es_critico = (
         (temp_ref is not None and temp_ref >= TEMP_CRIT_LIMITE)
-        or (hum_ref is not None and hum_ref >= HUM_CRIT_LIMITE)
+        or (hum_ref is not None and hum_ref > HUM_CRIT_LIMITE)
         or (exp_ref is not None and exp_ref >= SENS_CRIT_LIMITE)
     )
     if es_critico:
@@ -243,7 +243,7 @@ def diagnosticar_motivos(g, previo):
         delta = f" ({t - t_ant:+.1f} °C)" if t_ant is not None else ""
         motivos.append(f"Temp. interior elevada: <b>{t:.1f} °C</b>{delta}")
 
-    if h is not None and h >= HUM_CRIT_LIMITE:
+    if h is not None and h > HUM_CRIT_LIMITE:
         delta = f" ({h - h_ant:+.0f} %)" if h_ant is not None else ""
         motivos.append(f"Humedad crítica: <b>{h:.0f} %</b>{delta}")
     elif h is not None and h > HUM_PREV_LIMITE:
@@ -357,7 +357,7 @@ def responder_salud_sistema(chat_id):
         f"• <b>Última lectura BFN:</b> {ult_str} ({cant_galp} galpones)\n"
         f"• <b>Registros en vivo (CSV):</b> {filas_vivo:,} filas\n"
         f"• <b>Umbrales vigentes:</b> Temp &gt;{TEMP_PREV_LIMITE}°C / ≥{TEMP_CRIT_LIMITE}°C | "
-        f"Hum &gt;{HUM_PREV_LIMITE:.0f}% / ≥{HUM_CRIT_LIMITE:.0f}%"
+        f"Hum &gt;{HUM_PREV_LIMITE:.0f}% / &gt;{HUM_CRIT_LIMITE:.0f}%"
     )
     enviar_telegram(msg, chat_destino=chat_id)
 
@@ -639,6 +639,19 @@ def leer_tabla_survey():
 # ==============================================================================
 def guardar_historial_csv(ahora_dt, galpones):
     existe = os.path.isfile(ARCHIVO_CSV)
+    fecha_str = ahora_dt.strftime("%Y-%m-%d")
+    hora_min = ahora_dt.strftime("%H:%M")
+    claves_recientes = set()
+    if existe:
+        try:
+            with open(ARCHIVO_CSV, mode="r", encoding="utf-8-sig") as fr:
+                for linea in fr.readlines()[-40:]:
+                    partes = linea.strip().split(";")
+                    if len(partes) >= 4:
+                        claves_recientes.add((partes[0], partes[1][:5], partes[3]))
+        except Exception:
+            pass
+
     with open(ARCHIVO_CSV, mode="a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f, delimiter=";")
         if not existe:
@@ -649,13 +662,16 @@ def guardar_historial_csv(ahora_dt, galpones):
             ])
 
         for num in sorted(galpones):
+            galp_lbl = f"Galpón {num:02d}"
+            if (fecha_str, hora_min, galp_lbl) in claves_recientes:
+                continue
             g = galpones[num]
             estado, _ = clasificar_estado(g["temp"], g["hum"], g.get("exp"))
             writer.writerow([
-                ahora_dt.strftime("%Y-%m-%d"),
+                fecha_str,
                 ahora_dt.strftime("%H:%M:%S"),
                 obtener_encargado(num),
-                f"Galpón {num:02d}",
+                galp_lbl,
                 estado,
                 g["temp"],
                 g["ext"],
@@ -1008,6 +1024,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error(f"Error no esperado en ciclo principal (continuando): {e}")
         time.sleep(INTERVALO_SEGUNDOS)
+
 
 
 
