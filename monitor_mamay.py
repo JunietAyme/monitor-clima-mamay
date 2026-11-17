@@ -79,7 +79,7 @@ RECORDATORIO_CRITICO_MIN = 15
 
 # Umbrales Técnicos de Resiliencia (ciclos de 5 min)
 CICLOS_DESCONEXION_ALERTA = 2      # 2 ciclos = 10 min sin señal
-CICLOS_SENSOR_CONGELADO = 18       # 18 ciclos = 90 min sin variación mínima
+CICLOS_SENSOR_CONGELADO = 36       # 36 ciclos = 180 min sin variación mínima
 
 # Resúmenes automáticos
 HORAS_RESUMEN = ["08:00", "12:00", "15:00"]
@@ -446,6 +446,9 @@ def escuchar_comandos_telegram():
                 offset = upd["update_id"] + 1
                 msg = upd.get("message") or upd.get("channel_post")
                 if not msg:
+                    continue
+                fecha_msg = msg.get("date", 0)
+                if fecha_msg and (time.time() - fecha_msg) > 120:
                     continue
                 texto = (msg.get("text") or "").strip()
                 chat_id = msg.get("chat", {}).get("id")
@@ -905,8 +908,8 @@ def procesar_ciclo(forzar_reporte=False):
 
         guardar_estado(estado)
 
-    # Notificaciones técnicas de hardware/enlace
-    if avisos_tecnicos:
+    # Notificaciones técnicas de hardware/enlace (solo en turno operativo 06:00 - 22:00)
+    if avisos_tecnicos and 6 <= ahora_dt.hour < 22:
         enviar_telegram(
             f"🛠️ <b>AVISO TÉCNICO DE TELEMETRÍA — GRANJA MAMAY</b>\n"
             f"📅 {ahora_dt.strftime('%d/%m/%Y')} | 🕒 {hora_actual} hrs\n\n"
@@ -1005,6 +1008,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error(f"Error no esperado en ciclo principal (continuando): {e}")
         time.sleep(INTERVALO_SEGUNDOS)
+
 
 
 
