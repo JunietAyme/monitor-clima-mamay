@@ -82,7 +82,7 @@ CICLOS_DESCONEXION_ALERTA = 2      # 2 ciclos = 10 min sin señal
 CICLOS_SENSOR_CONGELADO = 18       # 18 ciclos = 90 min sin variación mínima
 
 # Resúmenes automáticos
-HORAS_RESUMEN = []
+HORAS_RESUMEN = ["08:00", "12:00", "15:00"]
 VENTANA_RESUMEN_MIN = 8
 ENVIAR_RESUMEN_AL_INICIAR = False
 INTERVALO_SEGUNDOS = 300
@@ -1005,6 +1005,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error(f"Error no esperado en ciclo principal (continuando): {e}")
         time.sleep(INTERVALO_SEGUNDOS)
+
 
 
 
