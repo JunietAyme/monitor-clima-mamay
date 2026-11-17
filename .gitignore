@@ -1,4 +1,14 @@
-﻿*
-!.gitignore
-!index.html
-!datos_clima.js
+﻿# Credenciales y sesión persistente de BigFarmNet
+config_secreta.json
+perfil_bfn/
+
+# Datos operativos, respaldos y logs locales
+*.csv
+*.xlsx
+*.log
+*.lock
+estado_alerta.json
+ultima_lectura.json
+backups/
+importar_excel/
+__pycache__/
