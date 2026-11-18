@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from openpyxl.chart import BarChart, LineChart, Reference
+from openpyxl.chart import BarChart, Reference
 
 CARPETA_BASE = r"C:\Scripts\Monitor_Mamay"
 ARCHIVO_XLSX = os.path.join(CARPETA_BASE, "Reporte_Clima_Mamay.xlsx")
@@ -370,9 +372,206 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
         ws.freeze_panes = "A5"
         ws.auto_filter.ref = f"A4:H{4 + len(por_mes[ym])}"
 
-        anchos = [14, 14, 14, 24, 24, 20, 20, 17]
+        # --- TABLAS RESUMEN LATERALES (J:M) PARA GRÁFICOS NATIVOS ---
+        resumen_galp = defaultdict(lambda: {"t_prom": [], "t_max": [], "h_max": []})
+        resumen_dia = defaultdict(lambda: {"t_min": [], "t_max": [], "h_max": []})
+
+        for fila in por_mes[ym]:
+            f_dia, _, g_nom, t_mn, t_mx, _, h_mx, _ = fila
+            if t_mn is not None and t_mx is not None:
+                resumen_galp[g_nom]["t_prom"].append((t_mn + t_mx) / 2.0)
+            if t_mx is not None:
+                resumen_galp[g_nom]["t_max"].append(t_mx)
+                resumen_dia[f_dia]["t_max"].append(t_mx)
+            if t_mn is not None:
+                resumen_dia[f_dia]["t_min"].append(t_mn)
+            if h_mx is not None:
+                resumen_galp[g_nom]["h_max"].append(h_mx)
+                resumen_dia[f_dia]["h_max"].append(h_mx)
+
+        # Tabla 1 (J4:M...) - Resumen por Galpón
+        headers_g = ["Galpón", "Temp. Prom. (°C)", "Temp. Máx. (°C)", "Hum. Máx. (%)"]
+        for c_off, h_txt in enumerate(headers_g, start=10):
+            c = ws.cell(row=4, column=c_off, value=h_txt)
+            c.font = font_header
+            c.fill = fill_header
+            c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            c.border = borde_fino
+
+        galpones_ord = sorted(resumen_galp.keys(), key=extraer_num_galpon)
+        for idx_g, g_nom in enumerate(galpones_ord, start=5):
+            d_g = resumen_galp[g_nom]
+            tp = round(sum(d_g["t_prom"]) / len(d_g["t_prom"]), 1) if d_g["t_prom"] else None
+            tx = round(max(d_g["t_max"]), 1) if d_g["t_max"] else None
+            hx = round(max(d_g["h_max"]), 0) if d_g["h_max"] else None
+            for c_off, val in enumerate([g_nom.replace("Galpón ", "G"), tp, tx, hx], start=10):
+                c = ws.cell(row=idx_g, column=c_off, value=val)
+                c.font = font_data
+                c.border = borde_fino
+                c.alignment = Alignment(horizontal="center" if c_off == 10 else "right", vertical="center")
+                if c_off in (11, 12):
+                    c.number_format = "0.0"
+                elif c_off == 13:
+                    c.number_format = "0"
+
+        fin_g = 4 + len(galpones_ord)
+        if fin_g >= 5:
+            chart_bar = BarChart()
+            chart_bar.type = "col"
+            chart_bar.style = 10
+            chart_bar.grouping = "clustered"
+            chart_bar.title = f"Comparativa Térmica por Galpón — {titulo_hoja}"
+            chart_bar.y_axis.title = "Temperatura (°C)"
+            chart_bar.x_axis.title = "Galpón"
+            chart_bar.y_axis.scaling.min = 16
+            chart_bar.width = 18
+            chart_bar.height = 10
+            data_bar = Reference(ws, min_col=11, max_col=12, min_row=4, max_row=fin_g)
+            cats_bar = Reference(ws, min_col=10, min_row=5, max_row=fin_g)
+            chart_bar.add_data(data_bar, titles_from_data=True)
+            chart_bar.set_categories(cats_bar)
+            ws.add_chart(chart_bar, "O4")
+
+        # Tabla 2 (J24:M...) - Evolución Diaria del Mes
+        fila_ini_d = max(24, fin_g + 3)
+        ws.row_dimensions[fila_ini_d].height = 24
+        headers_d = ["Fecha", "Temp. Mín. (°C)", "Temp. Máx. (°C)", "Hum. Máx. (%)"]
+        for c_off, h_txt in enumerate(headers_d, start=10):
+            c = ws.cell(row=fila_ini_d, column=c_off, value=h_txt)
+            c.font = font_header
+            c.fill = fill_header
+            c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            c.border = borde_fino
+
+        dias_ord = sorted(resumen_dia.keys())
+        for idx_d, f_dia in enumerate(dias_ord, start=fila_ini_d + 1):
+            d_d = resumen_dia[f_dia]
+            tmn = round(min(d_d["t_min"]), 1) if d_d["t_min"] else None
+            tmx = round(max(d_d["t_max"]), 1) if d_d["t_max"] else None
+            hmx = round(max(d_d["h_max"]), 0) if d_d["h_max"] else None
+            for c_off, val in enumerate([f_dia[5:], tmn, tmx, hmx], start=10):
+                c = ws.cell(row=idx_d, column=c_off, value=val)
+                c.font = font_data
+                c.border = borde_fino
+                c.alignment = Alignment(horizontal="center" if c_off == 10 else "right", vertical="center")
+                if c_off in (11, 12):
+                    c.number_format = "0.0"
+                elif c_off == 13:
+                    c.number_format = "0"
+
+        fin_d = fila_ini_d + len(dias_ord)
+        if fin_d >= fila_ini_d + 1:
+            chart_line = LineChart()
+            chart_line.style = 10
+            chart_line.title = f"Evolución Térmica Diaria — {titulo_hoja}"
+            chart_line.y_axis.title = "Temperatura (°C)"
+            chart_line.x_axis.title = "Día (MM-DD)"
+            chart_line.y_axis.scaling.min = 16
+            chart_line.width = 18
+            chart_line.height = 10
+            data_line = Reference(ws, min_col=11, max_col=12, min_row=fila_ini_d, max_row=fin_d)
+            cats_line = Reference(ws, min_col=10, min_row=fila_ini_d + 1, max_row=fin_d)
+            chart_line.add_data(data_line, titles_from_data=True)
+            chart_line.set_categories(cats_line)
+            for serie in chart_line.series:
+                serie.graphicalProperties.line.width = 25000
+            ws.add_chart(chart_line, "O24")
+
+        anchos = [14, 14, 14, 24, 24, 20, 20, 17, 3, 12, 18, 18, 16]
         for i, ancho in enumerate(anchos, start=1):
             ws.column_dimensions[get_column_letter(i)].width = ancho
+
+        # --- Resumen por Galpón (Cols J:M) + Gráficos de Barras Nativos ---
+        resumen_galp = {}
+        for fila in por_mes[ym]:
+            _, enc_f, galp_f, _, tmax_f, _, hmax_f, _ = fila
+            num_g = extraer_num_galpon(galp_f)
+            item_g = resumen_galp.setdefault(num_g, {
+                "tag": f"G{num_g:02d}",
+                "zona": enc_f,
+                "tmax": None,
+                "hmax": None,
+            })
+            if tmax_f is not None and (item_g["tmax"] is None or tmax_f > item_g["tmax"]):
+                item_g["tmax"] = tmax_f
+            if hmax_f is not None and (item_g["hmax"] is None or hmax_f > item_g["hmax"]):
+                item_g["hmax"] = hmax_f
+
+        if resumen_galp:
+            headers_res = ["Galpón", "Zona", "Temp. Máx. (°C)", "Hum. Máx. (%)"]
+            for offset, h_txt in enumerate(headers_res):
+                c_hdr = ws.cell(row=4, column=10 + offset, value=h_txt)
+                c_hdr.font = font_header
+                c_hdr.fill = fill_titulo
+                c_hdr.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+                c_hdr.border = borde_fino
+
+            galps_ord = [resumen_galp[k] for k in sorted(resumen_galp.keys())]
+            for idx_g, info_g in enumerate(galps_ord, start=5):
+                vals_g = [info_g["tag"], info_g["zona"], info_g["tmax"], info_g["hmax"]]
+                for offset, val_g in enumerate(vals_g):
+                    cel = ws.cell(row=idx_g, column=10 + offset, value=val_g)
+                    cel.font = font_data
+                    cel.border = borde_fino
+                    if idx_g % 2 == 0:
+                        cel.fill = fill_zebra
+                    if offset in (0, 1):
+                        cel.alignment = Alignment(horizontal="center", vertical="center")
+                    elif offset == 2:
+                        cel.number_format = "0.0"
+                        cel.alignment = Alignment(horizontal="right", vertical="center")
+                        if val_g is not None and val_g >= 26.0:
+                            cel.fill = fill_alerta
+                            cel.font = font_alerta
+                    elif offset == 3:
+                        cel.number_format = "0"
+                        cel.alignment = Alignment(horizontal="right", vertical="center")
+                        if val_g is not None and val_g > 80.0:
+                            cel.fill = fill_alerta
+                            cel.font = font_alerta
+
+            anchos_res = [11, 13, 18, 16]
+            for offset, w_res in enumerate(anchos_res):
+                ws.column_dimensions[get_column_letter(10 + offset)].width = w_res
+
+            fila_fin_res = 4 + len(galps_ord)
+            cats_ref = Reference(ws, min_col=10, min_row=5, max_row=fila_fin_res)
+
+            # Gráfico 1: Temperatura Máxima por Galpón (°C)
+            chart_t = BarChart()
+            chart_t.type = "col"
+            chart_t.style = 10
+            chart_t.title = f"Temperatura Máxima por Galpón — {titulo_hoja}"
+            chart_t.y_axis.title = "°C"
+            chart_t.x_axis.title = "Galpón"
+            chart_t.y_axis.scaling.min = 18
+            chart_t.legend = None
+            chart_t.width = 16
+            chart_t.height = 8.5
+            data_t = Reference(ws, min_col=12, min_row=4, max_row=fila_fin_res)
+            chart_t.add_data(data_t, titles_from_data=True)
+            chart_t.set_categories(cats_ref)
+            if chart_t.series:
+                chart_t.series[0].graphicalProperties.solidFill = "EA580C"
+            ws.add_chart(chart_t, f"J{fila_fin_res + 2}")
+
+            # Gráfico 2: Humedad Máxima por Galpón (%)
+            chart_h = BarChart()
+            chart_h.type = "col"
+            chart_h.style = 10
+            chart_h.title = f"Humedad Máxima por Galpón — {titulo_hoja}"
+            chart_h.y_axis.title = "% HR"
+            chart_h.x_axis.title = "Galpón"
+            chart_h.y_axis.scaling.min = 50
+            chart_h.legend = None
+            chart_h.width = 16
+            chart_h.height = 8.5
+            data_h = Reference(ws, min_col=13, min_row=4, max_row=fila_fin_res)
+            chart_h.add_data(data_h, titles_from_data=True)
+            chart_h.set_categories(cats_ref)
+            if chart_h.series:
+                chart_h.series[0].graphicalProperties.solidFill = "0A84FF"
+            ws.add_chart(chart_h, f"J{fila_fin_res + 19}")
 
     try:
         wb.save(ruta_xlsx)
@@ -385,5 +584,7 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
 
 if __name__ == "__main__":
     actualizar_excel_mensual()
+
+
 
 
