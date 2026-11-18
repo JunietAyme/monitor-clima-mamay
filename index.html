@@ -1717,29 +1717,135 @@
                     { width: 16 }, { width: 16 }, { width: 18 }, { width: 16 }, { width: 14 }
                 ];
 
-                // Incrustar captura del gráfico activo debajo de la tabla
-                const canvasGrafico = document.querySelector('canvas');
-                if (canvasGrafico && canvasGrafico.width > 0 && canvasGrafico.height > 0) {
-                    const filaInicioImg = 15 + seleccionadosTodos.length;
-                    wsExec.mergeCells(filaInicioImg, 1, filaInicioImg, 10);
-                    const lblGraf = wsExec.getCell(filaInicioImg, 1);
-                    lblGraf.value = 'TENDENCIA VISUAL DEL PERÍODO FILTRADO';
-                    lblGraf.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
-                    wsExec.getRow(filaInicioImg).height = 22;
+                // Generar e incrustar SIEMPRE Gráfico de Barras + Gráfico de Líneas
+                const filaInicioImg = 15 + seleccionadosTodos.length;
+                wsExec.mergeCells(filaInicioImg, 1, filaInicioImg, 10);
+                const lblGraf = wsExec.getCell(filaInicioImg, 1);
+                lblGraf.value = 'ANÁLISIS GRÁFICO DEL PERÍODO (COMPARATIVA POR GALPÓN Y EVOLUCIÓN TEMPORAL)';
+                lblGraf.font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: C_SLATE_DARK } };
+                wsExec.getRow(filaInicioImg).height = 22;
 
-                    const imgId = wb.addImage({
-                        base64: canvasGrafico.toDataURL('image/png'),
-                        extension: 'png'
-                    });
-                    const ratio = canvasGrafico.height / canvasGrafico.width;
-                    const anchoPx = 860;
-                    const altoPx = Math.min(380, Math.max(220, Math.round(anchoPx * ratio)));
+                const crearCanvasOffscreen = (w, h) => {
+                    const c = document.createElement('canvas');
+                    c.width = w;
+                    c.height = h;
+                    return c;
+                };
 
-                    wsExec.addImage(imgId, {
-                        tl: { col: 0, row: filaInicioImg },
-                        ext: { width: anchoPx, height: altoPx }
-                    });
-                }
+                // 1) Gráfico de Barras: Última Temp. Interior vs Exterior por Galpón
+                const cBar = crearCanvasOffscreen(640, 320);
+                const labelsBar = seleccionadosConectados.map(g => g.replace('Galpón ', 'G'));
+                const dataBarInt = seleccionadosConectados.map(g => {
+                    const arr = filtrados.filter(r => r.galpon === g && r.temp !== null);
+                    return arr.length ? arr[arr.length - 1].temp : null;
+                });
+                const dataBarExt = seleccionadosConectados.map(g => {
+                    const arr = filtrados.filter(r => r.galpon === g && r.ext !== null);
+                    return arr.length ? arr[arr.length - 1].ext : null;
+                });
+
+                const chBar = new Chart(cBar.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labelsBar,
+                        datasets: [
+                            {
+                                label: 'Temp. Interior (°C)',
+                                data: dataBarInt,
+                                backgroundColor: dataBarInt.map(v => v >= UMBRAL_TEMP_CRIT ? '#EF4444' : (v > UMBRAL_TEMP_PREV ? '#F59E0B' : '#10B981')),
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Temp. Exterior (°C)',
+                                data: dataBarExt,
+                                backgroundColor: '#94A3B8',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: false,
+                        animation: false,
+                        plugins: {
+                            title: { display: true, text: 'Comparativa por Galpón — Última Lectura (°C)', color: '#0F172A', font: { size: 13, weight: 'bold' } },
+                            legend: { position: 'bottom', labels: { color: '#334155', font: { size: 11 } } }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#334155', font: { size: 10 } }, grid: { display: false } },
+                            y: { suggestedMin: 18, suggestedMax: 32, ticks: { color: '#334155', font: { size: 10 } } }
+                        }
+                    }
+                });
+
+                // 2) Gráfico de Líneas: Evolución Temporal Promedio Interior vs Exterior
+                const cLine = crearCanvasOffscreen(640, 320);
+                const tiemposUnicos = Array.from(new Set(filtrados.map(r => `${r.fecha} ${r.hora.slice(0, 5)}`))).sort();
+                const labelsLine = formatearEjeTiempo(tiemposUnicos);
+                const serieLineInt = tiemposUnicos.map(t => {
+                    const vals = filtrados.filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r.temp !== null).map(r => r.temp);
+                    return vals.length ? Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1)) : null;
+                });
+                const serieLineExt = tiemposUnicos.map(t => {
+                    const vals = filtrados.filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r.ext !== null).map(r => r.ext);
+                    return vals.length ? Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1)) : null;
+                });
+
+                const chLine = new Chart(cLine.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labelsLine,
+                        datasets: [
+                            {
+                                label: 'Promedio Interior (°C)',
+                                data: serieLineInt,
+                                borderColor: '#EA580C',
+                                backgroundColor: 'rgba(234, 88, 12, 0.12)',
+                                fill: true,
+                                borderWidth: 2.2,
+                                tension: 0.3,
+                                pointRadius: 0,
+                                spanGaps: true
+                            },
+                            {
+                                label: 'Promedio Exterior (°C)',
+                                data: serieLineExt,
+                                borderColor: '#64748B',
+                                borderDash: [4, 4],
+                                borderWidth: 1.8,
+                                tension: 0.3,
+                                pointRadius: 0,
+                                spanGaps: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: false,
+                        animation: false,
+                        plugins: {
+                            title: { display: true, text: 'Evolución Térmica en el Tiempo (°C)', color: '#0F172A', font: { size: 13, weight: 'bold' } },
+                            legend: { position: 'bottom', labels: { color: '#334155', font: { size: 11 } } }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#334155', maxTicksLimit: 8, font: { size: 10 } }, grid: { display: false } },
+                            y: { suggestedMin: 18, suggestedMax: 32, ticks: { color: '#334155', font: { size: 10 } } }
+                        }
+                    }
+                });
+
+                const imgBarId = wb.addImage({ base64: cBar.toDataURL('image/png'), extension: 'png' });
+                const imgLineId = wb.addImage({ base64: cLine.toDataURL('image/png'), extension: 'png' });
+
+                wsExec.addImage(imgBarId, {
+                    tl: { col: 0, row: filaInicioImg },
+                    ext: { width: 520, height: 260 }
+                });
+                wsExec.addImage(imgLineId, {
+                    tl: { col: 5, row: filaInicioImg },
+                    ext: { width: 520, height: 260 }
+                });
+
+                chBar.destroy();
+                chLine.destroy();
 
                 // HOJA 2: CONSOLIDADO DIARIO POR GALPÓN
                 const wsDiario = wb.addWorksheet('Consolidado Diario', { views: [{ state: 'frozen', ySplit: 4 }] });
@@ -1966,6 +2072,7 @@
     </script>
 </body>
 </html>
+
 
 
 
