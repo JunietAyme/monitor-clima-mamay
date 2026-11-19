@@ -380,27 +380,27 @@ def responder_log_sistema(chat_id):
             chat_destino=chat_id,
         )
     except Exception as e:
-        enviar_telegram(f"? Error leyendo log: {html.escape(str(e))}", chat_destino=chat_id)
+        enviar_telegram(f"❌ Error leyendo log: {html.escape(str(e))}", chat_destino=chat_id)
 
 
 def ejecutar_actualizacion_remota(chat_id):
     if str(chat_id) != str(TELEGRAM_CHAT_ID):
         return
-    enviar_telegram("? Descargando ?ltima versi?n desde GitHub...", chat_destino=chat_id)
+    enviar_telegram("⏳ Descargando última versión desde GitHub...", chat_destino=chat_id)
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
     try:
         subprocess.run(["git", "fetch", "origin", "main"], cwd=CARPETA_BASE, check=True, capture_output=True, text=True, creationflags=flags)
         subprocess.run(["git", "reset", "--hard", "origin/main"], cwd=CARPETA_BASE, check=True, capture_output=True, text=True, creationflags=flags)
         info_commit = subprocess.check_output(
-            ["git", "log", "-n", "1", "--pretty=format:%h ? %s (%ad)", "--date=format:%d/%m %H:%M"],
+            ["git", "log", "-n", "1", "--pretty=format:%h — %s (%ad)", "--date=format:%d/%m %H:%M"],
             cwd=CARPETA_BASE, text=True, creationflags=flags
         ).strip()
     except Exception as e:
-        enviar_telegram(f"? Error al actualizar con Git:\n<pre>{html.escape(str(e))}</pre>", chat_destino=chat_id)
+        enviar_telegram(f"❌ Error al actualizar con Git:\n<pre>{html.escape(str(e))}</pre>", chat_destino=chat_id)
         return
 
     enviar_telegram(
-        f"? <b>C?digo actualizado en producci?n</b>\n"
+        f"✅ <b>Código actualizado en producción</b>\n"
         f"? <b>Commit:</b> {html.escape(info_commit)}\n"
         f"?? Reiniciando servicio en segundo plano...",
         chat_destino=chat_id,
