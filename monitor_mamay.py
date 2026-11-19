@@ -10,6 +10,7 @@ import socket
 import atexit
 import logging
 import threading
+import subprocess
 from logging.handlers import RotatingFileHandler
 from datetime import datetime, date
 
@@ -362,6 +363,65 @@ def responder_salud_sistema(chat_id):
     enviar_telegram(msg, chat_destino=chat_id)
 
 
+def responder_log_sistema(chat_id):
+    if str(chat_id) != str(TELEGRAM_CHAT_ID):
+        return
+    if not os.path.isfile(LOG_FILE):
+        enviar_telegram("?? No se encontr? el archivo monitor_mamay.log.", chat_destino=chat_id)
+        return
+    try:
+        with open(LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
+            ultimas = f.readlines()[-20:]
+        texto_log = "".join(ultimas).strip()
+        if len(texto_log) > 3400:
+            texto_log = "...\n" + texto_log[-3400:]
+        enviar_telegram(
+            f"?? <b>?LTIMAS L?NEAS DEL LOG ? MAMAY</b>\n<pre>{html.escape(texto_log)}</pre>",
+            chat_destino=chat_id,
+        )
+    except Exception as e:
+        enviar_telegram(f"? Error leyendo log: {html.escape(str(e))}", chat_destino=chat_id)
+
+
+def ejecutar_actualizacion_remota(chat_id):
+    if str(chat_id) != str(TELEGRAM_CHAT_ID):
+        return
+    enviar_telegram("? Descargando ?ltima versi?n desde GitHub...", chat_destino=chat_id)
+    flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    try:
+        subprocess.run(["git", "fetch", "origin", "main"], cwd=CARPETA_BASE, check=True, capture_output=True, text=True, creationflags=flags)
+        subprocess.run(["git", "reset", "--hard", "origin/main"], cwd=CARPETA_BASE, check=True, capture_output=True, text=True, creationflags=flags)
+        info_commit = subprocess.check_output(
+            ["git", "log", "-n", "1", "--pretty=format:%h ? %s (%ad)", "--date=format:%d/%m %H:%M"],
+            cwd=CARPETA_BASE, text=True, creationflags=flags
+        ).strip()
+    except Exception as e:
+        enviar_telegram(f"? Error al actualizar con Git:\n<pre>{html.escape(str(e))}</pre>", chat_destino=chat_id)
+        return
+
+    enviar_telegram(
+        f"? <b>C?digo actualizado en producci?n</b>\n"
+        f"? <b>Commit:</b> {html.escape(info_commit)}\n"
+        f"?? Reiniciando servicio en segundo plano...",
+        chat_destino=chat_id,
+    )
+
+    try:
+        if os.path.isfile(LOCK_FILE):
+            os.remove(LOCK_FILE)
+    except Exception:
+        pass
+
+    pythonw_exe = sys.executable.replace("python.exe", "pythonw.exe")
+    if not os.path.isfile(pythonw_exe):
+        pythonw_exe = "pythonw.exe"
+
+    detached = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | flags
+    subprocess.Popen([pythonw_exe, os.path.join(CARPETA_BASE, "monitor_mamay.py")], cwd=CARPETA_BASE, creationflags=detached, close_fds=True)
+    time.sleep(1.5)
+    os._exit(0)
+
+
 def responder_consulta_bajo_demanda(comando_texto, chat_id):
     cache = leer_cache_lectura()
     if not cache or not cache.get("galpones"):
@@ -459,6 +519,10 @@ def escuchar_comandos_telegram():
                     activar_teclado_consulta(chat_id)
                 elif texto.startswith("/salud"):
                     responder_salud_sistema(chat_id)
+                elif texto.startswith("/log"):
+                    responder_log_sistema(chat_id)
+                elif texto.startswith("/actualizar"):
+                    ejecutar_actualizacion_remota(chat_id)
                 elif any(k in texto.lower() for k in ["estado general", "zona arias", "zona castillo", "solo alertas", "/estado"]):
                     responder_consulta_bajo_demanda(texto, chat_id)
         except Exception:
