@@ -1,4 +1,4 @@
-﻿name: Monitor Clima Mamay (Horario 24/7)
+name: Monitor Clima Mamay (Horario 24/7)
 
 on:
   schedule:
