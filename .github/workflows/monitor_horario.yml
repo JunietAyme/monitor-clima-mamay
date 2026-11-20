@@ -2,9 +2,8 @@
 
 on:
   schedule:
-    # Ejecuta al minuto 5 de cada hora (24 veces al día, 100% gratis)
     - cron: '5 * * * *'
-  workflow_dispatch: # Permite ejecutarlo manualmente con un clic para probar
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -41,5 +40,5 @@ jobs:
         run: |
           git config user.name "Monitor Mamay Bot"
           git config user.email "bot@inversionesmamay.local"
-          git add datos_clima.js historial_clima_mamay.csv estado_alerta.json ultima_lectura.json 2>/dev/null || true
+          git add datos_clima.js estado_alerta.json ultima_lectura.json 2>/dev/null || true
           git diff --staged --quiet || (git commit -m "Actualizacion horaria 24/7 $(TZ='America/Lima' date '+%Y-%m-%d %H:%M')" && git pull --rebase origin main && git push origin main)
