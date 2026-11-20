@@ -6,7 +6,7 @@ import json
 import shutil
 import subprocess
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, date, timedelta, timezone
 TZ_LIMA = timezone(timedelta(hours=-5))
 def ahora_lima():
     return datetime.now(TZ_LIMA).replace(tzinfo=None)

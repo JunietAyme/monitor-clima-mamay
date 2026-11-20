@@ -12,7 +12,7 @@ import logging
 import threading
 import subprocess
 from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, date, timedelta, timezone
 TZ_LIMA = timezone(timedelta(hours=-5))
 def ahora_lima():
     return datetime.now(TZ_LIMA).replace(tzinfo=None)
@@ -900,7 +900,7 @@ primer_ciclo = True
 def procesar_ciclo(forzar_reporte=False):
     global primer_ciclo
     ahora_dt = ahora_lima()
-    hoy_str = date.today().isoformat()
+    hoy_str = ahora_lima().date().isoformat()
     hora_actual = ahora_dt.strftime("%H:%M")
 
     if not hay_internet():
