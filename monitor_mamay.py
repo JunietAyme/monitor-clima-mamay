@@ -82,13 +82,13 @@ RECORDATORIO_CRITICO_MIN = 15
 
 # Umbrales Técnicos de Resiliencia (ciclos de 5 min)
 CICLOS_DESCONEXION_ALERTA = 2      # 2 ciclos = 10 min sin señal
-CICLOS_SENSOR_CONGELADO = 36       # 36 ciclos = 180 min sin variación mínima
+CICLOS_SENSOR_CONGELADO = 3       # 36 ciclos = 180 min sin variación mínima
 
 # Resúmenes automáticos
 HORAS_RESUMEN = ["08:00", "12:00", "15:00"]
 VENTANA_RESUMEN_MIN = 8
 ENVIAR_RESUMEN_AL_INICIAR = False
-INTERVALO_SEGUNDOS = 300
+INTERVALO_SEGUNDOS = 3600
 
 INICIO_SERVICIO_DT = datetime.now()
 alerta_sesion_enviada = False
