@@ -235,7 +235,7 @@ def exportar_datos_web_auto(serie_dashboard):
         try:
             raw_ant = open(ARCHIVO_JS_AUTO, 'r', encoding='utf-8').read().strip()
             if '=' in raw_ant:
-                prev_total = len(json.loads(raw_ant.split('=', 1)[1].rstrip(';').strip()).get('registros', []))
+                prev_total = len(json.JSONDecoder().raw_decode(raw_ant.split('=', 1)[1].lstrip())[0].get('registros', []))
                 if prev_total > 0 and len(lista_ordenada) < int(prev_total * 0.85):
                     raise RuntimeError(f'Bloqueo de seguridad: los registros bajarian de {prev_total} a {len(lista_ordenada)}. Abortando escritura.')
         except RuntimeError:
