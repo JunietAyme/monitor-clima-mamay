@@ -38,6 +38,7 @@ jobs:
           TZ: America/Lima
           MAMAY_BFN_USER: ${{ secrets.MAMAY_BFN_USER }}
           MAMAY_BFN_PASS: ${{ secrets.MAMAY_BFN_PASS }}
+          MAMAY_BFN_SESSION: ${{ secrets.MAMAY_BFN_SESSION }}
           MAMAY_TG_TOKEN: ${{ secrets.MAMAY_TG_TOKEN }}
           MAMAY_TG_CHAT_ID: ${{ secrets.MAMAY_TG_CHAT_ID }}
         run: python monitor_mamay.py --una-vez

@@ -614,15 +614,33 @@ def leer_tabla_survey():
 
     try:
         with sync_playwright() as p:
-            import shutil
+            import shutil, json
             canal_navegador = "chrome" if shutil.which("google-chrome") else None
-            context = p.chromium.launch_persistent_context(
-                user_data_dir=PERFIL_DIR,
-                channel=canal_navegador,
-                headless=True,
-                viewport={"width": 1920, "height": 1400},
-                args=["--disable-blink-features=AutomationControlled"],
-            )
+            sesion_env = os.getenv("MAMAY_BFN_SESSION", "").strip()
+            args_nav = [
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+            ]
+            ua_nav = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+            browser = None
+            if sesion_env:
+                browser = p.chromium.launch(channel=canal_navegador, headless=True, args=args_nav)
+                context = browser.new_context(
+                    storage_state=json.loads(sesion_env),
+                    viewport={"width": 1920, "height": 1400},
+                    user_agent=ua_nav,
+                )
+            else:
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=PERFIL_DIR,
+                    channel=canal_navegador,
+                    headless=True,
+                    viewport={"width": 1920, "height": 1400},
+                    user_agent=ua_nav,
+                    args=args_nav,
+                )
             try:
                 page = context.pages[0] if context.pages else context.new_page()
                 page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
@@ -690,6 +708,8 @@ def leer_tabla_survey():
             finally:
                 try:
                     context.close()
+                    if browser:
+                        browser.close()
                 except Exception:
                     pass
 
