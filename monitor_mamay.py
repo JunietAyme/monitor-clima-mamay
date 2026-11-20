@@ -1092,9 +1092,22 @@ if __name__ == "__main__":
         time.sleep(3)
 
     if modo_nube:
-        procesar_ciclo()
-        logging.info("Ciclo horario en nube finalizado correctamente.")
-        sys.exit(0)
+        ultimo_error = None
+        for intento in range(1, 4):
+            try:
+                logging.info(f"Iniciando intento {intento}/3 de extracci?n horaria...")
+                procesar_ciclo()
+                logging.info("Ciclo horario en nube finalizado correctamente.")
+                sys.exit(0)
+            except Exception as e:
+                ultimo_error = e
+                logging.error(f"Fallo en intento {intento}/3: {e}")
+                if intento < 3:
+                    espera = intento * 20
+                    logging.info(f"Reintentando en {espera} segundos...")
+                    time.sleep(espera)
+        logging.critical(f"Abortado tras 3 intentos fallidos: {ultimo_error}")
+        sys.exit(1)
 
     activar_teclado_consulta(TELEGRAM_CHAT_ID)
 
