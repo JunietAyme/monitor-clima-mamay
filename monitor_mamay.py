@@ -86,7 +86,7 @@ CICLOS_SENSOR_CONGELADO = 3       # 36 ciclos = 180 min sin variación mínima
 
 # Resúmenes automáticos
 HORAS_RESUMEN = ["08:00", "12:00", "15:00"]
-VENTANA_RESUMEN_MIN = 8
+VENTANA_RESUMEN_MIN = 45
 ENVIAR_RESUMEN_AL_INICIAR = False
 INTERVALO_SEGUNDOS = 3600
 
@@ -993,7 +993,8 @@ def procesar_ciclo(forzar_reporte=False):
             primer_ciclo = False
             if ENVIAR_RESUMEN_AL_INICIAR:
                 enviar_ahora = True
-        elif slot_resumen:
+
+        if slot_resumen:
             enviar_ahora = True
             estado["resumenes"].append(slot_resumen)
 
