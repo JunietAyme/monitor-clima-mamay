@@ -6,7 +6,10 @@ import json
 import shutil
 import subprocess
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+TZ_LIMA = timezone(timedelta(hours=-5))
+def ahora_lima():
+    return datetime.now(TZ_LIMA).replace(tzinfo=None)
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -57,12 +60,12 @@ def sincronizar_github_pages():
         )
         res = subprocess.run([git_cmd, "diff", "--cached", "--quiet"], cwd=CARPETA_BASE, timeout=10)
         if res.returncode != 0:
-            msg = "Actualizacion automatica " + datetime.now().strftime("%Y-%m-%d %H:%M")
+            msg = "Actualizacion automatica " + ahora_lima().strftime("%Y-%m-%d %H:%M")
             subprocess.run([git_cmd, "commit", "-m", msg], cwd=CARPETA_BASE, check=True, capture_output=True, timeout=15)
             subprocess.run([git_cmd, "push", "origin", "main"], cwd=CARPETA_BASE, check=True, capture_output=True, timeout=25)
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] Dashboard web sincronizado en GitHub Pages.")
+            print(f"[{ahora_lima().strftime('%H:%M:%S')}] Dashboard web sincronizado en GitHub Pages.")
     except Exception as e:
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] Aviso sincronizacion web (datos locales a salvo): {e}")
+        print(f"[{ahora_lima().strftime('%H:%M:%S')}] Aviso sincronizacion web (datos locales a salvo): {e}")
 
 
 def parse_float(val):
@@ -192,7 +195,7 @@ def procesar_archivo_csv(ruta_csv, acumulado_diario, serie_dashboard):
 
 def _compactar_serie_web(serie_dashboard):
     """Mantiene 5 min en los últimos 7 días y agrupa días anteriores a bloques de 30 min."""
-    limite_fino = (datetime.now() - timedelta(days=DIAS_DETALLE_FINO)).strftime("%Y-%m-%d")
+    limite_fino = (ahora_lima() - timedelta(days=DIAS_DETALLE_FINO)).strftime("%Y-%m-%d")
     resultado = []
     buckets_antiguos = defaultdict(list)
 
@@ -233,14 +236,14 @@ def exportar_datos_web_auto(serie_dashboard):
             raw_ant = open(ARCHIVO_JS_AUTO, 'r', encoding='utf-8').read().strip()
             if '=' in raw_ant:
                 prev_total = len(json.loads(raw_ant.split('=', 1)[1].rstrip(';').strip()).get('registros', []))
-                if prev_total > 0 and len(lista_ordenada) < prev_total:
+                if prev_total > 0 and len(lista_ordenada) < int(prev_total * 0.85):
                     raise RuntimeError(f'Bloqueo de seguridad: los registros bajarian de {prev_total} a {len(lista_ordenada)}. Abortando escritura.')
         except RuntimeError:
             raise
         except Exception:
             pass
     payload = {
-        "actualizado": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "actualizado": ahora_lima().strftime("%d/%m/%Y %H:%M:%S"),
         "total": len(lista_ordenada),
         "registros": lista_ordenada,
     }
@@ -350,7 +353,7 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
         ws.row_dimensions[1].height = 26
 
         ws.merge_cells("A2:H2")
-        ws["A2"] = f"Consolidado BigFarmNet Survey + Monitor en Vivo | Actualizado: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+        ws["A2"] = f"Consolidado BigFarmNet Survey + Monitor en Vivo | Actualizado: {ahora_lima().strftime('%d/%m/%Y %H:%M')}"
         ws["A2"].font = font_sub
         ws["A2"].alignment = Alignment(horizontal="left", vertical="center", indent=1)
         ws.row_dimensions[2].height = 18
@@ -598,10 +601,10 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
 
     try:
         wb.save(ruta_xlsx)
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] Excel y datos web actualizados ({len(serie_dashboard)} lecturas totales).")
+        print(f"[{ahora_lima().strftime('%H:%M:%S')}] Excel y datos web actualizados ({len(serie_dashboard)} lecturas totales).")
         return True
     except PermissionError:
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] Datos web actualizados; cierre {ruta_xlsx} para refrescar el Excel.")
+        print(f"[{ahora_lima().strftime('%H:%M:%S')}] Datos web actualizados; cierre {ruta_xlsx} para refrescar el Excel.")
         return False
 
 

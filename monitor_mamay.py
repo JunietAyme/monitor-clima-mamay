@@ -12,7 +12,10 @@ import logging
 import threading
 import subprocess
 from logging.handlers import RotatingFileHandler
-from datetime import datetime, date
+from datetime import datetime, timedelta, timezone
+TZ_LIMA = timezone(timedelta(hours=-5))
+def ahora_lima():
+    return datetime.now(TZ_LIMA).replace(tzinfo=None)
 
 import requests
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
@@ -90,7 +93,7 @@ VENTANA_RESUMEN_MIN = 45
 ENVIAR_RESUMEN_AL_INICIAR = False
 INTERVALO_SEGUNDOS = 3600
 
-INICIO_SERVICIO_DT = datetime.now()
+INICIO_SERVICIO_DT = ahora_lima()
 alerta_sesion_enviada = False
 lock_estado = threading.Lock()
 
@@ -336,7 +339,7 @@ def activar_teclado_consulta(chat_id):
 
 
 def responder_salud_sistema(chat_id):
-    ahora = datetime.now()
+    ahora = ahora_lima()
     uptime_seg = int((ahora - INICIO_SERVICIO_DT).total_seconds())
     horas, rem = divmod(uptime_seg, 3600)
     mins, _ = divmod(rem, 60)
@@ -435,7 +438,7 @@ def responder_consulta_bajo_demanda(comando_texto, chat_id):
 
     try:
         dt_lectura = datetime.fromisoformat(cache["timestamp"])
-        mins_antig = max(0, int((datetime.now() - dt_lectura).total_seconds() // 60))
+        mins_antig = max(0, int((ahora_lima() - dt_lectura).total_seconds() // 60))
         etiqueta_antig = "ahora mismo" if mins_antig == 0 else f"hace {mins_antig} min"
     except Exception:
         etiqueta_antig = ""
@@ -787,7 +790,7 @@ def guardar_historial_csv(ahora_dt, galpones):
 def hacer_backup_diario():
     carpeta_backup = os.path.join(CARPETA_BASE, "backups")
     os.makedirs(carpeta_backup, exist_ok=True)
-    hoy_str = datetime.now().strftime("%Y-%m-%d")
+    hoy_str = ahora_lima().strftime("%Y-%m-%d")
 
     pares = [
         (ARCHIVO_CSV, os.path.join(carpeta_backup, f"historial_clima_{hoy_str}.csv"), "CSV"),
@@ -896,7 +899,7 @@ primer_ciclo = True
 
 def procesar_ciclo(forzar_reporte=False):
     global primer_ciclo
-    ahora_dt = datetime.now()
+    ahora_dt = ahora_lima()
     hoy_str = date.today().isoformat()
     hora_actual = ahora_dt.strftime("%H:%M")
 
