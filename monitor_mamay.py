@@ -700,8 +700,7 @@ def leer_tabla_survey():
             if "page" in locals() and page:
                 url_act = page.url
                 titulo_act = page.title()
-                muestra_txt = (page.locator("body").inner_text(timeout=2000) or "")[:220].replace("
-", " | ")
+                muestra_txt = " ".join((page.locator("body").inner_text(timeout=2000) or "")[:220].split())
         except Exception:
             pass
         logging.warning(f"Timeout BFN ({te}). URL={url_act} | Titulo={titulo_act} | Texto={muestra_txt}")
