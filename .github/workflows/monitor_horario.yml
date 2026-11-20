@@ -43,10 +43,11 @@ jobs:
           MAMAY_TG_CHAT_ID: ${{ secrets.MAMAY_TG_CHAT_ID }}
         run: python monitor_mamay.py --una-vez
 
-      - name: Validar integridad de datos_clima.js
+      - name: Validar integridad e historial de datos_clima.js
         run: |
           test -s datos_clima.js
           node --check datos_clima.js
+          python -c "import json, subprocess; contar=lambda r: len(json.loads(r.split('=',1)[1].rstrip(';').strip()).get('registros',[])); a=contar(open('datos_clima.js',encoding='utf-8').read()); p=contar(subprocess.check_output(['git','show','HEAD:datos_clima.js'],text=True)); print(f'Previos: {p} | Actuales: {a}'); assert a>=p, f'Perdida de historial ({a}<{p})'"
 
       - name: Guardar cambios en GitHub Pages (con reintento ante conflictos)
         env:

@@ -7,8 +7,6 @@ perfil_bfn/
 *.xlsx
 *.log
 *.lock
-estado_alerta.json
-ultima_lectura.json
 backups/
 importar_excel/
 __pycache__/

@@ -645,6 +645,8 @@ def leer_tabla_survey():
                 page = context.pages[0] if context.pages else context.new_page()
                 page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
                 page.goto(URL_SURVEY, wait_until="domcontentloaded", timeout=60000)
+                if os.getenv("MAMAY_BFN_SESSION") and "login.my.bigdutchman.com" in page.url:
+                    raise RuntimeError("SESION_CADUCADA: MAMAY_BFN_SESSION expiro. Ejecuta .\\renovar_sesion.ps1 en tu PC y actualiza el Secret en GitHub.")
 
                 for _ in range(30):
                     page.wait_for_timeout(1000)
@@ -917,9 +919,13 @@ def procesar_ciclo(forzar_reporte=False):
         logging.error(f"Error guardando historial CSV: {e}")
 
     try:
-        actualizar_excel_mensual()
+        ok_web = actualizar_excel_mensual()
+        if ok_web is False and os.getenv('MAMAY_BFN_SESSION'):
+            raise RuntimeError('actualizar_excel_mensual() devolvio False en la nube.')
     except Exception as e:
-        logging.error(f"Error actualizando Excel / datos_clima.js: {e}")
+        logging.error(f'Error actualizando Excel / datos_clima.js: {e}')
+        if os.getenv('MAMAY_BFN_SESSION'):
+            raise
 
     hacer_backup_diario()
 

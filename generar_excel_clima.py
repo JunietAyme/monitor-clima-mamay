@@ -228,6 +228,17 @@ def _compactar_serie_web(serie_dashboard):
 
 def exportar_datos_web_auto(serie_dashboard):
     lista_ordenada = _compactar_serie_web(serie_dashboard)
+    if os.path.exists(ARCHIVO_JS_AUTO):
+        try:
+            raw_ant = open(ARCHIVO_JS_AUTO, 'r', encoding='utf-8').read().strip()
+            if '=' in raw_ant:
+                prev_total = len(json.loads(raw_ant.split('=', 1)[1].rstrip(';').strip()).get('registros', []))
+                if prev_total > 0 and len(lista_ordenada) < prev_total:
+                    raise RuntimeError(f'Bloqueo de seguridad: los registros bajarian de {prev_total} a {len(lista_ordenada)}. Abortando escritura.')
+        except RuntimeError:
+            raise
+        except Exception:
+            pass
     payload = {
         "actualizado": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
         "total": len(lista_ordenada),
