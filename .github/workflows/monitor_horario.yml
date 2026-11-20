@@ -15,7 +15,7 @@ permissions:
 jobs:
   extraer-clima:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 12
 
     steps:
       - name: Descargar repositorio
@@ -32,7 +32,6 @@ jobs:
         run: |
           pip install playwright requests openpyxl
           playwright install chromium
-          playwright install-deps chromium
 
       - name: Ejecutar extracción horaria BigFarmNet (con reintentos)
         env:

@@ -614,8 +614,11 @@ def leer_tabla_survey():
 
     try:
         with sync_playwright() as p:
+            import shutil
+            canal_navegador = "chrome" if shutil.which("google-chrome") else None
             context = p.chromium.launch_persistent_context(
                 user_data_dir=PERFIL_DIR,
+                channel=canal_navegador,
                 headless=True,
                 viewport={"width": 1920, "height": 1400},
                 args=["--disable-blink-features=AutomationControlled"],
