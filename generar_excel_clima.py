@@ -13,7 +13,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.chart import BarChart, LineChart, Reference
 from openpyxl.chart import BarChart, Reference
 
-CARPETA_BASE = r"C:\Scripts\Monitor_Mamay"
+CARPETA_BASE = os.path.dirname(os.path.abspath(__file__))
 ARCHIVO_XLSX = os.path.join(CARPETA_BASE, "Reporte_Clima_Mamay.xlsx")
 ARCHIVO_JS_AUTO = os.path.join(CARPETA_BASE, "datos_clima.js")
 
@@ -248,6 +248,18 @@ def actualizar_excel_mensual(ruta_xlsx=ARCHIVO_XLSX):
         "hums": []
     })
     serie_dashboard = {}
+    if os.path.exists(ARCHIVO_JS_AUTO):
+        try:
+            raw_js = open(ARCHIVO_JS_AUTO, "r", encoding="utf-8").read().strip()
+            if "=" in raw_js:
+                json_str = raw_js.split("=", 1)[1].rstrip(";").strip()
+                prev_data = json.loads(json_str)
+                for reg_prev in prev_data.get("registros", []):
+                    clave_p = (reg_prev.get("fecha"), reg_prev.get("hora"), reg_prev.get("num"))
+                    if all(clave_p):
+                        serie_dashboard[clave_p] = reg_prev
+        except Exception as e:
+            print(f"Aviso precargando datos_clima.js previo: {e}")
 
     archivos_csv = [
         p for p in glob.glob(os.path.join(CARPETA_BASE, "*.csv"))

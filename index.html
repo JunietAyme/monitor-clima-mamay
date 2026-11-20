@@ -413,7 +413,7 @@
         </div>
     </div>
 
-    <script src="datos_clima.js"></script>
+    <script>document.write('<script src="datos_clima.js?v=' + Date.now() + '"><\/script>');</script>
     <script>
         const UMBRAL_TEMP_PREV = 23.0;
         const UMBRAL_TEMP_CRIT = 26.0;
