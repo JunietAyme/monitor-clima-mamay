@@ -625,6 +625,7 @@ def leer_tabla_survey():
             )
             try:
                 page = context.pages[0] if context.pages else context.new_page()
+                page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
                 page.goto(URL_SURVEY, wait_until="domcontentloaded", timeout=60000)
 
                 for _ in range(30):
@@ -700,7 +701,9 @@ def leer_tabla_survey():
             if "page" in locals() and page:
                 url_act = page.url
                 titulo_act = page.title()
-                muestra_txt = " ".join((page.locator("body").inner_text(timeout=2000) or "")[:220].split()) or ("HTML: " + " ".join(page.content()[:240].split()))
+                cuerpo_txt = " ".join((page.locator("body").inner_text(timeout=2000) or "")[:220].split())
+                html_ini = " ".join((page.content() or "")[:350].split())
+                muestra_txt = cuerpo_txt if cuerpo_txt else f"SIN_TEXTO | HTML={html_ini}"
         except Exception:
             pass
         logging.warning(f"Timeout BFN ({te}). URL={url_act} | Titulo={titulo_act} | Texto={muestra_txt}")
