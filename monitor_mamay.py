@@ -629,10 +629,10 @@ def leer_tabla_survey():
 
                 for _ in range(30):
                     page.wait_for_timeout(1000)
-                    if "login.bfn-fusion" in page.url and page.locator('input[name="password"], #password').count() > 0:
+                    if any(k in page.url for k in ("login.bfn-fusion", "login.my.bigdutchman.com", "openid-connect/auth")) and page.locator('input[name="password"], #password, input[type="password"]').count() > 0:
                         if CLAVE_WEB:
-                            page.locator('input[name="username"], #username').first.fill(CORREO_WEB)
-                            page.locator('input[name="password"], #password').first.fill(CLAVE_WEB)
+                            page.locator('input[name="username"], #username, input[type="email"], input[type="text"]').first.fill(CORREO_WEB)
+                            page.locator('input[name="password"], #password, input[type="password"]').first.fill(CLAVE_WEB)
                             chk = page.locator('#rememberMe, input[name="rememberMe"]').first
                             if chk.count() > 0 and not chk.is_checked():
                                 chk.check()
@@ -700,7 +700,7 @@ def leer_tabla_survey():
             if "page" in locals() and page:
                 url_act = page.url
                 titulo_act = page.title()
-                muestra_txt = " ".join((page.locator("body").inner_text(timeout=2000) or "")[:220].split())
+                muestra_txt = " ".join((page.locator("body").inner_text(timeout=2000) or "")[:220].split()) or ("HTML: " + " ".join(page.content()[:240].split()))
         except Exception:
             pass
         logging.warning(f"Timeout BFN ({te}). URL={url_act} | Titulo={titulo_act} | Texto={muestra_txt}")
