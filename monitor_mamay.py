@@ -21,7 +21,7 @@ from generar_excel_clima import actualizar_excel_mensual
 # ==============================================================================
 # 1. CONFIGURACIÓN GENERAL Y UMBRALES
 # ==============================================================================
-CARPETA_BASE = r"C:\Scripts\Monitor_Mamay"
+CARPETA_BASE = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(CARPETA_BASE, "monitor_mamay.log")
 LOCK_FILE = os.path.join(CARPETA_BASE, "monitor.lock")
 ESTADO_FILE = os.path.join(CARPETA_BASE, "estado_alerta.json")
@@ -43,6 +43,8 @@ CONFIG_SECRETA_FILE = os.path.join(CARPETA_BASE, "config_secreta.json")
 
 def cargar_credenciales():
     if not os.path.isfile(CONFIG_SECRETA_FILE):
+        if os.getenv("MAMAY_BFN_USER") and os.getenv("MAMAY_TG_TOKEN"):
+            return {}
         raise FileNotFoundError(
             f"Falta {CONFIG_SECRETA_FILE}. Copia config_secreta.example.json a config_secreta.json y completa tus claves."
         )
@@ -1075,16 +1077,24 @@ def procesar_ciclo(forzar_reporte=False):
 
 
 if __name__ == "__main__":
-    adquirir_candado()
-    logging.info("Servicio Monitor Mamay (v4 resiliencia técnica + /salud) iniciado.")
+    modo_nube = "--una-vez" in sys.argv
+    if not modo_nube:
+        adquirir_candado()
+    logging.info(f"Servicio Monitor Mamay iniciado (modo={'nube-1h' if modo_nube else 'local-5m'}).")
 
-    hilo_bot = threading.Thread(target=escuchar_comandos_telegram, daemon=True)
-    hilo_bot.start()
+    if not modo_nube:
+        hilo_bot = threading.Thread(target=escuchar_comandos_telegram, daemon=True)
+        hilo_bot.start()
 
     for _ in range(15):
         if hay_internet():
             break
         time.sleep(3)
+
+    if modo_nube:
+        procesar_ciclo()
+        logging.info("Ciclo horario en nube finalizado correctamente.")
+        sys.exit(0)
 
     activar_teclado_consulta(TELEGRAM_CHAT_ID)
 

@@ -1,0 +1,45 @@
+﻿name: Monitor Clima Mamay (Horario 24/7)
+
+on:
+  schedule:
+    # Ejecuta al minuto 5 de cada hora (24 veces al día, 100% gratis)
+    - cron: '5 * * * *'
+  workflow_dispatch: # Permite ejecutarlo manualmente con un clic para probar
+
+permissions:
+  contents: write
+
+jobs:
+  extraer-clima:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias y Chromium
+        run: |
+          pip install playwright requests openpyxl
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Ejecutar extracción horaria BigFarmNet
+        env:
+          MAMAY_BFN_USER: ${{ secrets.MAMAY_BFN_USER }}
+          MAMAY_BFN_PASS: ${{ secrets.MAMAY_BFN_PASS }}
+          MAMAY_TG_TOKEN: ${{ secrets.MAMAY_TG_TOKEN }}
+          MAMAY_TG_CHAT_ID: ${{ secrets.MAMAY_TG_CHAT_ID }}
+        run: python monitor_mamay.py --una-vez
+
+      - name: Guardar cambios en GitHub Pages
+        run: |
+          git config user.name "Monitor Mamay Bot"
+          git config user.email "bot@inversionesmamay.local"
+          git add datos_clima.js historial_clima_mamay.csv estado_alerta.json ultima_lectura.json 2>/dev/null || true
+          git diff --staged --quiet || (git commit -m "Actualizacion horaria 24/7 $(TZ='America/Lima' date '+%Y-%m-%d %H:%M')" && git pull --rebase origin main && git push origin main)
