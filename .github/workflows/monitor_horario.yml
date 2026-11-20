@@ -31,7 +31,7 @@ jobs:
           pip install playwright requests openpyxl
           playwright install chromium
 
-      - name: Ejecutar extracciÃ³n horaria BigFarmNet (con reintentos)
+      - name: Ejecutar extraccion horaria BigFarmNet (con reintentos)
         env:
           TZ: America/Lima
           MAMAY_BFN_USER: ${{ secrets.MAMAY_BFN_USER }}
@@ -63,13 +63,14 @@ jobs:
             done
           fi
 
-      - name: Notificar fallo crÃ­tico a Telegram
+      - name: Notificar fallo critico a Telegram
         if: failure()
         env:
           MAMAY_TG_TOKEN: ${{ secrets.MAMAY_TG_TOKEN }}
           MAMAY_TG_CHAT_ID: ${{ secrets.MAMAY_TG_CHAT_ID }}
         run: |
+          MSG=$'⚠️ <b>FALLO EN MONITOR CLIMA (NUBE 24/7)</b>\nEl ciclo horario fallo o la sesion de BigFarmNet caduco.\n🔍 Revisar log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
           curl -s -X POST "https://api.telegram.org/bot${MAMAY_TG_TOKEN}/sendMessage" \
             -d chat_id="${MAMAY_TG_CHAT_ID}" \
             -d parse_mode="HTML" \
-            --data-urlencode "text=âš ï¸ <b>FALLO EN MONITOR CLIMA (NUBE 24/7)</b>%0AEl ciclo horario fallÃ³ tras 3 intentos.%0AðŸ” Revisar log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --data-urlencode "text=${MSG}"
