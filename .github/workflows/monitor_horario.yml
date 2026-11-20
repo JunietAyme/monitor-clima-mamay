@@ -30,6 +30,7 @@ jobs:
 
       - name: Ejecutar extracción horaria BigFarmNet
         env:
+          TZ: America/Lima
           MAMAY_BFN_USER: ${{ secrets.MAMAY_BFN_USER }}
           MAMAY_BFN_PASS: ${{ secrets.MAMAY_BFN_PASS }}
           MAMAY_TG_TOKEN: ${{ secrets.MAMAY_TG_TOKEN }}
