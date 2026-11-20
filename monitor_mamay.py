@@ -692,8 +692,19 @@ def leer_tabla_survey():
                 except Exception:
                     pass
 
-    except PlaywrightTimeoutError:
-        logging.warning("Timeout de red al consultar BigFarmNet Fusion. Se reintentará en el próximo ciclo.")
+    except PlaywrightTimeoutError as te:
+        url_act = "desconocida"
+        titulo_act = ""
+        muestra_txt = ""
+        try:
+            if "page" in locals() and page:
+                url_act = page.url
+                titulo_act = page.title()
+                muestra_txt = (page.locator("body").inner_text(timeout=2000) or "")[:220].replace("
+", " | ")
+        except Exception:
+            pass
+        logging.warning(f"Timeout BFN ({te}). URL={url_act} | Titulo={titulo_act} | Texto={muestra_txt}")
         return {}
     except Exception as e:
         logging.error(f"Error de conexión o lectura en Survey: {e}")
@@ -840,7 +851,7 @@ def evaluar_salud_sensores(estado, galpones):
                 if reg_t["ciclos_iguales"] >= CICLOS_SENSOR_CONGELADO and not reg_t.get("alerta_congelado"):
                     avisos_tecnicos.append(
                         f"🧊 <b>Posible sensor congelado:</b> Galpón {num:02d} ({zona}) repite exactamente "
-                        f"{fmt_val(g.get('temp'), ' °C')} / {fmt_val(g.get('hum'), '%', 0)} desde hace {reg_t['ciclos_iguales'] * 5} min."
+                        f"{fmt_val(g.get('temp'), ' °C')} / {fmt_val(g.get('hum'), '%', 0)} desde hace {reg_t['ciclos_iguales']} h."
                     )
                     reg_t["alerta_congelado"] = True
             else:
@@ -872,6 +883,8 @@ def procesar_ciclo(forzar_reporte=False):
     galpones = leer_tabla_survey()
     if not galpones:
         logging.warning("No se obtuvieron datos válidos de Survey en este ciclo.")
+        if "--una-vez" in sys.argv:
+            raise RuntimeError("No se obtuvieron datos validos de BigFarmNet Survey.")
         return
 
     guardar_cache_lectura(ahora_dt, galpones)
