@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-11-21T05:00:31.309889",
-  "fecha_hora": "21/11/2026 05:00",
+  "timestamp": "2026-11-21T06:00:26.437185",
+  "fecha_hora": "21/11/2026 06:00",
   "galpones": {
     "1": {
       "num": 1,
       "activo": true,
-      "temp": 26.5,
+      "temp": 26.9,
       "ext": 23.5,
       "hum": 79.0,
-      "exp": 24.3
+      "exp": 24.7
     },
     "2": {
       "num": 2,
       "activo": true,
-      "temp": 24.7,
-      "ext": 23.9,
-      "hum": 77.0,
-      "exp": 23.1
+      "temp": 24.8,
+      "ext": 24.0,
+      "hum": 78.0,
+      "exp": 23.0
     },
     "3": {
       "num": 3,
       "activo": true,
-      "temp": 26.2,
+      "temp": 26.5,
       "ext": 23.4,
       "hum": 79.0,
       "exp": 23.0
@@ -29,50 +29,50 @@
     "4": {
       "num": 4,
       "activo": true,
-      "temp": 25.8,
-      "ext": 24.8,
-      "hum": 78.0,
-      "exp": 23.0
+      "temp": 26.1,
+      "ext": 24.9,
+      "hum": 77.0,
+      "exp": 22.9
     },
     "5": {
       "num": 5,
       "activo": true,
-      "temp": 25.8,
+      "temp": 26.0,
       "ext": 23.7,
-      "hum": 83.0,
+      "hum": 84.0,
       "exp": 23.1
     },
     "6": {
       "num": 6,
       "activo": true,
-      "temp": 25.9,
+      "temp": 25.4,
       "ext": 23.6,
-      "hum": 83.0,
-      "exp": 22.1
+      "hum": 84.0,
+      "exp": 22.0
     },
     "7": {
       "num": 7,
       "activo": true,
-      "temp": 25.6,
-      "ext": 23.5,
-      "hum": 85.0,
-      "exp": 23.0
+      "temp": 25.8,
+      "ext": 23.6,
+      "hum": 86.0,
+      "exp": 23.1
     },
     "8": {
       "num": 8,
       "activo": true,
-      "temp": 26.2,
+      "temp": 26.4,
       "ext": 23.6,
-      "hum": 86.0,
+      "hum": 87.0,
       "exp": 23.0
     },
     "9": {
       "num": 9,
       "activo": true,
-      "temp": 25.5,
+      "temp": 25.6,
       "ext": 23.7,
-      "hum": 79.0,
-      "exp": 23.6
+      "hum": 80.0,
+      "exp": 23.7
     },
     "10": {
       "num": 10,
@@ -93,34 +93,34 @@
     "12": {
       "num": 12,
       "activo": true,
-      "temp": 26.2,
-      "ext": 23.8,
+      "temp": 26.3,
+      "ext": 23.9,
       "hum": 89.0,
-      "exp": 23.0
+      "exp": 23.1
     },
     "13": {
       "num": 13,
       "activo": true,
-      "temp": 26.5,
+      "temp": 26.7,
       "ext": 23.6,
       "hum": 85.0,
-      "exp": 24.2
+      "exp": 24.4
     },
     "14": {
       "num": 14,
       "activo": true,
-      "temp": 26.3,
+      "temp": 26.2,
       "ext": 23.9,
       "hum": 83.0,
-      "exp": 23.0
+      "exp": 22.9
     },
     "15": {
       "num": 15,
       "activo": true,
-      "temp": 26.7,
-      "ext": 24.4,
-      "hum": 75.0,
-      "exp": 22.9
+      "temp": 26.9,
+      "ext": 23.9,
+      "hum": 76.0,
+      "exp": 23.2
     }
   }
 }
