@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-11-23T06:00:39.953360",
-  "fecha_hora": "23/11/2026 06:00",
+  "timestamp": "2026-11-23T07:00:35.433628",
+  "fecha_hora": "23/11/2026 07:00",
   "galpones": {
     "1": {
       "num": 1,
       "activo": true,
       "temp": 26.6,
-      "ext": 23.2,
+      "ext": 23.6,
       "hum": 79.0,
       "exp": 24.4
     },
@@ -14,7 +14,7 @@
       "num": 2,
       "activo": true,
       "temp": 24.7,
-      "ext": 23.7,
+      "ext": 24.3,
       "hum": 77.0,
       "exp": 23.0
     },
@@ -22,15 +22,15 @@
       "num": 3,
       "activo": true,
       "temp": 26.3,
-      "ext": 23.2,
+      "ext": 23.6,
       "hum": 78.0,
       "exp": 23.0
     },
     "4": {
       "num": 4,
       "activo": true,
-      "temp": 26.1,
-      "ext": 24.7,
+      "temp": 26.0,
+      "ext": 24.9,
       "hum": 77.0,
       "exp": 23.0
     },
@@ -38,23 +38,23 @@
       "num": 5,
       "activo": true,
       "temp": 25.8,
-      "ext": 23.5,
+      "ext": 23.9,
       "hum": 83.0,
       "exp": 23.1
     },
     "6": {
       "num": 6,
       "activo": true,
-      "temp": 25.1,
-      "ext": 23.3,
+      "temp": 25.5,
+      "ext": 23.9,
       "hum": 83.0,
-      "exp": 22.0
+      "exp": 22.1
     },
     "7": {
       "num": 7,
       "activo": true,
-      "temp": 25.6,
-      "ext": 23.4,
+      "temp": 25.7,
+      "ext": 23.9,
       "hum": 85.0,
       "exp": 23.0
     },
@@ -62,47 +62,47 @@
       "num": 8,
       "activo": true,
       "temp": 26.2,
-      "ext": 23.4,
-      "hum": 85.0,
+      "ext": 23.7,
+      "hum": 86.0,
       "exp": 23.0
     },
     "9": {
       "num": 9,
       "activo": true,
-      "temp": 25.6,
-      "ext": 23.4,
+      "temp": 25.5,
+      "ext": 23.9,
       "hum": 80.0,
-      "exp": 23.6
+      "exp": 23.5
     },
     "10": {
       "num": 10,
       "activo": true,
-      "temp": 23.4,
-      "ext": 23.6,
+      "temp": 23.6,
+      "ext": 24.2,
       "hum": 86.0,
       "exp": 23.0
     },
     "11": {
       "num": 11,
       "activo": true,
-      "temp": 26.0,
-      "ext": 23.5,
+      "temp": 26.2,
+      "ext": 23.8,
       "hum": 83.0,
-      "exp": 23.3
+      "exp": 23.5
     },
     "12": {
       "num": 12,
       "activo": true,
       "temp": 26.1,
-      "ext": 23.7,
+      "ext": 24.1,
       "hum": 88.0,
-      "exp": 22.9
+      "exp": 23.1
     },
     "13": {
       "num": 13,
       "activo": true,
-      "temp": 26.4,
-      "ext": 23.3,
+      "temp": 26.3,
+      "ext": 23.8,
       "hum": 85.0,
       "exp": 24.1
     },
@@ -110,17 +110,17 @@
       "num": 14,
       "activo": true,
       "temp": 25.9,
-      "ext": 23.7,
+      "ext": 24.1,
       "hum": 83.0,
-      "exp": 22.7
+      "exp": 22.6
     },
     "15": {
       "num": 15,
       "activo": true,
       "temp": 26.7,
-      "ext": 23.6,
+      "ext": 24.0,
       "hum": 76.0,
-      "exp": 22.9
+      "exp": 23.0
     }
   }
 }
