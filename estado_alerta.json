@@ -6,255 +6,255 @@
       "max_temp": 29.6,
       "max_hum": 80.0,
       "max_exp": 27.4,
-      "ultima_temp": 29.0,
-      "ultima_hum": 76.0,
+      "ultima_temp": 28.6,
+      "ultima_hum": 77.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "2": {
       "nivel": "CRITICO",
       "max_temp": 27.9,
       "max_hum": 77.0,
       "max_exp": 24.8,
-      "ultima_temp": 27.4,
-      "ultima_hum": 69.0,
+      "ultima_temp": 27.3,
+      "ultima_hum": 70.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "3": {
       "nivel": "CRITICO",
       "max_temp": 29.9,
       "max_hum": 79.0,
       "max_exp": 26.0,
-      "ultima_temp": 29.4,
+      "ultima_temp": 29.3,
       "ultima_hum": 64.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "4": {
       "nivel": "CRITICO",
       "max_temp": 28.4,
-      "max_hum": 78.0,
+      "max_hum": 79.0,
       "max_exp": 24.6,
-      "ultima_temp": 27.6,
-      "ultima_hum": 78.0,
+      "ultima_temp": 27.1,
+      "ultima_hum": 79.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "5": {
       "nivel": "CRITICO",
       "max_temp": 28.8,
       "max_hum": 84.0,
       "max_exp": 25.0,
-      "ultima_temp": 28.3,
-      "ultima_hum": 75.0,
+      "ultima_temp": 27.8,
+      "ultima_hum": 76.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "6": {
       "nivel": "CRITICO",
       "max_temp": 28.3,
       "max_hum": 84.0,
       "max_exp": 24.2,
-      "ultima_temp": 27.8,
+      "ultima_temp": 27.4,
       "ultima_hum": 79.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "7": {
       "nivel": "CRITICO",
       "max_temp": 28.4,
       "max_hum": 86.0,
       "max_exp": 24.4,
-      "ultima_temp": 28.2,
-      "ultima_hum": 76.0,
+      "ultima_temp": 27.9,
+      "ultima_hum": 77.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "8": {
       "nivel": "CRITICO",
       "max_temp": 28.8,
       "max_hum": 86.0,
       "max_exp": 25.3,
-      "ultima_temp": 28.1,
-      "ultima_hum": 81.0,
+      "ultima_temp": 28.5,
+      "ultima_hum": 76.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "9": {
       "nivel": "CRITICO",
       "max_temp": 27.1,
       "max_hum": 81.0,
       "max_exp": 25.1,
-      "ultima_temp": 26.9,
-      "ultima_hum": 77.0,
+      "ultima_temp": 26.5,
+      "ultima_hum": 78.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "10": {
       "nivel": "CRITICO",
       "max_temp": 28.2,
       "max_hum": 86.0,
       "max_exp": 26.2,
-      "ultima_temp": 27.9,
-      "ultima_hum": 70.0,
+      "ultima_temp": 27.5,
+      "ultima_hum": 71.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "11": {
       "nivel": "CRITICO",
       "max_temp": 28.2,
       "max_hum": 84.0,
       "max_exp": 25.6,
-      "ultima_temp": 28.1,
+      "ultima_temp": 27.8,
       "ultima_hum": 79.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "12": {
       "nivel": "CRITICO",
       "max_temp": 28.2,
       "max_hum": 89.0,
       "max_exp": 25.0,
-      "ultima_temp": 28.1,
-      "ultima_hum": 82.0,
+      "ultima_temp": 27.4,
+      "ultima_hum": 81.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "13": {
       "nivel": "CRITICO",
       "max_temp": 28.4,
       "max_hum": 85.0,
       "max_exp": 26.1,
-      "ultima_temp": 27.8,
-      "ultima_hum": 80.0,
+      "ultima_temp": 27.5,
+      "ultima_hum": 81.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "14": {
       "nivel": "CRITICO",
       "max_temp": 27.9,
       "max_hum": 84.0,
       "max_exp": 25.0,
-      "ultima_temp": 27.6,
-      "ultima_hum": 80.0,
+      "ultima_temp": 27.4,
+      "ultima_hum": 79.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     },
     "15": {
       "nivel": "CRITICO",
       "max_temp": 28.3,
       "max_hum": 76.0,
       "max_exp": 24.6,
-      "ultima_temp": 28.3,
+      "ultima_temp": 27.9,
       "ultima_hum": 72.0,
       "inicio_alerta": "2026-11-23T00:00:28.101562",
-      "ultimo_aviso_ts": "2026-11-23T15:01:22.080289"
+      "ultimo_aviso_ts": "2026-11-23T16:00:28.347088"
     }
   },
   "tecnico": {
     "1": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "29.0|76.0|30.6|26.7",
+      "firma_previa": "28.6|77.0|30.5|26.3",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "2": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.4|69.0|32.0|24.3",
+      "firma_previa": "27.3|70.0|31.7|24.2",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "3": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "29.4|64.0|30.0|25.4",
+      "firma_previa": "29.3|64.0|29.4|25.4",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "4": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.6|78.0|31.4|23.4",
+      "firma_previa": "27.1|79.0|31.7|23.0",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "5": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.3|75.0|31.9|24.5",
+      "firma_previa": "27.8|76.0|32.4|24.0",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "6": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.8|79.0|31.3|23.7",
+      "firma_previa": "27.4|79.0|30.7|23.3",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "7": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.2|76.0|30.8|24.3",
+      "firma_previa": "27.9|77.0|30.5|23.9",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "8": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.1|81.0|31.3|24.7",
+      "firma_previa": "28.5|76.0|30.7|25.1",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "9": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "26.9|77.0|30.7|25.0",
+      "firma_previa": "26.5|78.0|30.3|24.5",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "10": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.9|70.0|32.4|25.7",
+      "firma_previa": "27.5|71.0|32.1|25.3",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "11": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.1|79.0|30.7|25.5",
+      "firma_previa": "27.8|79.0|30.0|25.1",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "12": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.1|82.0|30.8|24.9",
+      "firma_previa": "27.4|81.0|30.5|24.1",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "13": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.8|80.0|30.7|25.6",
+      "firma_previa": "27.5|81.0|30.3|25.2",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "14": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.6|80.0|33.6|24.3",
+      "firma_previa": "27.4|79.0|33.0|24.1",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "15": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "28.3|72.0|31.4|24.6",
+      "firma_previa": "27.9|72.0|31.4|24.2",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     }
