@@ -372,7 +372,7 @@ def responder_log_sistema(chat_id):
     if str(chat_id) != str(TELEGRAM_CHAT_ID):
         return
     if not os.path.isfile(LOG_FILE):
-        enviar_telegram("?? No se encontr? el archivo monitor_mamay.log.", chat_destino=chat_id)
+        enviar_telegram("⚠️ No se encontró el archivo monitor_mamay.log.", chat_destino=chat_id)
         return
     try:
         with open(LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
@@ -381,7 +381,7 @@ def responder_log_sistema(chat_id):
         if len(texto_log) > 3400:
             texto_log = "...\n" + texto_log[-3400:]
         enviar_telegram(
-            f"?? <b>?LTIMAS L?NEAS DEL LOG ? MAMAY</b>\n<pre>{html.escape(texto_log)}</pre>",
+            f"📄 <b>ÚLTIMAS LÍNEAS DEL LOG · MAMAY</b>\n<pre>{html.escape(texto_log)}</pre>",
             chat_destino=chat_id,
         )
     except Exception as e:
@@ -407,7 +407,7 @@ def ejecutar_actualizacion_remota(chat_id):
     enviar_telegram(
         f"✅ <b>Código actualizado en producción</b>\n"
         f"? <b>Commit:</b> {html.escape(info_commit)}\n"
-        f"?? Reiniciando servicio en segundo plano...",
+        f"🔄 Reiniciando servicio en segundo plano...",
         chat_destino=chat_id,
     )
 
