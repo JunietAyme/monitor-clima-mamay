@@ -29,7 +29,7 @@ def parse_num(val):
 
 
 def clasificar_estado(t, h):
-    if (t is not None and t >= TEMP_CRIT) or (h is not None and h >= HUM_CRIT):
+    if (t is not None and t >= TEMP_CRIT) or (h is not None and h > HUM_CRIT):
         return "CRITICO"
     if (t is not None and t > TEMP_PREV) or (h is not None and h > HUM_PREV):
         return "PREVENTIVO"
