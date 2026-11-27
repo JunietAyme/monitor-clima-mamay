@@ -657,7 +657,7 @@
         </div>
     </div>
 
-    <script>document.write('<script src="datos_clima.js?v=' + Date.now() + '"><\/script>');</script>
+    <script id="script-datos-vivo" src="datos_clima.js" defer></script>
     <script>
         const UMBRAL_TEMP_PREV = 23.0;
         const UMBRAL_TEMP_CRIT = 26.0;
@@ -678,6 +678,8 @@
         let chartCruceAguaInst = null;
 
         let galponesConDatos = new Set();
+        let galponesEnLinea = new Set();
+        let excluirGalponesLimpieza = true;
         let galponesActivos = new Set();
         let tipoGraficoActual = 'lineas'; // Supervisora prefiere líneas por defecto
         let vistaPrincipalActual = 'clima';
@@ -698,6 +700,15 @@
             '#AC8E68', '#34C759', '#AF52DE', '#FF2D55', '#5AC8FA',
             '#FF9500', '#30B0C7', '#A2845E'
         ];
+
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
         function limpiarNombreGalpon(g) {
             return String(g || '').replace(/GalpÃ³n/g, 'Galpón');
@@ -836,7 +847,7 @@
                     if (!numSem) return;
 
                     // Detectar año si aparece en las primeras 5 filas (ej. 2026 o 2027)
-                    let anio = 2026;
+                    let anio = null;
                     for (let r = 1; r <= 5; r++) {
                         ws.getRow(r).eachCell(cell => {
                             const v = cell.value;
@@ -846,6 +857,17 @@
                                 if (mAnio) anio = parseInt(mAnio[0], 10);
                             }
                         });
+                    }
+
+                    const ultimaFechaClima = (window.REGISTROS_GLOBALES && window.REGISTROS_GLOBALES.length)
+                        ? window.REGISTROS_GLOBALES[window.REGISTROS_GLOBALES.length - 1].fecha
+                        : new Date().toISOString().slice(0, 10);
+                    const anioRef = parseInt(ultimaFechaClima.slice(0, 4), 10) || new Date().getFullYear();
+
+                    if (!anio) {
+                        anio = anioRef;
+                    } else if (numSem <= 10 && anio < anioRef) {
+                        anio = anioRef;
                     }
 
                     const infoSem = obtenerRangoSemanaOperativa(numSem, anio);
@@ -1044,7 +1066,7 @@
                     }
 
                     const postSem = totalAves > 0 ? pond('postSem') : null;
-                    const postStd = pond('postStd');
+                    const postStd = totalAves > 0 ? pond('postStd') : null;
                     const difPost = (postSem !== null && postStd !== null) ? (postSem - postStd) : null;
                     const mortSemPct = totalAves > 0 ? (totalMuertos / (totalAves + totalMuertos)) * 100 : null;
 
@@ -1061,16 +1083,16 @@
                         etiquetaEstado,
                         linea: lineasUnicas.join(' + ') || '—',
                         fase: fasesUnicas.join(' / ') || '—',
-                        edadSem: lotes[0].edadSem,
+                        edadSem: totalAves > 0 ? lotes[0].edadSem : null,
                         avesActual: totalAves,
                         postStd,
                         postSem,
                         difPost,
                         muertos: totalMuertos,
                         mortSemPct,
-                        graStd: pond('graStd'),
+                        graStd: totalAves > 0 ? pond('graStd') : null,
                         graSem: totalAves > 0 ? pond('graSem') : null,
-                        convStd: pond('convStd'),
+                        convStd: totalAves > 0 ? pond('convStd') : null,
                         convReal: totalAves > 0 ? pond('convReal') : null,
                         aguaMl: totalAves > 0 ? pond('aguaMl') : null,
                         pesoHuevoReal: totalAves > 0 ? pond('pesoHuevoReal') : null,
@@ -1311,14 +1333,26 @@
 
             const mesesSet = new Set();
             galponesConDatos = new Set();
+            galponesEnLinea = new Set();
+            let ultimaFechaGlobal = '';
 
             registros.forEach(r => {
-                if (r.fecha) mesesSet.add(r.fecha.substring(0, 7));
+                if (r.fecha) {
+                    mesesSet.add(r.fecha.substring(0, 7));
+                    if (r.fecha > ultimaFechaGlobal) ultimaFechaGlobal = r.fecha;
+                }
                 if (r.galpon) galponesConDatos.add(r.galpon);
             });
 
+            registros.forEach(r => {
+                if (r.fecha === ultimaFechaGlobal && r.galpon) {
+                    galponesEnLinea.add(r.galpon);
+                }
+            });
+
+            const enLineaOperativos = Array.from(galponesEnLinea).filter(g => obtenerNumGalpon(g) !== 2).length;
             document.getElementById('lbl-subtitulo-header').textContent =
-                `Telemetría · ${galponesConDatos.size} activos / ${TOTAL_GALPONES_GRANJA} galpones`;
+                `Telemetría · ${galponesEnLinea.size} en línea (${enLineaOperativos} prod.) / ${TOTAL_GALPONES_GRANJA} galpones`;
 
             const selectMes = document.getElementById('filtro-mes');
             const mesPrevio = selectMes.value;
@@ -1366,18 +1400,19 @@
 
             CATALOGO_GALPONES.forEach(g => {
                 const activo = galponesActivos.has(g);
-                const conectado = galponesConDatos.has(g);
+                const enLinea = galponesEnLinea.has(g);
+                const tieneHistorico = galponesConDatos.has(g);
                 const num = obtenerNumGalpon(g);
                 const numCorto = g.replace('Galpón ', 'G');
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.onclick = () => toggleGalpon(g);
 
-                if (!conectado) {
+                if (!enLinea) {
                     btn.className = activo
                         ? 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-dashed border-zinc-400/50 dark:border-white/20 bg-black/[0.02] dark:bg-white/[0.02] text-zinc-400 dark:text-zinc-500 active:scale-95'
                         : 'py-1.5 rounded-xl text-xs font-medium transition-all duration-150 border border-dashed border-black/[0.05] dark:border-white/[0.06] text-zinc-400/60 dark:text-zinc-600 active:scale-95';
-                    btn.title = `${g} (Pendiente de conexión BFN)`;
+                    btn.title = tieneHistorico ? `${g} (Sin telemetría en vivo · solo histórico)` : `${g} (Pendiente de conexión BFN)`;
                 } else {
                     btn.className = activo
                         ? 'py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 border border-apple-orange/50 bg-apple-orangeLight/15 dark:bg-apple-orange/20 text-apple-orangeLight dark:text-apple-orange active:scale-95'
@@ -1388,8 +1423,8 @@
                 container.appendChild(btn);
             });
 
-            const activosConectados = Array.from(galponesActivos).filter(g => galponesConDatos.has(g)).length;
-            document.getElementById('hint-modo').textContent = `${activosConectados} activos`;
+            const activosEnLinea = Array.from(galponesActivos).filter(g => galponesEnLinea.has(g)).length;
+            document.getElementById('hint-modo').textContent = `${activosEnLinea} en línea`;
             actualizarEstadoBotonesPreset();
         }
 
@@ -1467,12 +1502,13 @@
             grid.innerHTML = '';
 
             seleccionadosTodos.forEach(g => {
-                const conectado = galponesConDatos.has(g);
+                const enLinea = galponesEnLinea.has(g);
+                const tieneHistorico = galponesConDatos.has(g);
                 const num = obtenerNumGalpon(g);
                 const numCorto = g.replace('Galpón ', 'G');
                 const zona = num <= 9 ? 'Arias' : 'Castillo';
 
-                if (!conectado) {
+                if (!enLinea) {
                     const card = document.createElement('div');
                     card.className = 'rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.1] bg-black/[0.01] dark:bg-white/[0.015] p-3 flex flex-col justify-between opacity-65';
                     card.innerHTML = `
@@ -1481,8 +1517,8 @@
                             <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
                         </div>
                         <div class="mt-2.5">
-                            <div class="text-xs font-medium text-apple-grayText">Sin enlace BFN</div>
-                            <div class="text-[10px] text-zinc-500 mt-0.5">${num === 18 ? 'Sin métricas aún' : 'Pendiente red'}</div>
+                            <div class="text-xs font-medium text-apple-grayText">${tieneHistorico ? 'Fuera de línea' : 'Sin enlace BFN'}</div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">${num === 18 ? 'Sin métricas aún' : (tieneHistorico ? 'Solo historial antiguo' : 'Pendiente red')}</div>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -1538,8 +1574,9 @@
         }
 
         function actualizarKPIsYTabla(filtrados, seleccionadosConectados) {
+            const evalGalpones = seleccionadosConectados.filter(g => galponesEnLinea.has(g) && (!excluirGalponesLimpieza || obtenerNumGalpon(g) !== 2));
             let opt = 0, prev = 0, crit = 0;
-            seleccionadosConectados.forEach(g => {
+            evalGalpones.forEach(g => {
                 const regs = filtrados.filter(r => r.galpon === g);
                 if (!regs.length) return;
                 const ult = regs[regs.length - 1];
@@ -1554,13 +1591,17 @@
             if (crit > 0) partesEstado.push(`${crit} crítico${crit > 1 ? 's' : ''}`);
             if (prev > 0) partesEstado.push(`${prev} preventivo${prev > 1 ? 's' : ''}`);
             document.getElementById('kpi-estado-detalle').textContent =
-                partesEstado.length ? partesEstado.join(' · ') : `De ${seleccionadosConectados.length} galpones activos`;
+                partesEstado.length ? `${partesEstado.join(' · ')} (G02 excl.)` : `De ${evalGalpones.length} galpones operativos`;
+
+            const filtradosOperativos = excluirGalponesLimpieza
+                ? filtrados.filter(r => obtenerNumGalpon(r.galpon) !== 2)
+                : filtrados;
 
             let sumaTemp = 0, countTemp = 0, maxTempObj = null;
             let sumaExt = 0, countExt = 0;
             let sumaHum = 0, countHum = 0, maxHumObj = null;
 
-            filtrados.forEach(r => {
+            filtradosOperativos.forEach(r => {
                 if (r.temp !== null) {
                     sumaTemp += r.temp;
                     countTemp++;
@@ -1618,9 +1659,9 @@
                     : (r.hum !== null && r.hum > UMBRAL_HUM_PREV ? 'text-apple-orange font-semibold' : '');
 
                 tr.innerHTML = `
-                    <td class="py-3 px-4 sm:px-6 font-mono text-[11px] text-apple-grayText">${r.fecha} · ${r.hora.slice(0, 5)}</td>
-                    <td class="py-3 px-3 sm:px-4 text-zinc-600 dark:text-zinc-400">${r.encargado}</td>
-                    <td class="py-3 px-3 sm:px-4 font-semibold">${r.galpon}</td>
+                    <td class="py-3 px-4 sm:px-6 font-mono text-[11px] text-apple-grayText">${escapeHtml(r.fecha)} · ${escapeHtml(r.hora.slice(0, 5))}</td>
+                    <td class="py-3 px-3 sm:px-4 text-zinc-600 dark:text-zinc-400">${escapeHtml(r.encargado)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-semibold">${escapeHtml(r.galpon)}</td>
                     <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${claseT}">${r.temp !== null ? r.temp.toFixed(1) + '°C' : '—'}</td>
                     <td class="py-3 px-3 sm:px-4 text-right font-mono text-apple-grayText tabular-nums">${r.ext !== null ? r.ext.toFixed(1) + '°C' : '—'}</td>
                     <td class="py-3 px-3 sm:px-4 text-right font-mono font-medium tabular-nums ${claseH}">${r.hum !== null ? r.hum + '%' : '—'}</td>
@@ -1789,23 +1830,36 @@
             }
 
             const tiemposSet = new Set();
-            filtrados.forEach(r => tiemposSet.add(`${r.fecha} ${r.hora.slice(0, 5)}`));
+            const idxGalponTiempo = new Map();
+            const idxPorTiempo = new Map();
+
+            filtrados.forEach(r => {
+                const tKey = `${r.fecha} ${r.hora.slice(0, 5)}`;
+                tiemposSet.add(tKey);
+                idxGalponTiempo.set(`${r.galpon}|${tKey}`, r);
+                let bucket = idxPorTiempo.get(tKey);
+                if (!bucket) {
+                    bucket = { exts: [], temps: [], hums: [] };
+                    idxPorTiempo.set(tKey, bucket);
+                }
+                if (r.ext !== null) bucket.exts.push(r.ext);
+                if (r.temp !== null) bucket.temps.push(r.temp);
+                if (r.hum !== null) bucket.hums.push(r.hum);
+            });
+
             const rawLabels = Array.from(tiemposSet).sort();
             const labels = formatearEjeTiempo(rawLabels);
 
             const serieExterior = rawLabels.map(t => {
-                const vals = filtrados
-                    .filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r.ext !== null)
-                    .map(r => r.ext);
+                const vals = idxPorTiempo.get(t)?.exts || [];
                 if (!vals.length) return null;
                 return Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1));
             });
 
             if (tipoGraficoActual === 'banda') {
                 const calcStats = campo => rawLabels.map(t => {
-                    const vals = filtrados
-                        .filter(r => `${r.fecha} ${r.hora.slice(0, 5)}` === t && r[campo] !== null)
-                        .map(r => r[campo]);
+                    const b = idxPorTiempo.get(t);
+                    const vals = b ? (campo === 'temp' ? b.temps : b.hums) : [];
                     if (!vals.length) return { min: null, avg: null, max: null };
                     const sum = vals.reduce((a, b) => a + b, 0);
                     return {
@@ -1955,7 +2009,7 @@
                 datasetsTemp.push({
                     ...estilo,
                     data: rawLabels.map(t => {
-                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora.slice(0, 5)}` === t);
+                        const f = idxGalponTiempo.get(`${g}|${t}`);
                         return f ? f.temp : null;
                     })
                 });
@@ -1963,7 +2017,7 @@
                 datasetsHum.push({
                     ...estilo,
                     data: rawLabels.map(t => {
-                        const f = filtrados.find(r => r.galpon === g && `${r.fecha} ${r.hora.slice(0, 5)}` === t);
+                        const f = idxGalponTiempo.get(`${g}|${t}`);
                         return f ? f.hum : null;
                     })
                 });
@@ -2095,7 +2149,8 @@
             document.getElementById('cruce-tag-lotes').textContent =
                 `${activasProd.length} galpones en producción (${PRODUCCION_DATA.semanas.find(s => s.numSem === ultimaSemNum)?.etiqueta || ''})`;
             document.getElementById('prod-kpi-aves').textContent = totalAves.toLocaleString('es-PE');
-            document.getElementById('prod-kpi-aves-sub').textContent = 'G02 en limpieza · G18 sin métricas';
+            const sinAvesTxt = filasUltimaSem.filter(f => f.avesActual <= 0).map(f => f.galpon.replace('Galpón ', 'G') + ' (' + f.etiquetaEstado.toLowerCase() + ')').join(' · ');
+            document.getElementById('prod-kpi-aves-sub').textContent = sinAvesTxt || 'Todos los galpones filtrados activos';
 
             document.getElementById('prod-kpi-postura').textContent = postRealProm !== null ? `${postRealProm.toFixed(2)}%` : '—';
             if (postRealProm !== null && postStdProm !== null) {
@@ -2181,7 +2236,7 @@
                     : (f.tempMax !== null && f.tempMax > UMBRAL_TEMP_PREV ? 'text-apple-orange font-semibold' : '');
 
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-semibold">${f.galpon.replace('Galpón ', 'G')} <span class="text-[10px] font-normal text-apple-grayText">${f.zona}</span></td>
+                    <td class="py-3 px-4 font-semibold" title="${escapeHtml(f.linea)} · ${escapeHtml(f.fase)}">${escapeHtml(f.galpon.replace('Galpón ', 'G'))} <span class="text-[10px] font-normal text-apple-grayText">${escapeHtml(f.zona)}</span></td>
                     <td class="py-3 px-3">${badgeHtml}</td>
                     <td class="py-3 px-3 text-right font-mono tabular-nums">${f.avesActual > 0 ? f.avesActual.toLocaleString('es-PE') : '0'}</td>
                     <td class="py-3 px-3 text-right font-mono tabular-nums ${clasePost}">${f.postSem !== null ? f.postSem.toFixed(1) + '%' : '—'}</td>
@@ -2242,8 +2297,8 @@
                         grid: { color: gridColor },
                         border: { display: false },
                         ticks: { color: tickColor, font: { size: 10 } },
-                        suggestedMin: min1,
-                        suggestedMax: max1,
+                        ...(min1 !== null && min1 !== undefined ? { suggestedMin: min1 } : {}),
+                        ...(max1 !== null && max1 !== undefined ? { suggestedMax: max1 } : {}),
                         title: { display: true, text: titleY1, color: tickColor, font: { size: 10 } }
                     },
                     y1: {
@@ -2251,8 +2306,8 @@
                         grid: { drawOnChartArea: false },
                         border: { display: false },
                         ticks: { color: tickColor, font: { size: 10 } },
-                        suggestedMin: min2,
-                        suggestedMax: max2,
+                        ...(min2 !== null && min2 !== undefined ? { suggestedMin: min2 } : {}),
+                        ...(max2 !== null && max2 !== undefined ? { suggestedMax: max2 } : {}),
                         title: { display: true, text: titleY2, color: tickColor, font: { size: 10 } }
                     }
                 }
@@ -2347,11 +2402,11 @@
                                 tension: 0.3,
                                 pointRadius: 2,
                                 spanGaps: true,
-                                yAxisID: 'y'
+                                yAxisID: 'y1'
                             }
                         ]
                     },
-                    options: baseDualOptions('Agua (ml) / Hum (%)', 60, 250, 'Temp. Prom (°C)', 18, 28)
+                    options: baseDualOptions('Consumo Agua (ml/ave)', null, null, 'Temp (°C) / Hum (%)', 15, 95)
                 });
                 return;
             }
@@ -2423,7 +2478,7 @@
                         }
                     ]
                 },
-                options: baseDualOptions('Postura (%)', 80, 95, 'Temp. Prom (°C)', 18, 28)
+                options: baseDualOptions('Postura (%)', null, null, 'Temp. Prom (°C)', 18, 28)
             });
 
             chartCruceAguaInst = new Chart(ctx2, {
@@ -2453,13 +2508,13 @@
                         }
                     ]
                 },
-                options: baseDualOptions('Javas / día', 3800, 4600, 'Temp. Prom (°C)', 18, 28)
+                options: baseDualOptions('Javas / día', null, null, 'Temp. Prom (°C)', 18, 28)
             });
         }
 
         // --- MODAL INDIVIDUAL ---
         function abrirModalGalpon(galpon) {
-            if (!galponesConDatos.has(galpon)) return;
+            if (!galponesEnLinea.has(galpon) && !galponesConDatos.has(galpon)) return;
             galponModalActual = galpon;
             renderizarContenidoModal(galpon);
             const modal = document.getElementById('modal-galpon');
@@ -2481,7 +2536,7 @@
         }
 
         function navegarModal(delta) {
-            const activosList = CATALOGO_GALPONES.filter(g => galponesConDatos.has(g));
+            const activosList = CATALOGO_GALPONES.filter(g => galponesEnLinea.has(g));
             if (!galponModalActual || !activosList.length) return;
             const idx = activosList.indexOf(galponModalActual);
             const nuevoIdx = (idx + delta + activosList.length) % activosList.length;
