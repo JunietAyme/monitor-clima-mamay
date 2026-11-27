@@ -85,7 +85,7 @@ RECORDATORIO_CRITICO_MIN = 15
 
 # Umbrales Técnicos de Resiliencia (ciclos de 5 min)
 CICLOS_DESCONEXION_ALERTA = 2      # 2 ciclos = 10 min sin señal
-CICLOS_SENSOR_CONGELADO = 3       # 36 ciclos = 180 min sin variación mínima
+CICLOS_SENSOR_CONGELADO = 3 if "--una-vez" in sys.argv else max(3, int(10800 // 3600))  # 3 h sin variación mínima
 
 # Resúmenes automáticos
 HORAS_RESUMEN = ["08:00", "12:00", "15:00"]
