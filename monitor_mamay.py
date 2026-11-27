@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 import csv
 import sys
@@ -48,12 +48,15 @@ def cargar_credenciales():
     if not os.path.isfile(CONFIG_SECRETA_FILE):
         if os.getenv("MAMAY_BFN_USER") and os.getenv("MAMAY_TG_TOKEN"):
             return {}
-        raise FileNotFoundError(
-            f"Falta {CONFIG_SECRETA_FILE}. Copia config_secreta.example.json a config_secreta.json y completa tus claves."
+        logging.warning(
+            f"No se encontro {CONFIG_SECRETA_FILE}; usando variables de entorno o valores por defecto."
         )
+        return {}
     with open(CONFIG_SECRETA_FILE, "r", encoding="utf-8-sig") as f:
-        return json.load(f)
-
+        data = json.load(f)
+    if not isinstance(data, dict):
+        raise ValueError(f"{CONFIG_SECRETA_FILE} debe contener un objeto JSON.")
+    return data
 
 _CREDS = cargar_credenciales()
 TELEGRAM_TOKEN = os.getenv("MAMAY_TG_TOKEN", _CREDS.get("telegram_token", ""))
@@ -745,9 +748,10 @@ def leer_tabla_survey():
 # 6. PERSISTENCIA Y FORMATEO DE MENSAJES
 # ==============================================================================
 def guardar_historial_csv(ahora_dt, galpones):
+    ts_real = ahora_lima()
     existe = os.path.isfile(ARCHIVO_CSV)
-    fecha_str = ahora_dt.strftime("%Y-%m-%d")
-    hora_min = ahora_dt.strftime("%H:%M")
+    fecha_str = ts_real.strftime("%Y-%m-%d")
+    hora_min = ts_real.strftime("%H:%M")
     claves_recientes = set()
     if existe:
         try:
@@ -776,7 +780,7 @@ def guardar_historial_csv(ahora_dt, galpones):
             estado, _ = clasificar_estado(g["temp"], g["hum"], g.get("exp"))
             writer.writerow([
                 fecha_str,
-                ahora_dt.strftime("%H:%M:%S"),
+                ts_real.strftime("%H:%M:%S"),
                 obtener_encargado(num),
                 galp_lbl,
                 estado,
