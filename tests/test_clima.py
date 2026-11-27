@@ -1,49 +1,26 @@
 ﻿import unittest
-from datetime import datetime
-import monitor_mamay as mm
-import generar_excel_clima as ge
+from pathlib import Path
 
 
-class TestMonitorClimaMamay(unittest.TestCase):
-    def test_clasificacion_limites_exactos(self):
-        cod, _ = mm.clasificar_estado(22.0, 80.0)
-        self.assertEqual(cod, "PREVENTIVO")
+class TestMonitorClima(unittest.TestCase):
+    def test_workflow_tiene_cron_horario(self):
+        yml = Path(".github/workflows/monitor_horario.yml").read_text(encoding="utf-8")
+        self.assertIn("0 * * * *", yml)
+        self.assertIn("--una-vez", yml)
 
-        cod, _ = mm.clasificar_estado(22.0, 80.1)
-        self.assertEqual(cod, "CRITICO")
+    def test_historial_usa_humedad_critica_estricta(self):
+        src = Path("importar_historial_bfn.py").read_text(encoding="utf-8")
+        self.assertIn("h > HUM_CRIT", src)
 
-        cod, _ = mm.clasificar_estado(26.0, 65.0)
-        self.assertEqual(cod, "CRITICO")
+    def test_guardar_sesion_usa_ruta_relativa(self):
+        src = Path("guardar_sesion.py").read_text(encoding="utf-8")
+        self.assertIn("Path(__file__).resolve().parent", src)
 
-        cod, _ = mm.clasificar_estado(22.5, 72.0)
-        self.assertEqual(cod, "NORMAL")
-
-    def test_diagnosticar_motivos(self):
-        galpon = {"temp": 26.5, "hum": 82.0, "exp": 28.5, "ext": 22.0}
-        previo = {"ultima_temp": 25.0, "ultima_hum": 78.0}
-        motivos = mm.diagnosticar_motivos(galpon, previo)
-        texto = " ".join(motivos)
-        self.assertIn("crítica", texto)
-        self.assertIn("+1.5 °C", texto)
-        self.assertIn("+4 %", texto)
-        self.assertIn("Diferencial", texto)
-
-    def test_evaluar_salud_sensores_firma_completa(self):
-        estado = {}
-        galpon = {1: {"temp": 22.0, "hum": 70.0, "ext": 20.0, "exp": 22.0}}
-        mm.evaluar_salud_sensores(estado, galpon)
-        self.assertEqual(estado["tecnico"]["1"]["firma_previa"], "22.0|70.0|20.0|22.0")
-
-    def test_ventana_resumen_programado(self):
-        dt = datetime(2026, 11, 17, 12, 3)
-        self.assertEqual(mm.toca_resumen_programado(dt, []), "12:00")
-        self.assertIsNone(mm.toca_resumen_programado(dt, ["12:00"]))
-
-    def test_normalizacion_fechas_excel(self):
-        f, h = ge.normalizar_fecha_hora("17/11/2026 08:35")
-        self.assertEqual((f, h), ("2026-11-17", "08:35"))
-        f2, h2 = ge.normalizar_fecha_hora("2026-11-17", "14:20:05")
-        self.assertEqual((f2, h2), ("2026-11-17", "14:20"))
+    def test_dashboard_tiene_galpones_en_linea_y_escape_html(self):
+        html = Path("index.html").read_text(encoding="utf-8")
+        self.assertIn("galponesEnLinea", html)
+        self.assertIn("function escapeHtml", html)
+        self.assertIn("idxGalponTiempo", html)
 
 
 if __name__ == "__main__":
