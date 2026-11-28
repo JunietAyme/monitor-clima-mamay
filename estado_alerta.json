@@ -6,7 +6,7 @@
       "max_temp": 29.1,
       "max_hum": 80.0,
       "max_exp": 26.9,
-      "ultima_temp": 27.1,
+      "ultima_temp": 27.2,
       "ultima_hum": 80.0,
       "inicio_alerta": "2026-11-27T00:00:28.655708",
       "ultimo_aviso_ts": "2026-11-27T18:56:40.991279"
@@ -36,7 +36,7 @@
       "max_temp": 27.9,
       "max_hum": 80.0,
       "max_exp": 24.1,
-      "ultima_temp": 26.2,
+      "ultima_temp": 26.1,
       "ultima_hum": 80.0,
       "inicio_alerta": "2026-11-27T00:00:28.655708",
       "ultimo_aviso_ts": "2026-11-27T18:56:40.991279"
@@ -86,20 +86,20 @@
       "max_temp": 27.8,
       "max_hum": 81.0,
       "max_exp": 25.8,
-      "ultima_temp": 26.0,
+      "ultima_temp": 26.1,
       "ultima_hum": 80.0,
       "inicio_alerta": "2026-11-27T00:00:28.655708",
       "ultimo_aviso_ts": "2026-11-27T18:56:40.991279"
     },
     "10": {
-      "nivel": "CRITICO",
-      "max_temp": 24.5,
-      "max_hum": 83.0,
-      "max_exp": 23.0,
-      "ultima_temp": 24.5,
-      "ultima_hum": 83.0,
-      "inicio_alerta": "2026-11-27T00:00:28.655708",
-      "ultimo_aviso_ts": "2026-11-27T18:56:40.991279"
+      "nivel": "NORMAL",
+      "max_temp": 0.0,
+      "max_hum": 0.0,
+      "max_exp": 0.0,
+      "ultima_temp": null,
+      "ultima_hum": null,
+      "inicio_alerta": null,
+      "ultimo_aviso_ts": null
     },
     "11": {
       "nivel": "CRITICO",
@@ -116,7 +116,7 @@
       "max_temp": 29.2,
       "max_hum": 89.0,
       "max_exp": 26.0,
-      "ultima_temp": 26.7,
+      "ultima_temp": 26.6,
       "ultima_hum": 85.0,
       "inicio_alerta": "2026-11-27T00:00:28.655708",
       "ultimo_aviso_ts": "2026-11-27T18:56:40.991279"
@@ -156,7 +156,7 @@
     "1": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "27.1|80.0|25.1|24.9",
+      "firma_previa": "27.2|80.0|25.1|25.0",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
@@ -164,20 +164,20 @@
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "25.4|74.0|25.2|23.0",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "3": {
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "27.3|74.0|24.7|23.2",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "4": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "26.2|80.0|25.7|23.0",
+      "firma_previa": "26.1|80.0|25.7|23.0",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
@@ -185,55 +185,55 @@
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "26.6|80.0|25.0|22.9",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "6": {
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "26.3|81.0|25.0|22.2",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "7": {
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "26.5|83.0|24.9|23.0",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "8": {
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "26.6|82.0|25.0|23.2",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "9": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "26.0|80.0|25.0|24.1",
+      "firma_previa": "26.1|80.0|25.0|24.2",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
     "10": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "24.5|83.0|26.5|23.0",
-      "ciclos_iguales": 19,
-      "alerta_congelado": true
+      "firma_previa": "None|None|None|None",
+      "ciclos_iguales": 0,
+      "alerta_congelado": false
     },
     "11": {
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "27.4|81.0|25.0|24.7",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "12": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "26.7|85.0|25.2|23.5",
+      "firma_previa": "26.6|85.0|25.2|23.4",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
@@ -241,13 +241,13 @@
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "27.3|82.0|25.0|25.1",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     },
     "14": {
       "ausencias": 0,
       "alerta_desconexion": false,
-      "firma_previa": "26.2|82.0|25.3|23.0",
+      "firma_previa": "26.2|82.0|25.3|22.9",
       "ciclos_iguales": 0,
       "alerta_congelado": false
     },
@@ -255,7 +255,7 @@
       "ausencias": 0,
       "alerta_desconexion": false,
       "firma_previa": "27.1|75.0|25.3|23.4",
-      "ciclos_iguales": 0,
+      "ciclos_iguales": 1,
       "alerta_congelado": false
     }
   },
